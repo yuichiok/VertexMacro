@@ -35,8 +35,8 @@ void asymmetry_b()
 
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && abs(MCBcostheta) < 0.95");
 	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && abs(MCBcostheta) < 0.95");
-	int forward = GenTree->Draw("MCBcostheta >> cosGen","MCBcostheta > 0 && MCBcostheta > -2 ");
-	int backward = GenTree->Draw("MCBcostheta >> +cosGen","MCBcostheta < 0 && MCBcostheta > -2");
+	int forward = normaltree->Draw("qMCBcostheta[0] >> cosGen","qMCBcostheta[0] > 0 && qMCBcostheta[0] > -2 ");
+	int backward = normaltree->Draw("-qMCBcostheta[1] >> +cosGen","qMCBcostheta[1] > 0 && qMCBcostheta[1] > -2");
 	//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && methodUsed");
 	//int backward = normaltree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && methodUsed");
 	//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 &&  qCostheta > -1.0");
