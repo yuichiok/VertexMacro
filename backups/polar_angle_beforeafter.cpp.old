@@ -1,0 +1,342 @@
+#include <iostream>
+#include <string>
+#include <TFile.h>
+#include <TApplication.h>
+#include <TCanvas.h>
+#include <TTree.h>
+#include <TH1.h>
+#include <TCut.h>
+#include <TEventList.h>
+#include <TStyle.h>
+
+using namespace std ;
+
+
+void AddAFBvalue( float input, int& plus , int& minus ){
+	if( input > 0 ){
+		plus++ ;
+	}else{
+		minus++ ;
+	}
+}
+
+float getAFB( int plus, int minus ){
+	return 1.0*(plus-minus)/(plus+minus) ;
+}
+
+
+#ifdef __CINT__
+int polar_angle_beforeafter(){
+#else
+int main( int argc, char **argv ){
+	TApplication app( "app", &argc, argv ) ;
+#endif
+
+
+	string rootfiledir = "root_merge/" ;
+	//string beforefilename = "hadronic_eRpL.root" ;
+	//string beforefilename = "hadronic_eLpR.root" ;
+	string beforefilename = "hadronic_eLpR_kekcc.root" ;
+	string afterfilename = "aftervertexrestore_" + beforefilename ;
+	//string afterfilename = "aftervertexrestoretest.root";
+	string rootfilename ;
+	string treename = "Stats" ;
+
+	rootfilename = rootfiledir + beforefilename ;
+	TFile file1( rootfilename.c_str() ) ;
+	if( file1.IsZombie() ){
+		cout << "cannot open the file '" << rootfilename << "'." << endl ;
+		return 1 ;
+	}
+
+	gStyle->SetOptStat(0) ;
+
+	int Top1bcharge, Top2bcharge ;
+	float Top1costheta, Top1bcostheta, Top2costheta, Top2bcostheta ;
+	float MCTopcostheta, MCTopBarcostheta ;
+	float qMCBcostheta[2] ;
+	int topplus = 0, topminus = 0, bottomplus = 0, bottomminus = 0 ;
+	float topAFB, bottomAFB, topAFBgen, bottomAFBgen ;
+
+	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.30 ) " ;
+	TCut chi2_1 = " chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
+	TCut chi2_2 = " chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
+	TCut chi2 = chi2_1 + chi2_2 ;
+	TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) && ( Top2mass > 140 ) && ( Top2mass < 210 ) " ;
+	TCut samecharge = " Top1bcharge * Top2bcharge > 0 " ;
+	TCut both0charge = " ( Top1bcharge == 0 ) || ( Top2bcharge == 0 ) " ;
+
+	cout << endl ;
+	cout << "-- before vertex recovery --" << endl ;
+
+	TTree* tree1 = (TTree*)file1.Get( treename.c_str() ) ;
+	int eventnum = tree1->GetEntries() ;
+	cout << "eventnum            = " << eventnum << " (100%)" << endl ;
+	int afterbtag = tree1->GetEntries( btag ) ;
+	cout << "after b-tag cut     = " << afterbtag << " (" << (float)100*afterbtag/eventnum << "%)" << endl ;
+	int afterkinematic = tree1->GetEntries( btag && kinematic ) ;
+	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
+	int afterchi2 = tree1->GetEntries( btag && kinematic && chi2 ) ;
+	cout << "after chi2 cut      = " << afterchi2 << " (" << (float)100*afterchi2/eventnum << "%)" << endl;
+
+	int samesignnum = tree1->GetEntries( btag && kinematic && chi2 && samecharge ) ;
+	int both0num = tree1->GetEntries( btag && kinematic && chi2 && both0charge ) ;
+	int usednum = afterchi2 - samesignnum - both0num ;
+	cout << endl ;
+	cout << "used number = " << usednum << endl ;
+	cout << "same charge sign number = " << samesignnum << endl ;
+	cout << "both charge 0 number = " << both0num << endl ;
+
+	TEventList *elist1 = new TEventList( "elist1", "Reconstructed Event List" ) ;
+	tree1->Draw( ">>elist1", btag && kinematic && chi2 && !samecharge && !both0charge ) ;
+	//usednum = elist->GetN() ;
+	//cout << "used number = " << usednum << endl ;
+
+	tree1->SetBranchAddress( "Top1bcharge", &Top1bcharge ) ;
+	tree1->SetBranchAddress( "Top1costheta", &Top1costheta ) ;
+	tree1->SetBranchAddress( "Top1bcostheta", &Top1bcostheta ) ;
+	tree1->SetBranchAddress( "Top2bcharge", &Top2bcharge ) ;
+	tree1->SetBranchAddress( "Top2costheta", &Top2costheta ) ;
+	tree1->SetBranchAddress( "Top2bcostheta", &Top2bcostheta ) ;
+
+	TCanvas* c1 = new TCanvas( "c1", "c1", 1280, 480 ) ;
+	TH1F* htop = new TH1F( "htop", "top polar angle (reconstructed)", 40, -1, 1 ) ;
+	htop->SetMinimum(0) ;
+	htop->SetLineColor(2) ;
+	TH1F* hbottom = new TH1F( "hbottom", "bottom polar angle (reconstructed)", 40, -1, 1 ) ;
+	hbottom->SetMinimum(0) ;
+	hbottom->SetLineColor(2) ;
+	TH1F* htopgen = new TH1F( "htopgen", "top polar angle (generated)", 40, -1, 1 ) ;
+	htopgen->SetMinimum(0) ;
+	htopgen->SetMaximum(0.11) ;
+	htopgen->SetLineColor(4) ;
+	TH1F* hbottomgen = new TH1F( "hbottomgen", "bottom polar angle (generated)", 40, -1, 1 ) ;
+	hbottomgen->SetMinimum(0) ;
+	hbottomgen->SetMaximum(0.11) ;
+	hbottomgen->SetLineColor(4) ;
+
+	double fillweight = (double)1/usednum ;
+
+	for( int i=0 ; i<usednum ; i++ ){
+
+		tree1->GetEntry( elist1->GetEntry(i) ) ;
+
+		if( Top1bcharge < 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
+			htop->Fill( Top1costheta, fillweight ) ;
+			htop->Fill( -Top2costheta, fillweight ) ;
+			hbottom->Fill( Top1bcostheta, fillweight ) ;
+			hbottom->Fill( -Top2bcostheta, fillweight ) ;
+			AddAFBvalue( Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( -Top2bcostheta, bottomplus, bottomminus ) ;
+		}else if( Top1bcharge > 0 ){  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
+			htop->Fill( -Top1costheta, fillweight ) ;
+			htop->Fill( Top2costheta, fillweight ) ;
+			hbottom->Fill( -Top1bcostheta, fillweight ) ;
+			hbottom->Fill( Top2bcostheta, fillweight ) ;
+			AddAFBvalue( -Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( Top2bcostheta, bottomplus, bottomminus ) ;
+		}else if( Top2bcharge > 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
+			htop->Fill( Top1costheta, fillweight ) ;
+			htop->Fill( -Top2costheta, fillweight ) ;
+			hbottom->Fill( Top1bcostheta, fillweight ) ;
+			hbottom->Fill( -Top2bcostheta, fillweight ) ;
+			AddAFBvalue( Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( -Top2bcostheta, bottomplus, bottomminus ) ;
+		}else{  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
+			htop->Fill( -Top1costheta, fillweight ) ;
+			htop->Fill( Top2costheta, fillweight ) ;
+			hbottom->Fill( -Top1bcostheta, fillweight ) ;
+			hbottom->Fill( Top2bcostheta, fillweight ) ;
+			AddAFBvalue( -Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( Top2bcostheta, bottomplus, bottomminus ) ;
+		}
+
+	}
+
+	topAFB = getAFB( topplus, topminus ) ;
+	bottomAFB = getAFB( bottomplus, bottomminus ) ;
+	cout << "AFB(top) = " << topAFB << ", AFB(bottom) = " << bottomAFB << endl ;
+
+	tree1->SetBranchStatus( "Top*", 0 ) ;
+	tree1->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
+	tree1->SetBranchAddress( "MCTopBarcostheta", &MCTopBarcostheta ) ;
+	tree1->SetBranchAddress( "qMCBcostheta", &qMCBcostheta ) ;
+
+	TEventList* elistgen = new TEventList( "elistgen", "Generated Event List" ) ;
+	tree1->Draw( ">>elistgen", " ( MCTopcostheta != -2 ) && ( MCTopBarcostheta != -2 ) && ( qMCBcostheta[0] != -2 ) && ( qMCBcostheta[1] != -2 ) " ) ;
+	int usedgennum = elistgen->GetN() ;
+	cout << endl ;
+
+	fillweight = (double)1/usedgennum ;
+
+	topplus = 0 ;
+	topminus = 0;
+	bottomplus = 0 ;
+	bottomminus = 0 ;
+
+	for( int i=0 ; i<usedgennum ; i++ ){
+
+		tree1->GetEntry( elistgen->GetEntry(i) ) ;
+
+		htopgen->Fill( MCTopcostheta, fillweight ) ;
+		htopgen->Fill( -MCTopBarcostheta, fillweight ) ;
+		hbottomgen->Fill( qMCBcostheta[0], fillweight ) ;
+		hbottomgen->Fill( -qMCBcostheta[1], fillweight ) ;
+		AddAFBvalue( MCTopcostheta, topplus, topminus ) ;
+		AddAFBvalue( -MCTopBarcostheta, topplus, topminus ) ;
+		AddAFBvalue( qMCBcostheta[0], bottomplus, bottomminus ) ;
+		AddAFBvalue( -qMCBcostheta[1], bottomplus, bottomminus ) ;
+
+	}
+
+	topAFBgen = getAFB( topplus, topminus ) ;
+	bottomAFBgen = getAFB( bottomplus, bottomminus ) ;
+
+
+	cout << endl ;
+	cout << "-- after vertex recovery --" << endl ;
+
+	rootfilename = rootfiledir + afterfilename ;
+
+	TFile file2( rootfilename.c_str() ) ;
+	if( file2.IsZombie() ){
+		cout << "cannot open the file '" << rootfilename << "'." << endl ;
+		return 1 ;
+	}
+
+	TTree* tree2 = (TTree*)file2.Get( treename.c_str() ) ;
+	eventnum = tree2->GetEntries() ;
+	cout << "eventnum            = " << eventnum << " (100%)" << endl ;
+	afterbtag = tree2->GetEntries( btag ) ;
+	cout << "after b-tag cut     = " << afterbtag << " (" << (float)100*afterbtag/eventnum << "%)" << endl ;
+	afterkinematic = tree2->GetEntries( btag && kinematic ) ;
+	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
+	afterchi2 = tree2->GetEntries( btag && kinematic && chi2 ) ;
+	cout << "after chi2 cut      = " << afterchi2 << " (" << (float)100*afterchi2/eventnum << "%)" << endl;
+
+	samesignnum = tree2->GetEntries( btag && kinematic && chi2 && samecharge ) ;
+	both0num = tree2->GetEntries( btag && kinematic && chi2 && both0charge ) ;
+	usednum = afterchi2 - samesignnum - both0num ;
+	cout << endl ;
+	cout << "used number = " << usednum << endl ;
+	cout << "same charge sign number = " << samesignnum << endl ;
+	cout << "both charge 0 number = " << both0num << endl ;
+
+	TEventList *elist2 = new TEventList( "elist2", "Reconstructed Event List" ) ;
+	tree2->Draw( ">>elist2", btag && kinematic && chi2 && !samecharge && !both0charge ) ;
+	//usednum = elist2->GetN() ;
+	//cout << "used number = " << usednum << endl ;
+
+	tree2->SetBranchAddress( "Top1bcharge", &Top1bcharge ) ;
+	tree2->SetBranchAddress( "Top1costheta", &Top1costheta ) ;
+	tree2->SetBranchAddress( "Top1bcostheta", &Top1bcostheta ) ;
+	tree2->SetBranchAddress( "Top2bcharge", &Top2bcharge ) ;
+	tree2->SetBranchAddress( "Top2costheta", &Top2costheta ) ;
+	tree2->SetBranchAddress( "Top2bcostheta", &Top2bcostheta ) ;
+
+	TH1F* htopafter = new TH1F( "htopafter", "top polar angle (after vertex restorer)", 40, -1, 1 ) ;
+	htopafter->SetMinimum(0) ;
+	htopafter->SetLineColor(3) ;
+	TH1F* hbottomafter = new TH1F( "hbottomafter", "bottom polar angle (after vertex restorer)", 40, -1, 1 ) ;
+	hbottomafter->SetMinimum(0) ;
+	hbottomafter->SetLineColor(3) ;
+
+	fillweight = (double)1/usednum ;
+
+	topplus = 0 ;
+	topminus = 0;
+	bottomplus = 0 ;
+	bottomminus = 0 ;
+
+	for( int i=0 ; i<usednum ; i++ ){
+
+		tree2->GetEntry( elist2->GetEntry(i) ) ;
+
+		if( Top1bcharge < 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
+			htopafter->Fill( Top1costheta, fillweight ) ;
+			htopafter->Fill( -Top2costheta, fillweight ) ;
+			hbottomafter->Fill( Top1bcostheta, fillweight ) ;
+			hbottomafter->Fill( -Top2bcostheta, fillweight ) ;
+			AddAFBvalue( Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( -Top2bcostheta, bottomplus, bottomminus ) ;
+		}else if( Top1bcharge > 0 ){  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
+			htopafter->Fill( -Top1costheta, fillweight ) ;
+			htopafter->Fill( Top2costheta, fillweight ) ;
+			hbottomafter->Fill( -Top1bcostheta, fillweight ) ;
+			hbottomafter->Fill( Top2bcostheta, fillweight ) ;
+			AddAFBvalue( -Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( Top2bcostheta, bottomplus, bottomminus ) ;
+		}else if( Top2bcharge > 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
+			htopafter->Fill( Top1costheta, fillweight ) ;
+			htopafter->Fill( -Top2costheta, fillweight ) ;
+			hbottomafter->Fill( Top1bcostheta, fillweight ) ;
+			hbottomafter->Fill( -Top2bcostheta, fillweight ) ;
+			AddAFBvalue( Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( -Top2bcostheta, bottomplus, bottomminus ) ;
+		}else{  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
+			htopafter->Fill( -Top1costheta, fillweight ) ;
+			htopafter->Fill( Top2costheta, fillweight ) ;
+			hbottomafter->Fill( -Top1bcostheta, fillweight ) ;
+			hbottomafter->Fill( Top2bcostheta, fillweight ) ;
+			AddAFBvalue( -Top1costheta, topplus, topminus ) ;
+			AddAFBvalue( Top2costheta, topplus, topminus ) ;
+			AddAFBvalue( -Top1bcostheta, bottomplus, bottomminus ) ;
+			AddAFBvalue( Top2bcostheta, bottomplus, bottomminus ) ;
+		}
+
+	}
+
+	topAFB = getAFB( topplus, topminus ) ;
+	bottomAFB = getAFB( bottomplus, bottomminus ) ;
+	cout << "AFB(top) = " << topAFB << ", AFB(bottom) = " << bottomAFB << endl ;
+
+	cout << endl ;
+	cout << endl ;
+	cout << "-- generated data --" << endl ;
+	cout << "used genarated number = " << usedgennum << endl ;
+	cout << endl ;
+	cout << "AFB(top) = " << topAFBgen << ", AFB(bottom) = " << bottomAFBgen << endl ;
+
+	c1->Divide(2,1) ;
+	c1->cd(1) ;
+	htopgen->SetTitle( "top polar angle (before:Red after:Green Gen:Blue)" ) ;
+	htopgen->Draw() ;
+	htop->Draw( "SAME" ) ;
+	htopafter->Draw( "SAME" ) ;
+
+	c1->cd(2) ;
+	hbottomgen->SetTitle( "bottom polar angle (before:Red after:Green Gen:Blue)" ) ;
+	hbottomgen->Draw() ;
+	hbottom->Draw( "SAME" ) ;
+	hbottomafter->Draw( "SAME" ) ;
+
+	c1->WaitPrimitive() ;
+
+	c1->Print( "picture/newpicture.png" ) ;
+	c1->Close() ;
+
+	file1.Close() ;
+	file2.Close() ;
+
+
+	return 0;
+
+}
+
+
+
+
