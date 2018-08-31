@@ -10,9 +10,9 @@ void efficiency()
 		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
 
-		//TTree * normaltree = Stats;
 		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 		TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
+		TTree * Summary = (TTree*) file->Get( "Summary" );
 
 		int forward = GenTree->Draw("qMCcostheta","qMCcostheta > 0 && qMCcostheta > -2 ");
 		int backward = GenTree->Draw("qMCcostheta","qMCcostheta < 0 && qMCcostheta > -2");
@@ -34,6 +34,35 @@ void efficiency()
 
 		//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ( methodTaken >= 1 )";
 
+
+		// Begin efficiency calculation
+		
+		int entrySum = Summary->GetEntries();
+		int nEvents, nAfterLeptonCuts, nAfterBtagCuts;
+		int nevt, nlcut, nbcut;
+
+		Summary->SetBranchAddress( "nEvents", &nEvents ) ;
+		Summary->SetBranchAddress( "nAfterLeptonCuts", &nAfterLeptonCuts ) ;
+		Summary->SetBranchAddress( "nAfterBtagCuts", &nAfterBtagCuts ) ;
+
+		for(int i=0; i<entrySum; i++){
+
+				Summary->GetEntry(i);
+
+				nevt  += nEvents;
+				nlcut += nAfterLeptonCuts;
+				nbcut += nAfterBtagCuts;
+
+		}
+
+		cout << "nEvents                      = " << nevt << " (100%)" << endl;
+		cout << "after lepton cuts            = " << nlcut << " (" << (float)(nlcut)/(float)(nevt) *100 << "%)" << endl;
+		cout << "after btag cuts (0.8 & 0.3)  = " << nbcut << " (" << (float)(nbcut)/(float)(nevt) *100 << "%)" << endl;
+		
+
+		TCut thru = "Thrust < 0.9";
+		TCut hadM = "hadMass > 180 && hadMass < 420";
+		TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
 
 
 		string fcuts = "qCostheta > 0" + cuts;
