@@ -7,9 +7,9 @@ void asymmetry_b()
 {
 		//TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
+		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/rootfile/rv01-16-p05_500.sv01-14-01-p00.mILD_o1_v05.E500-TDR_ws.I108675.P6f_yyxylv.eL.pR_dst_5709_00001-DST.root");
+		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/rootfile/rv01-16-p05_500.sv01-14-01-p00.mILD_o1_v05.E500-TDR_ws.I108675.P6f_yyxylv.eL.pR_dst_5709_00001-DST.root");
 
 		int bin_e = 30;
 		int max_e = 1;
@@ -67,7 +67,7 @@ void asymmetry_b()
 		// BASE CUTS //
 		///////////////
 
-		string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.0 || Top2btag > 0.0)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
+		TCut cuts = " hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.8 || Top2btag > 0.3)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
 
 		// **** Full cuts ****
 		//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ((methodTaken == 1 && Top1btag > 0.8 && Top2btag > 0.8 && Top1bmomentum > 35 && Top2bmomentum > 35) || methodTaken > 1 )";
@@ -86,12 +86,59 @@ void asymmetry_b()
 		//int recoforward = normaltree->Draw("qCostheta >> cosReco", fcuts.c_str());
 		//int recobackward = normaltree->Draw("qCostheta >> +cosReco", bcuts.c_str());
 
-		string fcuts = "qBCostheta > 0" + cuts;
-		string bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
 
-		int recoforward = normaltree->Draw("qBCostheta >> cosReco", fcuts.c_str());
-		int recobackward = normaltree->Draw("qBCostheta >> +cosReco", bcuts.c_str());
+		//string fcuts = "qBCostheta > 0" + cuts;
+		//string bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
 
+		//int recoforward = normaltree->Draw("qBCostheta >> cosReco", fcuts.c_str());
+		//int recobackward = normaltree->Draw("qBCostheta >> +cosReco", bcuts.c_str());
+
+		int entry = normaltree->GetEntries();
+		float hadMass, Top1mass, W1mass, Top1btag, Top2btag, Top1gamma, Top2gamma, Top1bmomentum, Top2bmomentum;
+		int methodTaken[12];
+
+		int nevt, Top1bcharge;
+		float Top1bcostheta;
+
+		int recoforward=0, recobackward=0;
+
+
+		normaltree->SetBranchAddress("hadMass", &hadMass) ;
+		normaltree->SetBranchAddress("Top1mass", &Top1mass) ;
+		normaltree->SetBranchAddress("W1mass", &W1mass) ;
+		normaltree->SetBranchAddress("Top1btag", &Top1btag) ;
+		normaltree->SetBranchAddress("Top2btag", &Top2btag) ;
+		normaltree->SetBranchAddress("Top1gamma", &Top1gamma) ;
+		normaltree->SetBranchAddress("Top2gamma", &Top2gamma) ;
+		normaltree->SetBranchAddress("Top1bmomentum", &Top1bmomentum) ;
+		normaltree->SetBranchAddress("Top2bmomentum", &Top2bmomentum) ;
+		normaltree->SetBranchAddress("methodTaken", methodTaken) ;
+
+		normaltree->SetBranchAddress("Top1bcharge", &Top1bcharge) ;
+		normaltree->SetBranchAddress("Top1bcostheta", &Top1bcostheta) ;
+
+		int testInt = 0;
+
+		TEventList *elist1 = new TEventList( "elist1", "Reconstructed Event List" ) ;
+		normaltree->Draw( ">>elist1", cuts ) ;
+
+		for(int i=0; i<entry; i++){
+
+				normaltree->GetEntry( elist1->GetEntry(i) ) ;
+
+				testInt++;
+
+				if(Top1bcharge < 0 && Top1bcostheta > 0){
+						cosReco->Fill(Top1bcostheta);
+						recoforward++;
+				}else if(Top1bcharge > 0 && Top1bcostheta < 0 && Top1bcostheta > -1){
+						cosReco->Fill(-Top1bcostheta);
+						recobackward++;
+				}
+
+		}
+
+		cout << "testInt = " << testInt << endl;
 
 		//int recoforward = normaltree->Draw("-Top1costheta*UsedBTVCM >> +cosReco", "(qCostheta > 0 && W1mass > 0 && UsedBTVCM !=0 && (MCBOscillation > -1 && MCBBarOscillation > -1 ))"); //UsedBTVCM
 		//int recobackward = normaltree->Draw("-Top1costheta*UsedBTVCM >> +cosReco", "(qCostheta < 0 && qCostheta > -1.0 && W1mass > 0 && UsedBTVCM !=0 && (MCBOscillation > -1 && MCBBarOscillation > -1 ))");
@@ -125,6 +172,8 @@ void asymmetry_b()
 		cout << "forward = " << forward << endl;
 		cout << "backward = " << backward << endl;
 
+		cout << "recoforward = " << recoforward << endl;
+		cout << "recobackward = " << recobackward << endl;
 
 		cout << "--------------------------------------------------------------\n";
 		cout << "--------------------------------------------------------------\n";
