@@ -1,6 +1,7 @@
 void methods(
 //string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root"
-string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root"
+//string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root"
+string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root"
 )
 {
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,500,500);
@@ -16,7 +17,8 @@ string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_le
 	TH1F * division1 = new TH1F("division1", ";methods", nbins,minn,maxn);
 	TH1F * division2 = new TH1F("division2", ";methods", nbins,minn,maxn);
 	TH1F * division3 = new TH1F("division3", ";methods", nbins,minn,maxn);
-	string bcuts = " MCMass > 200 && MCPDG == 5 && methodUsed";
+	string bcuts   = " MCMass > 200 && MCPDG == 5 && methodUsed";
+	//string topcuts = " hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.0 || Top2btag > 0.0)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
 	//string topcuts = "hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 ";
 	string topcuts = "hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && Top1gamma + Top2gamma > 2.4 && Top2gamma < 2.";
 	//string topcuts = " InvMass > 180 && maxPhotonEnergy < 40 && B1mass + B2mass < 120 && Sphericity < 0.2 && methodRefused == 0 && methodUsed > 0";
