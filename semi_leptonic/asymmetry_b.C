@@ -34,8 +34,8 @@ void asymmetry_b()
 
 		//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && abs(MCBcostheta) < 0.95");
 		//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && abs(MCBcostheta) < 0.95");
-		int forward = normaltree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
-		int backward = normaltree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
+		int forward = GenTree->Draw("MCBcostheta >> cosGen","MCBcostheta > 0 && MCBcostheta > -2 ");
+		int backward = GenTree->Draw("MCBcostheta >> +cosGen","MCBcostheta < 0 && MCBcostheta > -2");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && methodUsed");
 		//int backward = normaltree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && methodUsed");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 &&  qCostheta > -1.0");
@@ -118,12 +118,6 @@ void asymmetry_b()
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
 
-		cout << "afbgen = " << afbgen << endl;
-		cout << "forward = " << forward << endl;
-		cout << "backward = " << backward << endl;
-
-		cout << "recoforward = " << recoforward << endl;
-		cout << "recobackward = " << recobackward << endl;
 
 		cout << "--------------------------------------------------------------\n";
 		cout << "--------------------------------------------------------------\n";
