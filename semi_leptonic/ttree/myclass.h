@@ -218,9 +218,9 @@ myclass::myclass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/users/ilc/okugawa/macros/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("/users/ilc/okugawa/macros/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
+         f = new TFile("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
       }
       f->GetObject("Stats",tree);
 
