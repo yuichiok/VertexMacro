@@ -7,9 +7,9 @@ void asymmetry()
 {
 		//TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
+		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
+		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_new_lcut.root");
 
 		int bin_e = 30;
 		int max_e = 1;
@@ -98,7 +98,7 @@ void asymmetry()
 		TCut method7 = "methodTaken == 7";
 
 		// Total cut applied
-		TCut cuts = rcTW + hadM;
+		TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
 
 		TCut fcuts = "qCostheta > 0" + cuts;
 		TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;

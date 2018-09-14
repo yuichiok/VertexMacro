@@ -7,9 +7,10 @@ void asymmetry_b()
 {
 		//TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut_090418.root");
+		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/rootfile/rv01-16-p05_500.sv01-14-01-p00.mILD_o1_v05.E500-TDR_ws.I108675.P6f_yyxylv.eL.pR_dst_5709_00001-DST.root");
+		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_new_lcut.root");
 
 		int bin_e = 30;
 		int max_e = 1;
@@ -34,8 +35,8 @@ void asymmetry_b()
 
 		//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && abs(MCBcostheta) < 0.95");
 		//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && abs(MCBcostheta) < 0.95");
-		int forward = GenTree->Draw("MCBcostheta >> cosGen","MCBcostheta > 0 && MCBcostheta > -2 ");
-		int backward = GenTree->Draw("MCBcostheta >> +cosGen","MCBcostheta < 0 && MCBcostheta > -2");
+		int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
+		int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && methodUsed");
 		//int backward = normaltree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && methodUsed");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 &&  qCostheta > -1.0");
