@@ -5,17 +5,29 @@
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void topHad_polar()
 {
-		string IsOld;
-		string filename1 = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_";
-		string filename2 = "_lcut.root";
+		int token=0;
+		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		string filename1;
 
-		cout << "type old or new: ";
-		cin  >> IsOld;
+		cout << "0 = New/Small" << endl;
+		cout << "1 = New/Large" << endl;
+		cout << "2 = Old      " << endl;
+		cout << "Choose from 0-2: ";
+		cin  >> token;
 		cout << endl;
-
-		string filename = filename1 + IsOld + filename2;
 		
-		cout << "Opening file: " << filename << " ..." << endl;
+		switch(token){
+			case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
+					 break;
+			case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
+					 break;
+			case 2 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+					 break;
+		}
+
+		string filename = filename0 + filename1;
+		cout << "Processing : " << filename << " ..." << endl;
+
 		TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
 		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
