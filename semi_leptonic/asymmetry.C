@@ -9,7 +9,8 @@ void asymmetry()
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
 		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_new_lcut.root");
+		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_new_lcut.root");
+		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_old_lcut.root");
 
 		int bin_e = 30;
 		int max_e = 1;
