@@ -5,13 +5,22 @@
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void topHad_polar()
 {
-		//TFile * file = TFile::Open(filename.c_str());
+		string IsOld;
+		string filename1 = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_";
+		string filename2 = "_lcut.root";
+
+		cout << "type old or new: ";
+		cin  >> IsOld;
+		cout << endl;
+
+		string filename = filename1 + IsOld + filename2;
+		
+		cout << "Opening file: " << filename << " ..." << endl;
+		TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
 		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/rootfile/rv01-16-p05_500.sv01-14-01-p00.mILD_o1_v05.E500-TDR_ws.I108675.P6f_yyxylv.eL.pR_dst_5709_00001-DST.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_new_lcut.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_old_lcut.root");
 
 		int bin_e = 30;
 		int max_e = 1;
@@ -20,7 +29,7 @@ void topHad_polar()
 		
 		TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 		cosReco->Sumw2();
-		TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
+		TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{topHad};Entries", bin_e,-1.0,max_e);
 		cosGen->Sumw2();
 
 		//TTree * normaltree = Stats;

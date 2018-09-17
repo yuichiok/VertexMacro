@@ -5,12 +5,20 @@
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void efficiency()
 {
-		//TFile * file = TFile::Open(filename.c_str());
+		string IsOld;
+		string filename1 = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_";
+		string filename2 = "_lcut.root";
+
+		cout << "type old or new: ";
+		cin  >> IsOld;
+		cout << endl;
+
+		string filename = filename1 + IsOld + filename2;
+		cout << "Opening file: " << filename << " ..." << endl;
+		TFile * file = TFile::Open(filename.c_str());
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
 		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
 		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_new_lcut.root");
-		TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxyev_eLeR_old_lcut.root");
 
 		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 		TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;

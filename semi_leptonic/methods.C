@@ -1,7 +1,7 @@
 void methods(
 //string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root"
 //string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root"
-string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_new_lcut.root"
+string filename = "rootfile/leptonic_yyxylv_eLeR_new_lcut.root"
 )
 {
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,500,500);
