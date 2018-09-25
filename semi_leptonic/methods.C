@@ -10,8 +10,8 @@ void methods()
 		TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,500,500);
 
 		int token=0;
-		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-		string filename0 = "rootfile/"; 
+		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" 	  << endl;

@@ -8,8 +8,8 @@ using namespace std;
 void asymmetry()
 {
 		int token=0;
-		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-		string filename0 = "rootfile/"; 
+		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" 	  << endl;
@@ -35,17 +35,12 @@ void asymmetry()
 		cout << "Processing : " << filename << " ..." << endl;
 
 		TFile * file = TFile::Open(filename.c_str());
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
-		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
 
 		int bin_e = 30;
 		int max_e = 1;
-		//if (!c1) 
-		//{
+		
 		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-		//}
-		//c1->Divide(2,1);
+		
 		TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 		cosReco->Sumw2();
 		TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{top};Entries", bin_e,-1.0,max_e);

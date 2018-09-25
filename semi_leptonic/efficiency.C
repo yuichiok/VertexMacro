@@ -6,8 +6,8 @@
 void efficiency()
 {
 		int token=0;
-		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-		string filename0 = "rootfile/"; 
+		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" << endl;
@@ -33,9 +33,6 @@ void efficiency()
 		cout << "Processing : " << filename << " ..." << endl;
 
 		TFile * file = TFile::Open(filename.c_str());
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_inc.root");
-		//!TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_iso_lep_lcut.root");
-		//TFile * file = TFile::Open("/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR_no_iso_lep.root");
 
 		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 		TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
