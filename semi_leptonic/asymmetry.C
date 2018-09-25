@@ -1,4 +1,3 @@
-
 #include <unistd.h>
 #include <iostream>
 #include <string>
@@ -9,13 +8,15 @@ using namespace std;
 void asymmetry()
 {
 		int token=0;
-		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		string filename0 = "rootfile/"; 
 		string filename1;
 
-		cout << "0 = New/Small" << endl;
-		cout << "1 = New/Large" << endl;
-		cout << "2 = Old      " << endl;
-		cout << "Choose from 0-2: ";
+		cout << "0 = New/Small" 	  << endl;
+		cout << "1 = New/Large" 	  << endl;
+		cout << "2 = New/Large/QQbar" << endl;
+		cout << "3 = Old      " 	  << endl;
+		cout << "Choose from 0-3: ";
 		cin  >> token;
 		cout << endl;
 		
@@ -24,7 +25,9 @@ void asymmetry()
 					 break;
 			case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
 					 break;
-			case 2 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+			case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
+					 break;
+			case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
 					 break;
 		}
 

@@ -6,13 +6,15 @@
 void efficiency()
 {
 		int token=0;
-		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" << endl;
 		cout << "1 = New/Large" << endl;
-		cout << "2 = Old      " << endl;
-		cout << "Choose from 0-2: ";
+		cout << "2 = New/Large/QQbar" << endl;
+		cout << "3 = Old      " 	  << endl;
+		cout << "Choose from 0-3: ";
 		cin  >> token;
 		cout << endl;
 		
@@ -21,7 +23,9 @@ void efficiency()
 					 break;
 			case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
 					 break;
-			case 2 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+			case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
+					 break;
+			case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
 					 break;
 		}
 
@@ -77,6 +81,7 @@ void efficiency()
 
 		}
 
+		cout << "============================ Baseline Cuts ============================" << endl;
 		cout << "nEvents                      = " << nevt << " (100%)" << endl;
 		cout << "after lepton cuts            = " << nlcut << " (" << (float)(nlcut)/(float)(nevt) *100 << "%)" << endl;
 		cout << "after btag cuts (0.8 & 0.3)  = " << nbcut << " (" << (float)(nbcut)/(float)(nevt) *100 << "%)" << endl;
@@ -102,6 +107,14 @@ void efficiency()
 		cout << "after hadronic mass cut      = " << afterhadMcut << " (" << (float)(afterhadMcut)/(float)(nevt) *100 << "%)" << endl;
 		cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
 		
+		int afterpcut = normaltree->GetEntries( thru && hadM && rcTW && pcut );
+		int aftergcut = normaltree->GetEntries( thru && hadM && rcTW && gcut );
+
+		cout << "============================ Non-baseline Cuts ============================" << endl;
+		cout << "after gcut                   = " << aftergcut << " (" << (float)(aftergcut)/(float)(nevt) *100 << "%)" << endl;
+		cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
+		cout << endl;
+
 		TCut fcoscut = "qCostheta > 0";
 		TCut bcoscut = "qCostheta < 0 && qCostheta > -1.0";
 	
@@ -114,6 +127,10 @@ void efficiency()
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
 		
+		cout << "recoforward  = " << recoforward  << endl;
+		cout << "recobackward = " << recobackward << endl;
+
+
 		cout << "--------------------------------------------------------------\n";
 		cout << "--------------------------------------------------------------\n";
 		std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";

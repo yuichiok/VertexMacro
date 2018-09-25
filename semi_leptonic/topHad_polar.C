@@ -6,7 +6,8 @@
 void topHad_polar()
 {
 		int token=0;
-		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" << endl;
