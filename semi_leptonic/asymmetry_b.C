@@ -6,15 +6,16 @@
 void asymmetry_b()
 {
 		int token=0;
-		//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-		string filename0 = "rootfile/"; 
+		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "rootfile/"; 
 		string filename1;
 
 		cout << "0 = New/Small" << endl;
 		cout << "1 = New/Large" << endl;
 		cout << "2 = New/Large/QQbar" << endl;
 		cout << "3 = Old      " 	  << endl;
-		cout << "Choose from 0-3: ";
+		cout << "4 = Old/yyxylv      "       << endl;
+		cout << "Choose from 0-4: ";
 		cin  >> token;
 		cout << endl;
 		
@@ -26,6 +27,8 @@ void asymmetry_b()
 			case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
 					 break;
 			case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+					 break;
+			case 4 : filename1 = "leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
 					 break;
 		}
 
@@ -57,8 +60,8 @@ void asymmetry_b()
 
 		//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && abs(MCBcostheta) < 0.95");
 		//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && abs(MCBcostheta) < 0.95");
-		int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
-		int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
+		int forward = GenTree->Draw("MCBcostheta >> cosGen","MCBcostheta > 0 && MCBcostheta > -2 ");
+		int backward = GenTree->Draw("MCBcostheta >> +cosGen","MCBcostheta < 0 && MCBcostheta > -2");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && methodUsed");
 		//int backward = normaltree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && methodUsed");
 		//int forward = normaltree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 &&  qCostheta > -1.0");
@@ -88,7 +91,7 @@ void asymmetry_b()
 		// BASE CUTS //
 		///////////////
 
-		string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.8 || Top2btag > 0.3)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
+		//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.8 || Top2btag > 0.3)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
 
 		// **** Full cuts ****
 		//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ((methodTaken == 1 && Top1btag > 0.8 && Top2btag > 0.8 && Top1bmomentum > 35 && Top2bmomentum > 35) || methodTaken > 1 )";
@@ -106,12 +109,31 @@ void asymmetry_b()
 		//int recoforward = normaltree->Draw("qCostheta >> cosReco", fcuts.c_str());
 		//int recobackward = normaltree->Draw("qCostheta >> +cosReco", bcuts.c_str());
 
+		// Selection lists
+		TCut thru = "Thrust < 0.9";
+		TCut hadM = "hadMass > 180 && hadMass < 420";
+		TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
+		TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
+		TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
+		
+		// Methods selection
+		TCut methodAll = "methodTaken > 0";
+		TCut method1 = "methodTaken == 1";
+		TCut method2 = "methodTaken == 2";
+		TCut method3 = "methodTaken == 3";
+		TCut method4 = "methodTaken == 4";
+		TCut method5 = "methodTaken == 5";
+		TCut method6 = "methodTaken == 6";
+		TCut method7 = "methodTaken == 7";
 
-		string fcuts = "qBCostheta > 0" + cuts;
-		string bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
+		// Total cut applied
+		TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
 
-		int recoforward = normaltree->Draw("qBCostheta >> cosReco", fcuts.c_str());
-		int recobackward = normaltree->Draw("qBCostheta >> +cosReco", bcuts.c_str());
+		TCut fcuts = "qBCostheta > 0" + cuts;
+		TCut bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
+
+		int recoforward = normaltree->Draw("qBCostheta >> cosReco", fcuts);
+		int recobackward = normaltree->Draw("qBCostheta >> +cosReco", bcuts);
 
 		//int recoforward = normaltree->Draw("-Top1costheta*UsedBTVCM >> +cosReco", "(qCostheta > 0 && W1mass > 0 && UsedBTVCM !=0 && (MCBOscillation > -1 && MCBBarOscillation > -1 ))"); //UsedBTVCM
 		//int recobackward = normaltree->Draw("-Top1costheta*UsedBTVCM >> +cosReco", "(qCostheta < 0 && qCostheta > -1.0 && W1mass > 0 && UsedBTVCM !=0 && (MCBOscillation > -1 && MCBBarOscillation > -1 ))");
