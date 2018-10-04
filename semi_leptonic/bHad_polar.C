@@ -3,7 +3,7 @@
 #include <iostream>
 #define MAXV 8
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
-void topHad_polar()
+void bHad_polar()
 {
 		int token=0;
 		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
@@ -32,7 +32,6 @@ void topHad_polar()
 						 break;
 		}
 
-
 		string filename = filename0 + filename1;
 		cout << "Processing : " << filename << " ..." << endl;
 
@@ -59,10 +58,10 @@ void topHad_polar()
 		cosGen->SetFillColor(kGreen+1);
 		cosGen->SetFillStyle(3004);
 
-		int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
-		int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
-		//int forward = GenTree->Draw("MCBcostheta >> cosGen","MCBcostheta > 0 && MCBcostheta > -2 ");
-		//int backward = GenTree->Draw("MCBcostheta >> +cosGen","MCBcostheta < 0 && MCBcostheta > -2");
+		//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
+		//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+		int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
+		int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
 		
 		
 		///////////////
@@ -89,12 +88,16 @@ void topHad_polar()
 		// Total cut applied
 		TCut cuts = rcTW + hadM + method7;
 
-		TCut fcuts = "Top1costheta > 0" + cuts;
-		TCut bcuts = "Top1costheta < 0" + cuts;
+		TCut fcuts = "Top1bcostheta > 0" + cuts;
+		TCut bcuts = "Top1bcostheta < 0" + cuts;
 
 		// Top hadronic angle
-		int recoforward = normaltree->Draw("-Top1costheta*Top2leptonCharge >> cosReco", fcuts);
-		int recobackward = normaltree->Draw("-Top1costheta*Top2leptonCharge >> +cosReco", bcuts);
+		int recoforward = normaltree->Draw("-Top1bcostheta*Top2leptonCharge >> cosReco", fcuts);
+		int recobackward = normaltree->Draw("-Top1bcostheta*Top2leptonCharge >> +cosReco", bcuts);
+
+		///////// NOTE //////////
+		// Top1bcostheta exists while Top2bcostheta don't
+
 
 		cosGen->SetStats(0);
 		TF1 * fgen = new TF1("fgen","pol2",-1,1);
