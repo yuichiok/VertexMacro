@@ -1,5 +1,11 @@
 #define myclass_cxx
 #include "myclass.h"
+#include <iostream>
+#include <string>
+#include <TCut.h>
+#include <TEventList.h>
+
+#include <TH1.h>
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -37,23 +43,22 @@ void myclass::Loop()
 
 		if (fChain == 0) return;
 
+
+		TEventList *elist = new TEventList( "elist", "Reconstructed Event List" ) ;
+
 		Long64_t nentries = fChain->GetEntriesFast();
 
 		Long64_t nbytes = 0, nb = 0;
 		int numTest=0;
-		
+
 		for (Long64_t jentry=0; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-				//bool hadM = (hadMass > 180 && hadMass < 420)? true: false;
-				//bool rcTW = (Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50)? true: false;
-
-				//if(hadM && rcTW) numTest++;
 
 				if (Cut(ientry) < 0) continue;
-		
+
 				numTest++;
 
 		}
