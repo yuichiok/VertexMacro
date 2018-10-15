@@ -20,18 +20,18 @@ void asymmetry()
 		cout << "Choose from 0-4: ";
 		cin  >> token;
 		cout << endl;
-		
+
 		switch(token){
-			case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
-					 break;
-			case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
-					 break;
-			case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
-					 break;
-			case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
-					 break;
-			case 4 : filename1 = "leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
-					 break;
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+						 break;
+				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+						 break;
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+						 break;
+				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+						 break;
+				case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
+						 break;
 		}
 
 		string filename = filename0 + filename1;
@@ -41,9 +41,9 @@ void asymmetry()
 
 		int bin_e = 30;
 		int max_e = 1;
-		
+
 		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-		
+
 		TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 		cosReco->Sumw2();
 		TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{top};Entries", bin_e,-1.0,max_e);
@@ -68,7 +68,7 @@ void asymmetry()
 		TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
 		TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 		TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
-		
+
 		// Methods selection
 		TCut methodAll = "methodTaken > 0";
 		TCut method1 = "methodTaken == 1";
@@ -86,14 +86,14 @@ void asymmetry()
 		TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 		int recoforward = normaltree->Draw("qCostheta >> cosReco", fcuts);
 		int recobackward = normaltree->Draw("qCostheta >> +cosReco", bcuts);
-		
+
 		cosGen->SetStats(0);
 		TF1 * fgen = new TF1("fgen","pol2",-1,1);
 		TF1 * freco = new TF1("freco","pol2",-0.9,0.9);
 		fgen->SetLineColor(kGreen);
 		fgen->SetLineStyle(3);
 		freco->SetLineStyle(3);
-		
+
 		cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
 		cosGen->Fit("fgen","Q");
 		cosReco->Fit("freco", "QR");
@@ -108,11 +108,11 @@ void asymmetry()
 		legendMean2->AddEntry(cosGen,"Generated","f");
 		legendMean2->AddEntry(cosReco,"Reconstructed","f");
 		legendMean2->Draw();
-		
+
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
-		
-		
+
+
 		cout << "--------------------------------------------------------------\n";
 		cout << "--------------------------------------------------------------\n";
 		std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";

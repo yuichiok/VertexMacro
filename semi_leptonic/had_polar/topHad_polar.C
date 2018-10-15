@@ -87,6 +87,7 @@ void topHad_polar()
 		TCut method7 = "methodTaken == 7";
 
 		// Total cut applied
+		//TCut cuts = rcTW + hadM + pcut + gcut + methodAll; (91% efficiency??)
 		TCut cuts = rcTW + hadM + method7;
 
 		TCut fcuts = "Top1costheta > 0" + cuts;

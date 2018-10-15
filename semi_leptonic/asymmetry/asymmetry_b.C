@@ -20,15 +20,15 @@ void asymmetry_b()
 		cout << endl;
 
 		switch(token){
-				case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
 						 break;
-				case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
+				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
 						 break;
-				case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
-				case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
 						 break;
-				case 4 : filename1 = "leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
+				case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
 						 break;
 		}
 
@@ -60,7 +60,7 @@ void asymmetry_b()
 		int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
 		int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
 
-		
+
 		// Selection lists
 		TCut thru = "Thrust < 0.9";
 		TCut hadM = "hadMass > 180 && hadMass < 420";

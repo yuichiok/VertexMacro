@@ -17,16 +17,16 @@ void efficiency()
 		cout << "Choose from 0-3: ";
 		cin  >> token;
 		cout << endl;
-		
+
 		switch(token){
-			case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
-					 break;
-			case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
-					 break;
-			case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
-					 break;
-			case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
-					 break;
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+						 break;
+				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+						 break;
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+						 break;
+				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+						 break;
 		}
 
 		string filename = filename0 + filename1;
@@ -59,7 +59,7 @@ void efficiency()
 
 
 		// Begin efficiency calculation
-		
+
 		int entrySum = Summary->GetEntries();
 		int nEvents, nAfterLeptonCuts, nAfterBtagCuts;
 		int nevt, nlcut, nbcut;
@@ -82,7 +82,7 @@ void efficiency()
 		cout << "nEvents                      = " << nevt << " (100%)" << endl;
 		cout << "after lepton cuts            = " << nlcut << " (" << (float)(nlcut)/(float)(nevt) *100 << "%)" << endl;
 		cout << "after btag cuts (0.8 & 0.3)  = " << nbcut << " (" << (float)(nbcut)/(float)(nevt) *100 << "%)" << endl;
-		
+
 
 		TCut thru = "Thrust < 0.9";
 		TCut hadM = "hadMass > 180 && hadMass < 420";
@@ -103,7 +103,7 @@ void efficiency()
 		cout << "after thrust cut             = " << afterthrucut << " (" << (float)(afterthrucut)/(float)(nevt) *100 << "%)" << endl;
 		cout << "after hadronic mass cut      = " << afterhadMcut << " (" << (float)(afterhadMcut)/(float)(nevt) *100 << "%)" << endl;
 		cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
-		
+
 		int afterpcut = normaltree->GetEntries( thru && hadM && rcTW && pcut );
 		int aftergcut = normaltree->GetEntries( thru && hadM && rcTW && gcut );
 
@@ -114,16 +114,16 @@ void efficiency()
 
 		TCut fcoscut = "qCostheta > 0";
 		TCut bcoscut = "qCostheta < 0 && qCostheta > -1.0";
-	
+
 		TCut fcuts = fcoscut && cuts;
 		TCut bcuts = bcoscut && cuts;
 
 		int recoforward = normaltree->GetEntries(fcuts);
 		int recobackward = normaltree->GetEntries(bcuts);
-		
+
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
-		
+
 		cout << "recoforward  = " << recoforward  << endl;
 		cout << "recobackward = " << recobackward << endl;
 
