@@ -132,7 +132,7 @@ void bHad_polar()
 		float afbgenf = (fgen->Integral(0,1) - fgen->Integral(-1,0)) / (fgen->Integral(0,1) + fgen->Integral(-1,0));
 		float afbrecof = (freco->Integral(0,1) - freco->Integral(-1,0)) / (freco->Integral(0,1) + freco->Integral(-1,0));
 		gPad->SetLeftMargin(0.14);
-		cosGen->GetYaxis()->SetTitleOffset(1.3);
+		cosGen->GetYaxis()->SetTitleOffset(1.7);
 		cout << "Afb gen functional: " << afbgenf << endl;
 		cout << "Afb reco functional: " << afbrecof << "(" << afbrecof / afbgenf *100 << "%)"   << endl;
 		float nominal = 30.8;

@@ -1,6 +1,47 @@
-void topcheck(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR.root")
+#include <unistd.h>
+#include <iostream>
+#define MAXV 8
+
+float getAfb(TH1F * h);
+void drawLegend(TH1F * hgen, TH1F * hreco);
+
+void topcheck()
 {
+	int token=0;
+	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+	string filename1;
+
+	cout << "0 = New/Small" 	  << endl;
+	cout << "1 = New/Large" 	  << endl;
+	cout << "2 = New/Large/QQbar" << endl;
+	cout << "3 = Old      " 	  << endl;
+	cout << "4 = Old/yyxylv      "       << endl;
+	cout << "Choose from 0-4: ";
+	cin  >> token;
+	cout << endl;
+
+	switch(token){
+		case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+						 break;
+		case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+						 break;
+		case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+						 break;
+		case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+						 break;
+		case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
+						 break;
+	}
+
+	string filename = filename0 + filename1;
+	cout << "Processing : " << filename << " ..." << endl;
+
 	TFile * file = TFile::Open(filename.c_str());
+
+	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
+	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
+	TTree * Summary = (TTree*) file->Get( "Summary" );
+
 	int bin_e = 40;
 	int max_e = 1;
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,1500,500);
@@ -29,9 +70,9 @@ void topcheck(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxy
 	cosGen->SetFillStyle(3004);
 	cosGen->SetStats(0);
 	string cuts = " hadMass > 180 && hadMass < 420 && Top1mass < 200 && W1mass < 110 && Top1mass > 150 && W1mass > 50 &&";
-	Stats->Draw("-Sum$(Top1KaonCharges)*Top1costheta>>cosRecoKaon",(cuts + "abs(Sum$(Top1KaonCharges)) > 0 && Top1costheta < 1").c_str());
-	Stats->Draw("-Top1bcharge*Top1costheta / abs(Top1bcharge)>>cosRecoVtx", (cuts + "abs(Top1bcharge) > 0 && Top1bmomentum > 0").c_str());
-	int leptons = Stats->Draw("-Top2leptonCharge*Top1costheta >>cosRecoLepton", (cuts + "1").c_str());
+	normaltree->Draw("-Sum$(Top1KaonCharges)*Top1costheta>>cosRecoKaon",(cuts + "abs(Sum$(Top1KaonCharges)) > 0 && Top1costheta < 1").c_str());
+	normaltree->Draw("-Top1bcharge*Top1costheta / abs(Top1bcharge)>>cosRecoVtx", (cuts + "abs(Top1bcharge) > 0 && Top1bmomentum > 0").c_str());
+	int leptons = normaltree->Draw("-Top2leptonCharge*Top1costheta >>cosRecoLepton", (cuts + "1").c_str());
 	//int leptons = Stats->Draw("-Top2leptonCharge*Top1costheta >>cosRecoLepton", (cuts + "Top1gamma+Top2gamma > 2.5 &&Top2gamma < 1.8").c_str());
 	//int leptons = Stats->Draw("-Top2leptonCharge*Top1costheta >>cosRecoLepton", (cuts + "chiGammaT+chiCosWb+chiPbstar < 15").c_str());
 	gPad->SetLeftMargin(0.14);
@@ -46,7 +87,7 @@ void topcheck(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxy
 	cout << "Quality: " << afbkaon / afbgen * 100 << "%\n";
 	cosGen->DrawNormalized("");
 	cosRecoKaon->DrawNormalized("same");
-	drawLegend(cosRecoKaon);
+	drawLegend(cosGen, cosRecoKaon);
 	c1->cd(1);
 	gPad->SetLeftMargin(0.14);
 	cosGen->GetYaxis()->SetTitleOffset(1.5);
@@ -58,7 +99,7 @@ void topcheck(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxy
 	cout << "Quality: " << afbvtx / afbgen * 100 << "%\n";
 	cosGen->DrawNormalized("");
 	cosRecoVtx->DrawNormalized("same");
-	drawLegend(cosRecoVtx);
+	drawLegend(cosGen, cosRecoVtx);
 	c1->cd(3);
 	gPad->SetLeftMargin(0.15);
 	cosGen->GetYaxis()->SetTitleOffset(1.5);
@@ -71,7 +112,7 @@ void topcheck(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxy
 	cout << "N: " << leptons << endl;
 	cosGen->DrawNormalized("");
 	cosRecoLepton->DrawNormalized("same");
-	drawLegend(cosRecoLepton);
+	drawLegend(cosGen, cosRecoLepton);
 }
 float getAfb(TH1F * h)
 {
@@ -81,13 +122,13 @@ float getAfb(TH1F * h)
 	cout << "AFB: " << afbgenf << endl;
 	return 	afbgenf;
 }
-float drawLegend(TH1F * h)
+void drawLegend(TH1F * hgen, TH1F * hreco)
 {
 	TLegend *legendMean2 = new TLegend(0.20,0.7,0.8,0.85,NULL,"brNDC");
-        legendMean2->SetFillColor(kWhite);
-        legendMean2->SetFillStyle(0);
-        legendMean2->SetBorderSize(0);
-        legendMean2->AddEntry(cosGen,"Generated","f");
-        legendMean2->AddEntry(h,h->GetTitle(),"fl");
+	legendMean2->SetFillColor(kWhite);
+	legendMean2->SetFillStyle(0);
+	legendMean2->SetBorderSize(0);
+	legendMean2->AddEntry(hgen,"Generated","f");
+	legendMean2->AddEntry(hreco,hreco->GetTitle(),"fl");
 	legendMean2->Draw();
 }

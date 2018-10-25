@@ -1,7 +1,43 @@
-void topreco(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxylv_eLeR.root")
+#include <unistd.h>
+#include <iostream>
+#define MAXV 8
+
+void makePretty(TH1* hist, int color);
+void drawLegend(TH1* hgammaTotal, TH1* hgammaWrong, bool right = false);
+
+void topreco()
 {
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,1200,400);
-	TFile *_file0 = TFile::Open(filename.c_str());
+	int token=0;
+	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+	string filename1;
+
+	cout << "0 = New/Small" 	  << endl;
+	cout << "1 = New/Large" 	  << endl;
+	cout << "2 = New/Large/QQbar" << endl;
+	cout << "3 = Old      " 	  << endl;
+	cout << "4 = Old/yyxylv      "       << endl;
+	cout << "Choose from 0-4: ";
+	cin  >> token;
+	cout << endl;
+
+	switch(token){
+		case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+						 break;
+		case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+						 break;
+		case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+						 break;
+		case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+						 break;
+		case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
+						 break;
+	}
+
+	string filename = filename0 + filename1;
+	cout << "Processing : " << filename << " ..." << endl;
+
+	TFile * file = TFile::Open(filename.c_str());
 	int bin_e = 50;
 	int minn = 1;
 	int maxn = 8;
@@ -18,10 +54,12 @@ void topreco(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyl
 	// **** Full cut ****
 	//string cuts = "hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ((methodTaken == 1 && Top1btag > 0.8 && Top2btag > 0.8 && Top1bmomentum > 35 && Top2bmomentum > 35) || methodTaken > 2 ) && ";
 	
+	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
+	
 	c1->Divide(3,1);
 	c1->cd(1);
-	Stats->Draw("Top1gamma >> gammaTotal",(cuts+"MCBWcorrect == 1").c_str());
-	Stats->Draw("Top1gamma >> gammaWrong",(cuts+"MCBWcorrect == 0").c_str());
+	normaltree->Draw("Top1gamma >> gammaTotal",(cuts+"MCBWcorrect == 1").c_str());
+	normaltree->Draw("Top1gamma >> gammaWrong",(cuts+"MCBWcorrect == 0").c_str());
 	makePretty(gammaTotal, kGreen);
 	makePretty(gammaWrong, kRed);
 	THStack * stack1 = new THStack("stack1",";#gamma_{t};Entries");
@@ -36,10 +74,10 @@ void topreco(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyl
 	stack1->GetXaxis()->SetTitleOffset(0.85);
 	stack1->GetXaxis()->SetTitleSize(.07);
 	//gPad->SetBottomMargin(0.14);
-	drawLegend();
+	drawLegend(gammaTotal, gammaWrong);
 	c1->cd(2);
-	Stats->Draw("Top1pstarb >> pTotal",(cuts+"MCBWcorrect == 1").c_str());
-	Stats->Draw("Top1pstarb >> pWrong",(cuts+"MCBWcorrect == 0").c_str());
+	normaltree->Draw("Top1pstarb >> pTotal",(cuts+"MCBWcorrect == 1").c_str());
+	normaltree->Draw("Top1pstarb >> pWrong",(cuts+"MCBWcorrect == 0").c_str());
 	makePretty(pTotal, kGreen);
 	makePretty(pWrong, kRed);
 	THStack * stack2 = new THStack("stack2",";p^{*}_{b} [GeV];Entries");
@@ -54,10 +92,10 @@ void topreco(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyl
 	gPad->SetRightMargin(0.04);
 	stack2->GetXaxis()->SetTitleOffset(0.75);
 	stack2->GetXaxis()->SetTitleSize(.07);
-	drawLegend();
+	drawLegend(gammaTotal, gammaWrong);
 	c1->cd(3);
-	Stats->Draw("Top1cosWb >> cosTotal",(cuts+"MCBWcorrect == 1").c_str());
-	Stats->Draw("Top1cosWb >> cosWrong",(cuts+"MCBWcorrect == 0").c_str());
+	normaltree->Draw("Top1cosWb >> cosTotal",(cuts+"MCBWcorrect == 1").c_str());
+	normaltree->Draw("Top1cosWb >> cosWrong",(cuts+"MCBWcorrect == 0").c_str());
 	makePretty(cosTotal, kGreen);
 	makePretty(cosWrong, kRed);
 	THStack * stack3 = new THStack("stack3",";cos#theta_{bW};Entries");
@@ -71,7 +109,7 @@ void topreco(string filename = "/home/ilc/yokugawa/run/root_merge/leptonic_yyxyl
 	gPad->SetRightMargin(0.04);
 	stack3->GetXaxis()->SetTitleOffset(0.85);
 	stack3->GetXaxis()->SetTitleSize(.07);
-	drawLegend();
+	drawLegend(gammaTotal, gammaWrong);
 	//gammaTotal->Draw();
 	//gammaWrong->Draw("same");
 }
@@ -87,7 +125,7 @@ void makePretty(TH1* hist, int color)
 		hist->SetFillStyle(3005);
 	}
 }
-float drawLegend(bool right = false)
+void drawLegend(TH1* hgammaTotal, TH1* hgammaWrong, bool right = false)
 {
 	
 	TLegend *legendMean2 = new TLegend(0.17,0.75,0.57,0.9,NULL,"brNDC");
@@ -99,7 +137,7 @@ float drawLegend(bool right = false)
         legendMean2->SetFillColor(kWhite);
         legendMean2->SetFillStyle(0);
         legendMean2->SetBorderSize(0);
-        legendMean2->AddEntry(gammaTotal,"All events","f");
-        legendMean2->AddEntry(gammaWrong,"Lepton migrated","f");
+        legendMean2->AddEntry(hgammaTotal,"All events","f");
+        legendMean2->AddEntry(hgammaWrong,"Lepton migrated","f");
 	legendMean2->Draw();
 }

@@ -1,12 +1,33 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
+//#include "rootlogon.C"
+#include "bilo_sty.C"
 #define MAXV 8
 
 using namespace std;
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void asymmetry()
 {
+		//gROOT->Reset();
+		// ILD Meeting style = 1, Original Bilokin Style = 0
+		int styl = 0;
+		int cx   = 500;
+		double Legx1 = 0.20;
+		double Legx2 = 0.6;
+
+/*		
+		if(styl){
+				cx = 530;
+				Legx1 = 0.26;
+				Legx2 = 0.66;
+				cout << "rootlogon gone through" << endl;
+//				rootlogon();
+		}else{
+				bilo_sty();
+		}
+*/
+
 		int token=0;
 		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
 		//string filename0 = "rootfile/"; 
@@ -42,7 +63,7 @@ void asymmetry()
 		int bin_e = 30;
 		int max_e = 1;
 
-		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
 
 		TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 		cosReco->Sumw2();
@@ -58,6 +79,7 @@ void asymmetry()
 		cosGen->SetLineColor(kGreen+1);
 		cosGen->SetFillColor(kGreen+1);
 		cosGen->SetFillStyle(3004);
+		
 
 		int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 		int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
@@ -81,11 +103,15 @@ void asymmetry()
 
 		// Total cut applied
 		TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+		//TCut cuts = rcTW + hadM + pcut + gcut + (method1 || method2 || method3 || method4);
+
 
 		TCut fcuts = "qCostheta > 0" + cuts;
 		TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 		int recoforward = normaltree->Draw("qCostheta >> cosReco", fcuts);
 		int recobackward = normaltree->Draw("qCostheta >> +cosReco", bcuts);
+
+		cout << recoforward <<endl;
 
 		cosGen->SetStats(0);
 		TF1 * fgen = new TF1("fgen","pol2",-1,1);
@@ -102,12 +128,16 @@ void asymmetry()
 		fgen->Draw("same");
 		cosGen->SetMinimum(0);
 		cosReco->Draw("samee");
-		TLegend *legendMean2 = new TLegend(0.20,0.75,0.6,0.85,NULL,"brNDC");
+		TLegend *legendMean2 = new TLegend(Legx1,0.75,Legx2,0.85,NULL,"brNDC");
 		legendMean2->SetFillColor(kWhite);
 		legendMean2->SetBorderSize(0);
 		legendMean2->AddEntry(cosGen,"Generated","f");
 		legendMean2->AddEntry(cosReco,"Reconstructed","f");
 		legendMean2->Draw();
+
+		TLatex latex;
+		latex.SetTextFont(72);
+		latex.DrawLatexNDC(0.21,0.7,"ILD #bf{Preliminary}");
 
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
@@ -121,8 +151,10 @@ void asymmetry()
 		cout << "--------------------------------------------------------------\n";
 		float afbgenf = (fgen->Integral(0,1) - fgen->Integral(-1,0)) / (fgen->Integral(0,1) + fgen->Integral(-1,0));
 		float afbrecof = (freco->Integral(0,1) - freco->Integral(-1,0)) / (freco->Integral(0,1) + freco->Integral(-1,0));
+		
 		gPad->SetLeftMargin(0.14);
-		cosGen->GetYaxis()->SetTitleOffset(1.3);
+		cosGen->GetYaxis()->SetTitleOffset(1.7);
+		
 		cout << "Afb gen functional: " << afbgenf << endl;
 		cout << "Afb reco functional: " << afbrecof << "(" << afbrecof / afbgenf *100 << "%)"   << endl;
 		float nominal = 30.8;

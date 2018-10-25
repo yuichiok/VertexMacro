@@ -20,15 +20,15 @@ void topHad_polar()
 		cout << endl;
 
 		switch(token){
-				case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
 						 break;
-				case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
+				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
 						 break;
-				case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
-				case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
 						 break;
-				case 4 : filename1 = "leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
+				case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
 						 break;
 		}
 
@@ -117,6 +117,11 @@ void topHad_polar()
 		legendMean2->AddEntry(cosGen,"Generated","f");
 		legendMean2->AddEntry(cosReco,"Reconstructed","f");
 		legendMean2->Draw();
+
+		TLatex latex;
+		latex.SetTextFont(72);
+		latex.DrawLatexNDC(0.21,0.7,"ILD #bf{Preliminary}");
+
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
 
@@ -129,8 +134,10 @@ void topHad_polar()
 		cout << "--------------------------------------------------------------\n";
 		float afbgenf = (fgen->Integral(0,1) - fgen->Integral(-1,0)) / (fgen->Integral(0,1) + fgen->Integral(-1,0));
 		float afbrecof = (freco->Integral(0,1) - freco->Integral(-1,0)) / (freco->Integral(0,1) + freco->Integral(-1,0));
+
 		gPad->SetLeftMargin(0.14);
-		cosGen->GetYaxis()->SetTitleOffset(1.3);
+		cosGen->GetYaxis()->SetTitleOffset(1.7);
+
 		cout << "Afb gen functional: " << afbgenf << endl;
 		cout << "Afb reco functional: " << afbrecof << "(" << afbrecof / afbgenf *100 << "%)"   << endl;
 		float nominal = 30.8;

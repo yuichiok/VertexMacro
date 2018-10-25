@@ -5,6 +5,9 @@
 
 using namespace std;
 
+void setLabels(TH1F * good);
+void makePretty(TH1F * good, int color);
+
 void methods()
 {
 		TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,500,500);
@@ -23,13 +26,13 @@ void methods()
 		cout << endl;
 
 		switch(token){
-				case 0 : filename1 = "leptonic_yyxyev_eLeR_new_small.root";
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
 						 break;
-				case 1 : filename1 = "leptonic_yyxyev_eLeR_new_large.root";
+				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
 						 break;
-				case 2 : filename1 = "leptonic_yyxyev_eLeR_new_large_QQbar.root";
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
-				case 3 : filename1 = "leptonic_yyxyev_eLeR_old_lcut.root" ;
+				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
 						 break;
 		}
 
@@ -37,6 +40,8 @@ void methods()
 		cout << "Processing : " << filename << " ..." << endl;
 
 		TFile * file = TFile::Open(filename.c_str());
+
+		TTree * Stats = (TTree*) file->Get( "Stats" ) ;
 
 		int nbins = 7;
 		int minn = 1;

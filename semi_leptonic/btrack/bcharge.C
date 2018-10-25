@@ -5,37 +5,14 @@
 
 using namespace std;
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
-void btrack()
+void bcharge()
 {
 		int token=0;
 		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+		//string filename0 = "rootfile/"; 
 		string filename1;
 
-		/*
-		cout << "0 = New/Small" 	  << endl;
-		cout << "1 = New/Large" 	  << endl;
-		cout << "2 = New/Large/QQbar" << endl;
-		cout << "3 = Old      " 	  << endl;
-		cout << "4 = Old/yyxylv      "       << endl;
-		cout << "Choose from 0-4: ";
-		cin  >> token;
-		cout << endl;
-
-		switch(token){
-				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
-						 break;
-				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
-						 break;
-				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
-						 break;
-				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
-						 break;
-				case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
-						 break;
-		}
-		*/
-
-		filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_withBtrack.root";
+		filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_withBtrack2.root";
 
 		string filename = filename0 + filename1;
 		cout << "Processing : " << filename << " ..." << endl;
@@ -46,8 +23,17 @@ void btrack()
 		int max_e = 1;
 
 		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-		TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
+		//TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
+		
+		TH1F * hist = new TH1F("hist", "test;ncharge;nevents", 12, 0, 1);
 
+		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
+
+		normaltree->Draw("Top1Genbcharge >> hist");
+
+		hist->Draw();
+
+		/*
 		TH2F * h_Top1bntracks     = new TH2F("h_Top1bntracks", "Top1 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
 		TH2F * h_Top2bntracks     = new TH2F("h_Top2bntracks", "Top2 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
 
@@ -111,6 +97,7 @@ void btrack()
 		h_Top2bntracks->SetStats(0);
 		h_Top2bntracks->Draw("COLZ");
 		c2->Update();
+		*/
 
 }
 

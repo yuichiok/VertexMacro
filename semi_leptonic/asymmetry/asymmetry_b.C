@@ -93,6 +93,7 @@ void asymmetry_b()
 		fgen->SetLineColor(kGreen);
 		fgen->SetLineStyle(3);
 		freco->SetLineStyle(3);
+
 		cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
 		cosGen->Fit("fgen","Q");
 		cosReco->Fit("freco", "QR");
@@ -107,6 +108,11 @@ void asymmetry_b()
 		legendMean2->AddEntry(cosGen,"Generated","f");
 		legendMean2->AddEntry(cosReco,"Reconstructed","f");
 		legendMean2->Draw();
+		
+		TLatex latex;
+		latex.SetTextFont(72);
+		latex.DrawLatexNDC(0.21,0.7,"ILD #bf{Preliminary}");
+		
 		float afbgen = (float)(forward - backward) / (float) (forward + backward);
 		float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
 
@@ -119,8 +125,10 @@ void asymmetry_b()
 		cout << "--------------------------------------------------------------\n";
 		float afbgenf = (fgen->Integral(0,1) - fgen->Integral(-1,0)) / (fgen->Integral(0,1) + fgen->Integral(-1,0));
 		float afbrecof = (freco->Integral(0,1) - freco->Integral(-1,0)) / (freco->Integral(0,1) + freco->Integral(-1,0));
+
 		gPad->SetLeftMargin(0.14);
-		cosGen->GetYaxis()->SetTitleOffset(1.3);
+		cosGen->GetYaxis()->SetTitleOffset(1.7);
+
 		cout << "Afb gen functional: " << afbgenf << endl;
 		cout << "Afb reco functional: " << afbrecof << "(" << afbrecof / afbgenf *100 << "%)"   << endl;
 		float nominal = 30.8;
