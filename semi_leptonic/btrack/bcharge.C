@@ -12,7 +12,7 @@ void bcharge()
 		//string filename0 = "rootfile/"; 
 		string filename1;
 
-		filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_withBtrack2.root";
+		filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 
 		string filename = filename0 + filename1;
 		cout << "Processing : " << filename << " ..." << endl;
@@ -25,23 +25,9 @@ void bcharge()
 		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
 		//TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
 		
-		TH1F * hist = new TH1F("hist", "test;ncharge;nevents", 12, 0, 1);
+		TH1F * hist = new TH1F("hist", "test;ncharge;nevents", 3, -1.5, 1.5);
 
 		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
-
-		normaltree->Draw("Top1Genbcharge >> hist");
-
-		hist->Draw();
-
-		/*
-		TH2F * h_Top1bntracks     = new TH2F("h_Top1bntracks", "Top1 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
-		TH2F * h_Top2bntracks     = new TH2F("h_Top2bntracks", "Top2 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
-
-		//TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
-		//cosReco->Sumw2();
-
-		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
-		TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
 
 		// Selection lists
 		TCut thru = "Thrust < 0.9";
@@ -61,43 +47,15 @@ void bcharge()
 		TCut method7 = "methodTaken == 7";
 
 		// Total cut applied
-		TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
-
-		TCut diag = " (Top1bntracks - Top1Genbntracks) == 0 " ;
+		TCut cuts = rcTW + hadM + pcut + gcut + method5;
 
 		//TCut fcuts = "qCostheta > 0" + cuts;
 		//TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 		
 		// Fill histograms from tree
-		normaltree->Draw("Top1bntracks:Top1Genbntracks >> h_Top1bntracks");
-		int Top1_accepted          = normaltree->Draw("Top1bntracks:Top1Genbntracks",  diag);
-		int Top1_rejected          = normaltree->Draw("Top1bntracks:Top1Genbntracks", !diag);
-		int Top1_total = Top1_accepted + Top1_rejected ;
+		normaltree->Draw("MCBHadCharge >> hist");
+		hist->Draw();
 
-		normaltree->Draw("Top2bntracks:Top2Genbntracks >> h_Top2bntracks");
-		int Top2_accepted          = normaltree->Draw("Top2bntracks:Top2Genbntracks",  diag);
-		int Top2_rejected          = normaltree->Draw("Top2bntracks:Top2Genbntracks", !diag);
-		int Top2_total 			   = Top2_accepted + Top2_rejected ;
-		
-		// output
-		cout << "====================" << endl;
-		cout << "accepted = " << Top1_accepted << "\n";
-		cout << "rejected = " << Top1_rejected << "\n";
-		cout << "Total    = " << Top1_total    << "\n";
-		cout << "\n";
-		cout << "Track reco eff = " << (float)(Top1_accepted) / (float)(Top1_total) << endl;
-		cout << "====================" << endl;
-
-		c1->cd();
-		h_Top1bntracks->SetStats(0);
-		h_Top1bntracks->Draw("COLZ");
-		c1->Update();
-		
-		c2->cd();
-		h_Top2bntracks->SetStats(0);
-		h_Top2bntracks->Draw("COLZ");
-		c2->Update();
-		*/
 
 }
 
