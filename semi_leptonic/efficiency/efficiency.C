@@ -13,7 +13,8 @@ void efficiency()
 		cout << "0 = New/Small" << endl;
 		cout << "1 = New/Large" << endl;
 		cout << "2 = New/Large/QQbar" << endl;
-		cout << "3 = Old      " 	  << endl;
+		cout << "3 = New/Large/QQbar_newTest" << endl;
+		//cout << "3 = Old      " 	  << endl;
 		cout << "Choose from 0-3: ";
 		cin  >> token;
 		cout << endl;
@@ -25,8 +26,10 @@ void efficiency()
 						 break;
 				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
-				case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+				case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
 						 break;
+				//case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
+				//		 break;
 		}
 
 		string filename = filename0 + filename1;
@@ -62,7 +65,7 @@ void efficiency()
 
 		int entrySum = Summary->GetEntries();
 		int nEvents, nAfterLeptonCuts, nAfterBtagCuts;
-		int nevt, nlcut, nbcut;
+		int nevt=0, nlcut=0, nbcut=0;
 
 		Summary->SetBranchAddress( "nEvents", &nEvents ) ;
 		Summary->SetBranchAddress( "nAfterLeptonCuts", &nAfterLeptonCuts ) ;
@@ -77,6 +80,8 @@ void efficiency()
 				nbcut += nAfterBtagCuts;
 
 		}
+
+		cout << endl;
 
 		cout << "============================ Baseline Cuts ============================" << endl;
 		cout << "nEvents                      = " << nevt << " (100%)" << endl;
