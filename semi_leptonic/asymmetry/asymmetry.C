@@ -92,6 +92,7 @@ void asymmetry()
 
 	// Total cut applied
 	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	//TCut cuts = rcTW + hadM + pcut + gcut + (method1|| method2|| method3|| method4);
 
 	TCut fcuts = "qCostheta > 0" + cuts;
 	TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;

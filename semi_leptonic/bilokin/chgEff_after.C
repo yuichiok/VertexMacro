@@ -13,7 +13,7 @@
 	return sqrt(diff);
 	}*/
 //TEfficiency * getEfficiency(TH1 * good, TH1 * total, bool same, int color, string title)
-void getEfficiency(TH1 * good, TH1 * total, TFile * fileout, bool same, int color, string title)
+void getEfficiency(TH1 * good, TH1 * total, bool same, int color, string title)
 {
 	if (TEfficiency::CheckConsistency(*good, *total)) 
 	{
@@ -34,10 +34,18 @@ void getEfficiency(TH1 * good, TH1 * total, TFile * fileout, bool same, int colo
 		gPad->Update();
 		eff2->GetPaintedGraph()->SetMaximum(1);
 		eff2->GetPaintedGraph()->GetYaxis()->SetTitleOffset(1.5);
-		eff2->Write();
 	}
-
 }
+bool IsConsistent(TH1 * good, TH1 * total)
+{
+	if (TEfficiency::CheckConsistency(*good, *total))
+	{
+		return true;
+	}else{
+		return false;
+	}
+}
+
 void drawLegend()
 {
 	TH1F *eff1  = new TH1F("cosCCbar", "E(Ntracks)", 5,-1.0,1);
@@ -60,8 +68,10 @@ void drawLegend()
 	legendMean2->AddEntry(eff1,"Before recovery","pl");
 	legendMean2->Draw();
 }
+
+
 //void chargeEfficiency(string recofilename = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/RecoTest.root", int color = kBlack, TCanvas * c1 = NULL, string genfilename = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root")
-void chargeEfficiency()
+void chgEff_after()
 {
 	int color = kBlack;
 	TCanvas * c1 = NULL;
@@ -78,8 +88,6 @@ void chargeEfficiency()
 	string genfilepath = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/";
 	string genfilename = "MCTest.root";
 	string genfile = genfilepath + genfilename;
-
-	TFile * outfile = new TFile("charge_eff_before.root", "RECREATE");
 
 	//gStyle->SetCanvasPreferGL(kTRUE);
 	int bin_e = 6;
@@ -109,17 +117,21 @@ void chargeEfficiency()
 	TH1F * cosgen = new TH1F("cosgenn2", "Reconstructed particles", nbins,0,1);
 	TH1F * cosgentotal = new TH1F("cosgenn", "Reconstructed particles", nbins,0,1);
 
+	TH2F * testMom = new TH2F("testMom", "Reconstructed particles", 121,0,maxp,121,0,maxp);
+	TH2F * chargeCompare = new TH2F("chargeCompare", "compare charge", 11, -5, 5, 11, -5, 5);
+
 	chargereco->Sumw2();
 	chargemc->Sumw2();
+
 	TChain* MC2 = new TChain("Stats");
 	MC2->Add(genfile.c_str());
 	//TChain* MC = new TChain("Vertices");
 	//MC->Add("TrashMCTest.root");
-	TChain* RECO = new TChain("Stats");
-	RECO->Add(recofile_before.c_str());
+	//TChain* RECO = new TChain("Stats");
+	//RECO->Add(recofile_before.c_str());
 
-	TChain* RECO2 = new TChain("Stats");
-	RECO2->Add(recofile_after.c_str());
+	TChain* RECO = new TChain("Stats");
+	RECO->Add(recofile_after.c_str());
 
 	int _numberOfVertexes = 0;
 	int _tag = 0;
@@ -141,8 +153,12 @@ void chargeEfficiency()
 	float _bbarrecocostheta = 0.0;
 	float _bdistance = 0.0;
 	float _bbardistance = 0.0;
+
 	float _bmomentum = 0.0;
 	float _bbarmomentum = 0.0;
+	float _brecomomentum = 0.0;
+	float _bbarrecomomentum = 0.0;
+
 	int _bnumber = 0;
 	int _bbarnumber = 0;
 	int _cnumber = 0;
@@ -166,8 +182,8 @@ void chargeEfficiency()
 
 	//bool usemva = true;
 	bool usemva = false;
-	//MC2->SetBranchAddress("bmomentum", &_bmomentum);
-	//MC2->SetBranchAddress("bbarmomentum", &_bbarmomentum);
+	MC2->SetBranchAddress("bmomentum", &_bmomentum);
+	MC2->SetBranchAddress("bbarmomentum", &_bbarmomentum);
 	//MC2->SetBranchAddress("bdistance", &_bdistance);
 	//MC2->SetBranchAddress("bbardistance", &_bbardistance);
 	//MC2->SetBranchAddress("bcostheta", &_bcostheta);
@@ -204,8 +220,8 @@ void chargeEfficiency()
 
 	//RECO->SetBranchAddress("bteta", &_bteta);
 	//RECO->SetBranchAddress("bbarteta", &_bbarteta);
-	RECO->SetBranchAddress("bbarmomentum", &_bbarmomentum);
-	RECO->SetBranchAddress("bmomentum", &_bmomentum);
+	RECO->SetBranchAddress("bbarmomentum", &_bbarrecomomentum);
+	RECO->SetBranchAddress("bmomentum", &_brecomomentum);
 	RECO->SetBranchAddress("bIPdistance", &_bIPdistance);
 	RECO->SetBranchAddress("bbarIPdistance", &_bbarIPdistance);
 	RECO->SetBranchAddress("bcharge", &_brecocharge);
@@ -225,17 +241,23 @@ void chargeEfficiency()
 		RECO->SetBranchAddress("btrusttag", &_btrusttag);
 		RECO->SetBranchAddress("bbartrusttag", &_bbartrusttag);
 	}
+
 	int mTotalNumberOfEvents1 = MC2->GetEntries();
+
 	int counter = 0;
 	int total = 0;
 	int num = 1;
 	float dist = 8.0;
 	int totalcounter = 0;
+	cout << "================================= After Recovery =================================" << "\n";
 	cout << "Total events: " << mTotalNumberOfEvents1 << "\n";
+
 	for (int k = 0; k < mTotalNumberOfEvents1; k++)
 	{
 		RECO->GetEntry(k);
 		MC2->GetEntry(k);
+
+
 		if (_bbarreconumber >  0 && _bbarnumber > 0) 
 		{
 			totalcounter++;
@@ -260,94 +282,76 @@ void chargeEfficiency()
 
 		float mvacut = 0.6;
 		float mvacut0 = 0.4;
-		//std::cout << "i: " << k << '\n';
+
 		if (_bbarreconumber %2 == 1 && _bbarreconumber != 3) 
 		{
-			//btagcutbar = .9;
-			//pcutbar = 20.0;
-			//distcutbar = 1.0;
 			bbarnvtxcut = 1;
 		}
 		if (_breconumber %2 == 1 && _breconumber != 3) 
 		{
-			//btagcut = .9;
-			//pcut = 20.0;
-			//distcut = 1.0;
 			bnvtxcut = 1;
 		}
-		if (_bbarnumber >  -1
-				//&& _bbartrusttag > mvacut
-				//&& _bbarreconumber != _bbarnumber
-				//&&_bbarmomentum >pcutbar 
-				//&& _bbardistance > distcut
-				//&&_bbartag > btagcutbar
-				//&& _bbarreconumber < ncut
-				//&& _bbarnvtx > bbarnvtxcut
-				//&& abs(_bbarrecocostheta) < coscut
-				//&&_bbarrecocharge == 0
-				//&& (_bbarreconumber %2 == 1)// || _bbarreconumber == 3)
-				//&& _bbaroffsetnumber <= 0//_bbarreconumber 
-			&& _bbarreconumber > 0
-				)
-				{
-					momentumrecototal->Fill(_bbarmomentum);
-					distrecototal->Fill(_bbardistance);
-					btagrecototal->Fill(_bbartag);
-					numbergentotal->Fill(_bbarnumber);
-					numberrecototal->Fill(_bbarreconumber);
-					cosgentotal->Fill(abs(_bbarrecocostheta));
-					total++;
-					//std::cout << "Reco bbar charge: " << _bbarrecocharge << '\n';
 
-					//if(_bbarrecocharge == _bbarcharge)
-					if ((_bbarrecocharge * _bbarcharge > 0.0) || (_bbarrecocharge ==0 && _bbarcharge == 0)) 
-					{
-						momentumreco->Fill(_bbarmomentum);
-						distreco->Fill(_bbardistance);
-						btagreco->Fill(_bbartag);
-						numbergen->Fill(_bbarnumber);
-						numberreco->Fill(_bbarreconumber);
-						cosgen->Fill(abs(_bbarrecocostheta));
-						counter++;
-					}
-				}
-		if (_bnumber > -1 
-				//&& (_zerotag > mvacut0 || _plustag > mvacut || _minustag > mvacut )
-				//&& _btrusttag > mvacut
-				//&& _breconumber != _bnumber
-				//&& _bmomentum > pcut 
-				//&& _btag > btagcut
-				//&& _bdistance > distcut
-				//&& _breconumber < ncut
-				//&& _bnvtx > bnvtxcut
-				//&& abs(_brecocostheta) < coscut
-				//&&_brecocharge == 0
-				//&& (_breconumber %2 == 1)// || _breconumber == 3)
-				//&& _boffsetnumber <= 0//_breconumber
-			&& _breconumber > 0
-				) 
-				{
-					momentumrecototal->Fill(_bmomentum);
-					distrecototal->Fill(_bdistance);
-					btagrecototal->Fill(_btag);
-					numbergentotal->Fill(_bnumber);
-					numberrecototal->Fill(_breconumber);
-					cosgentotal->Fill(abs(_brecocostheta));
-					total++;
-					//if(_brecocharge == _bcharge)
-					if ((_brecocharge * _bcharge > 0.0) || (_brecocharge ==0 && _bcharge == 0)) 
-					{
-						momentumreco->Fill(_bmomentum);
-						distreco->Fill(_bdistance);
-						btagreco->Fill(_btag);
-						numberreco->Fill(_breconumber);
-						numbergen->Fill(_bnumber);
-						cosgen->Fill(abs(_brecocostheta));
-						counter++;
+		if (_bbarnumber >  -1 && _bbarreconumber > 0)
+		{
+			momentumrecototal->Fill(_bbarrecomomentum);
+			distrecototal->Fill(_bbardistance);
+			btagrecototal->Fill(_bbartag);
+			numbergentotal->Fill(_bbarnumber);
+			numberrecototal->Fill(_bbarreconumber);
+			cosgentotal->Fill(abs(_bbarrecocostheta));
+			total++;
 
-					}
-				}
+			testMom->Fill(_bbarmomentum,_bbarrecomomentum);
+
+			if ((_bbarrecocharge * _bbarcharge > 0.0) || (_bbarrecocharge ==0 && _bbarcharge == 0)) 
+			{
+				chargeCompare->Fill(_bbarcharge, _bbarrecocharge);
+
+				momentumreco->Fill(_bbarrecomomentum);
+				distreco->Fill(_bbardistance);
+				btagreco->Fill(_bbartag);
+				numbergen->Fill(_bbarnumber);
+				numberreco->Fill(_bbarreconumber);
+				cosgen->Fill(abs(_bbarrecocostheta));
+				counter++;
+			}
+		}
+
+		if (_bnumber > -1 && _breconumber > 0) 
+		{
+			momentumrecototal->Fill(_brecomomentum);
+			distrecototal->Fill(_bdistance);
+			btagrecototal->Fill(_btag);
+			numbergentotal->Fill(_bnumber);
+			numberrecototal->Fill(_breconumber);
+			cosgentotal->Fill(abs(_brecocostheta));
+			total++;
+
+			testMom->Fill(_bmomentum,_brecomomentum);
+
+			if ((_brecocharge * _bcharge > 0.0) || (_brecocharge ==0 && _bcharge == 0)) 
+			{
+				chargeCompare->Fill(_bcharge, _brecocharge);
+
+				momentumreco->Fill(_brecomomentum);
+				distreco->Fill(_bdistance);
+				btagreco->Fill(_btag);
+				numberreco->Fill(_breconumber);
+				numbergen->Fill(_bnumber);
+				cosgen->Fill(abs(_brecocostheta));
+				counter++;
+
+			}
+		}
 	}
+
+	cout << "Correct charge: " << counter
+		<< " of " << total
+		<< " (" << (float)counter/(float)total*100. << "%)" << '\n';
+
+	cout << "Efficiency: " << (float) total / (float) totalcounter * 100  << "%, out of " << totalcounter << " events." <<'\n';
+
 	gStyle->SetPalette(1);
 	c1->cd(1);
 	//momentumrecototal->Draw("p");
@@ -356,34 +360,24 @@ void chargeEfficiency()
 	//distreco->Draw("same");
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
-	getEfficiency(btagreco, btagrecototal, outfile, same, color, ";btag;Charge purity");
-	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-btag.pdf");
-	//savePad("recoverytest/pdf/purity-nocuts-btag.pdf");
-	//getEfficiency(distreco, distrecototal, same, color,  "Purity by d_{IP};d_{IP};p(d_{IP})");
+	getEfficiency(btagreco, btagrecototal, same, color, ";btag;Charge purity");
+
 	c1->cd(2);
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
-	getEfficiency(momentumreco, momentumrecototal, outfile, same, color, ";|p|_{had};Charge purity");
-	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-pb.pdf");
+	getEfficiency(momentumreco, momentumrecototal, same, color, ";|p|_{had};Charge purity");
+
 	c1->cd(3);
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
-	getEfficiency(numberreco, numberrecototal, outfile, same, color, ";N_{rec};Charge purity");
-	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-nrec.pdf");
+	getEfficiency(numberreco, numberrecototal, same, color, ";N_{rec};Charge purity");
 
 	c1->cd(4);
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
 	//getEfficiency(numbergen, numbergentotal, same, color,  "Purity by N_{gen};N_{gen};p_{B}(N_{gen})");
-	getEfficiency(cosgen, cosgentotal, outfile, same, color, ";|cos#theta|;Charge purity");
-	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-costheta.pdf");
-	
-	
-	
-	cout << "Correct charge: " << counter
-		<< " of " << total
-		<< " (" << (float)counter/(float)total*100. << "%)" << endl;
-	cout << "Efficiency: " << (float) total / (float) totalcounter * 100  << "%, out of " << totalcounter << " events." <<'\n';
+	getEfficiency(cosgen, cosgentotal, same, color, ";|cos#theta|;Charge purity");
+
 	drawLegend();
 	int font = 43;
 	int size = 20;
@@ -395,20 +389,13 @@ void chargeEfficiency()
 	text.SetNDC();
 	text.DrawLatex(0.85, 0.86,"ILD");
 	//chargereco->Draw("psame");
-	outfile->Close();
-	delete outfile;
 	
+	TCanvas * c2 = new TCanvas("c2", "Data_Reco", 0, 0, 500, 500);
+
+	//chargeCompare->Draw("COLZ");
+	//momentumreco->Draw();
+	testMom->SetStats(0);
+	testMom->Draw("COLZ");
+
 }
 
-/*void savePad(string tag)
-{
-	const char* n = gPad->GetName();
-	cout <<"Write file:\t"<<tag<<"\tfor pad:\t"<<n<<endl;
-	TPad *pad = gPad;
-	TCanvas *temp = new TCanvas();
-	TPad *clone = (TPad*)pad->DrawClone();
-	clone->Draw();
-	//clone->SetPad(0,0,1,1);
-	temp->SaveAs(tag.c_str());
-	delete temp;
-}*/

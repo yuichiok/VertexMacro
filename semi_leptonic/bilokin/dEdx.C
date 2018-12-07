@@ -13,7 +13,6 @@ void dEdx()
 	TTree * TaggedVertices = (TTree*) file->Get( "TaggedVertices" ) ;
 	TTree * Stats				 	 = (TTree*) file->Get( "Stats" ) ;
 	
-	
 	int nbins = 1000;
 	float maxp = 80;
 	float maxcos = 1;

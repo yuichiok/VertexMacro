@@ -13,7 +13,16 @@ void format(TH2 * table)
 	table->GetXaxis()->SetTitle("N_{gen}");
 	table->GetXaxis()->SetTitleSize(0.045);
 }
-void table(string recofilename = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/RecoTest.root", string mcfilename = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root"){
+void table()
+{
+	string recofilepath 				= "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out";
+  string recofilename_after		= "/after_vtx_recovery/RecoTest_after.root";
+  string recofilename_before	= "/before_vtx_recovery/RecoTest_before.root";
+
+	string recofilename 				= recofilepath + recofilename_after;
+
+	string mcfilename 					= "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root";
+
 	int _vertex = 0;
 	int _pdg[MAXN];
 	float _probability[MAXN];
@@ -118,8 +127,6 @@ void table(string recofilename = "/home/ilc/yokugawa/run_preset/root_merge/Trash
 	T3->SetBranchAddress("bbarcostheta", &_bbarcos);
 	T3->SetBranchAddress("bcharge", &_brecocharge);
 	T3->SetBranchAddress("bbarcharge", &_bbarrecocharge);
-
-
 
 	T2->SetBranchAddress("bbarmomentum", &_bbarmomentum);
 	T2->SetBranchAddress("bmomentum", &_bmomentum);
