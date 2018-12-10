@@ -70,7 +70,6 @@ void drawLegend()
 }
 
 
-//void chargeEfficiency(string recofilename = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/RecoTest.root", int color = kBlack, TCanvas * c1 = NULL, string genfilename = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root")
 void chgEff_after()
 {
 	int color = kBlack;
