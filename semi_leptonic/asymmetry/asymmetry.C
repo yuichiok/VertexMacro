@@ -23,9 +23,11 @@ void asymmetry()
 	cout << "1 = New/Large" 	  << endl;
 	cout << "2 = New/Large/QQbar" << endl;
 	cout << "3 = New/Large/QQbar_newTest" << endl;
+  cout << "4 = New/Large/QQbar_NewIsoLep" << endl;
+  cout << "5 = New/Large/QQbar_NewIsoLep_beforeVR" << endl;
 	//cout << "3 = Old      " 	  << endl;
 	//cout << "4 = Old/yyxylv      "       << endl;
-	cout << "Choose from 0-3: ";
+	cout << "Choose from 0-5: ";
 	cin  >> token;
 	cout << endl;
 
@@ -37,6 +39,10 @@ void asymmetry()
 		case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
 		case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
+						 break;
+		case 4 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_121318.root";
+						 break;
+		case 5 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_beforeVR.root";
 						 break;
 		//case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
 		//				 break;
