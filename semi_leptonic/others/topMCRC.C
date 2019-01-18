@@ -28,16 +28,13 @@ void topMCRC()
 						 break;
 		case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
 						 break;
-		case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
+		case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_121318.root";
 						 break;
 		//case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
 		//				 break;
 		//case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
 		//				 break;
 	}
-
-	//test
-	filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_dEdx.root";
 
 	string filename = filename0 + filename1;
 	cout << "Processing : " << filename << " ..." << endl;
@@ -123,8 +120,9 @@ void topMCRC()
 	*/
 
 	c2->cd();
-	h_B1mass->Draw();
-
+	//h_B1mass->Draw();
+	normaltree->Draw("Top2leptonCos >> h_LeptonCos");
+	h_LeptonCos->Draw();
 
 }
 

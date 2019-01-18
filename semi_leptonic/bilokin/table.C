@@ -19,8 +19,8 @@ void table()
   string recofilename_after		= "/after_vtx_recovery/RecoTest_after.root";
   string recofilename_before	= "/before_vtx_recovery/RecoTest_before.root";
 
-	//string recofilename 				= recofilepath + recofilename_after;
-	string recofilename 				= recofilepath + recofilename_before;
+	string recofilename 				= recofilepath + recofilename_after;
+	//string recofilename 				= recofilepath + recofilename_before;
 
 	string mcfilename 					= "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root";
 

@@ -6,19 +6,20 @@ void dEdx()
 {
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,1200,600);
 	c1->Divide(2,1);
-	string recofilepath = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/";
-	string recofilename = "RecoTest.root";
+	string recofilepath = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
+	string recofilename = "RecoTest_before_NewIsoLep_121318.root";
 	string recofile			= recofilepath + recofilename;
 	TFile * file = TFile::Open(recofile.c_str());
 	TTree * TaggedVertices = (TTree*) file->Get( "TaggedVertices" ) ;
 	TTree * Stats				 	 = (TTree*) file->Get( "Stats" ) ;
-	
+
 	int nbins = 1000;
 	float maxp = 80;
 	float maxcos = 1;
 	float maxs = 3e-7;
 	float maxes = 3e-9;
 	float mins = 1e-7;
+	
 	c1->cd(1);
 	TH2F * pip	 	= new TH2F("pip",";p [GeV];dE/dx [GeV/mm]",nbins,0,maxp ,nbins, mins, maxs);
 	TH2F * prp 		= new TH2F("prp",";p [GeV];#frac{dE}{dx} [GeV/mm]",nbins,0,maxp ,nbins, mins, maxs);
@@ -40,17 +41,22 @@ void dEdx()
 	makePretty(kcos,kBlue);
 	makePretty(pcos,pcol);
 	pip->GetYaxis()->SetTitleOffset(1.7);
-	
+
 	int npions=0;
 	int nprotons=0;
 	int nkaons=0;
-	
-	if (recofilename == "RecoTest.root") 
+
+	if (recofilename == "RecoTest_before_NewIsoLep_121318.root") 
 	{
-		npions = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
-		nprotons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
-		nkaons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> kp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 321 && generation ","");
-		
+		//npions = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
+		//nprotons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
+		//nkaons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> kp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 321 && generation ","");
+
+		npions = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
+		nprotons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
+		nkaons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> kp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 321 && generation ","");
+
+
 		//int npions = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
 		//int nprotons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
 		//int nkaons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> kp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 321 && generation ","");
@@ -70,16 +76,16 @@ void dEdx()
 	gPad->SetLeftMargin(0.18);
 	gPad->SetRightMargin(0.05);
 	pip->Draw();
-	prp->Draw("same");
 	kp->Draw("same");
+	prp->Draw("same");
 	f1->Draw("same");
 	f2->Draw("same");
 	TLegend *legendMean = new TLegend(0.2,0.85,0.35,0.7,NULL,"brNDC");
-        legendMean->SetFillColor(kWhite);
-        legendMean->SetBorderSize(0);
-        legendMean->AddEntry(pip,"#pi","fp");
-        legendMean->AddEntry(kp,"K","fp");
-        legendMean->AddEntry(prp,"p","fp");
+	legendMean->SetFillColor(kWhite);
+	legendMean->SetBorderSize(0);
+	legendMean->AddEntry(pip,"#pi","fp");
+	legendMean->AddEntry(kp,"K","fp");
+	legendMean->AddEntry(prp,"p","fp");
 	legendMean->Draw();
 	if (recofilename == "pid.root") 
 	{
@@ -117,13 +123,13 @@ void dEdx()
 	//ko->DrawNormalized();
 	//po->DrawNormalized("same");
 	TLegend *legendMean1 = new TLegend(0.2,0.85,0.35,0.7,NULL,"brNDC");
-        legendMean1->SetFillColor(kWhite);
-        legendMean1->SetBorderSize(0);
-        legendMean1->AddEntry(picos,"#pi","f");
-        legendMean1->AddEntry(kcos,"K","f");
-        legendMean1->AddEntry(pcos,"p","f");
-        //legendMean1->AddEntry(po,"#pi","l");
-        //legendMean1->AddEntry(ko,"K","l");
+	legendMean1->SetFillColor(kWhite);
+	legendMean1->SetBorderSize(0);
+	legendMean1->AddEntry(picos,"#pi","f");
+	legendMean1->AddEntry(kcos,"K","f");
+	legendMean1->AddEntry(pcos,"p","f");
+	//legendMean1->AddEntry(po,"#pi","l");
+	//legendMean1->AddEntry(ko,"K","l");
 	legendMean1->Draw();
 }
 void makePretty(TH2F * p, int color)
