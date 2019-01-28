@@ -293,7 +293,8 @@ void chargeEfficiency2()
 			//distcut = 1.0;
 			bnvtxcut = 1;
 		}
-		if (_bbarnumber >  -1
+		if (//_bbarnumber >  -1
+				
 				//&& _bbartrusttag > mvacut
 				//&& _bbarreconumber != _bbarnumber
 				//&&_bbarmomentum >pcutbar 
@@ -305,7 +306,10 @@ void chargeEfficiency2()
 				//&&_bbarrecocharge == 0
 				//&& (_bbarreconumber %2 == 1)// || _bbarreconumber == 3)
 				//&& _bbaroffsetnumber <= 0//_bbarreconumber 
-			&& _bbarreconumber > 0
+			
+			  //&& _bbarreconumber > 0
+				
+				_bbarnumber==_bbarreconumber
 				)
 				{
 					momentumrecototal->Fill(_bbarmomentum);
@@ -329,7 +333,8 @@ void chargeEfficiency2()
 						counter++;
 					}
 				}
-		if (_bnumber > -1 
+		if (//_bnumber > -1 
+				
 				//&& (_zerotag > mvacut0 || _plustag > mvacut || _minustag > mvacut )
 				//&& _btrusttag > mvacut
 				//&& _breconumber != _bnumber
@@ -342,7 +347,10 @@ void chargeEfficiency2()
 				//&&_brecocharge == 0
 				//&& (_breconumber %2 == 1)// || _breconumber == 3)
 				//&& _boffsetnumber <= 0//_breconumber
-			&& _breconumber > 0
+			  
+				//&& _breconumber > 0
+				
+				_bnumber==_breconumber
 				) 
 				{
 					momentumrecototal->Fill(_bmomentum);
@@ -466,7 +474,8 @@ void chargeEfficiency2()
 			//distcut = 1.0;
 			bnvtxcut = 1;
 		}
-		if (_bbarnumber >  -1
+		if (//_bbarnumber >  -1
+				
 				//&& _bbartrusttag > mvacut
 				//&& _bbarreconumber != _bbarnumber
 				//&&_bbarmomentum >pcutbar 
@@ -478,7 +487,10 @@ void chargeEfficiency2()
 				//&&_bbarrecocharge == 0
 				//&& (_bbarreconumber %2 == 1)// || _bbarreconumber == 3)
 				//&& _bbaroffsetnumber <= 0//_bbarreconumber 
-			&& _bbarreconumber > 0
+			  
+				//&& _bbarreconumber > 0
+				
+				_bbarnumber==_bbarreconumber
 				)
 				{
 					momentumrecototal_after->Fill(_bbarmomentum);
@@ -502,7 +514,8 @@ void chargeEfficiency2()
 						counter++;
 					}
 				}
-		if (_bnumber > -1 
+		if (//_bnumber > -1 
+
 				//&& (_zerotag > mvacut0 || _plustag > mvacut || _minustag > mvacut )
 				//&& _btrusttag > mvacut
 				//&& _breconumber != _bnumber
@@ -515,7 +528,10 @@ void chargeEfficiency2()
 				//&&_brecocharge == 0
 				//&& (_breconumber %2 == 1)// || _breconumber == 3)
 				//&& _boffsetnumber <= 0//_breconumber
-			&& _breconumber > 0
+			
+			  //&& _breconumber > 0
+
+				_bnumber==_breconumber
 				) 
 				{
 					momentumrecototal_after->Fill(_bmomentum);
