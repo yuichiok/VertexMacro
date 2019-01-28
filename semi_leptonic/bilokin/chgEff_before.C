@@ -79,14 +79,14 @@ void chgEff_before()
 	// reco files
 	string recofilepath_before = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
 	string recofilepath_after  = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/";
-	string recofilename_before = "RecoTest_before.root";
-	string recofilename_after  = "RecoTest_after.root";
+	string recofilename_before = "RecoTest_before_NewIsoLep_012819.root";
+	string recofilename_after  = "RecoTest_after_NewIsoLep_012819.root";
 	string recofile_before = recofilepath_before + recofilename_before;
 	string recofile_after  = recofilepath_after + recofilename_after;
 
 	// MC file
 	string genfilepath = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/";
-	string genfilename = "MCTest.root";
+	string genfilename = "MCTest_NewIsoLep.root";
 	string genfile = genfilepath + genfilename;
 
 	//gStyle->SetCanvasPreferGL(kTRUE);
