@@ -7,7 +7,7 @@ void dEdx()
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,1200,600);
 	c1->Divide(2,1);
 	string recofilepath = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
-	string recofilename = "RecoTest_before_NewIsoLep_121318.root";
+	string recofilename = "RecoTest_before_NewIsoLep_012819.root";
 	string recofile			= recofilepath + recofilename;
 	TFile * file = TFile::Open(recofile.c_str());
 	TTree * TaggedVertices = (TTree*) file->Get( "TaggedVertices" ) ;
@@ -46,7 +46,7 @@ void dEdx()
 	int nprotons=0;
 	int nkaons=0;
 
-	if (recofilename == "RecoTest_before_NewIsoLep_121318.root") 
+	if (recofilename == "RecoTest_before_NewIsoLep_012819.root") 
 	{
 		//npions = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
 		//nprotons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");

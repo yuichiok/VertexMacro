@@ -1,7 +1,7 @@
 void purity()
 {
 	string filepath = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/" ;
-	string file		 = "VertexRestore.root";
+	string file		 = "VertexRestore_NewIsoLep_020619.root";
 	string filename = filepath + file ;
 
 	TFile * file2 = TFile::Open(filename.c_str());

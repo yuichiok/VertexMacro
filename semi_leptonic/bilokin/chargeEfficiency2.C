@@ -82,8 +82,8 @@ void chargeEfficiency2()
 	//string recofilename_before = "RecoTest_before_NoNewVtx.root";
 	//string recofilename_after  = "RecoTest_after_NoNewVtx.root";
 	
-	string recofilename_before = "RecoTest_before_NewIsoLep_012819.root";
-	string recofilename_after  = "RecoTest_after_NewIsoLep_012819.root";
+	string recofilename_before = "RecoTest_before_NewIsoLep_020619.root";
+	string recofilename_after  = "RecoTest_after_NewIsoLep_020619.root";
 	
 	string recofile_before = recofilepath_before + recofilename_before;
 	string recofile_after  = recofilepath_after + recofilename_after;
@@ -293,7 +293,7 @@ void chargeEfficiency2()
 			//distcut = 1.0;
 			bnvtxcut = 1;
 		}
-		if (//_bbarnumber >  -1
+		if (_bbarnumber >  -1
 				
 				//&& _bbartrusttag > mvacut
 				//&& _bbarreconumber != _bbarnumber
@@ -307,9 +307,9 @@ void chargeEfficiency2()
 				//&& (_bbarreconumber %2 == 1)// || _bbarreconumber == 3)
 				//&& _bbaroffsetnumber <= 0//_bbarreconumber 
 			
-			  //&& _bbarreconumber > 0
+			  && _bbarreconumber > 0
 				
-				_bbarnumber==_bbarreconumber
+				//_bbarnumber==_bbarreconumber
 				)
 				{
 					momentumrecototal->Fill(_bbarmomentum);
@@ -333,7 +333,7 @@ void chargeEfficiency2()
 						counter++;
 					}
 				}
-		if (//_bnumber > -1 
+		if (_bnumber > -1 
 				
 				//&& (_zerotag > mvacut0 || _plustag > mvacut || _minustag > mvacut )
 				//&& _btrusttag > mvacut
@@ -348,9 +348,9 @@ void chargeEfficiency2()
 				//&& (_breconumber %2 == 1)// || _breconumber == 3)
 				//&& _boffsetnumber <= 0//_breconumber
 			  
-				//&& _breconumber > 0
+				&& _breconumber > 0
 				
-				_bnumber==_breconumber
+				//_bnumber==_breconumber
 				) 
 				{
 					momentumrecototal->Fill(_bmomentum);
@@ -474,7 +474,7 @@ void chargeEfficiency2()
 			//distcut = 1.0;
 			bnvtxcut = 1;
 		}
-		if (//_bbarnumber >  -1
+		if (_bbarnumber >  -1
 				
 				//&& _bbartrusttag > mvacut
 				//&& _bbarreconumber != _bbarnumber
@@ -488,9 +488,9 @@ void chargeEfficiency2()
 				//&& (_bbarreconumber %2 == 1)// || _bbarreconumber == 3)
 				//&& _bbaroffsetnumber <= 0//_bbarreconumber 
 			  
-				//&& _bbarreconumber > 0
+				&& _bbarreconumber > 0
 				
-				_bbarnumber==_bbarreconumber
+				//_bbarnumber==_bbarreconumber
 				)
 				{
 					momentumrecototal_after->Fill(_bbarmomentum);
@@ -514,7 +514,7 @@ void chargeEfficiency2()
 						counter++;
 					}
 				}
-		if (//_bnumber > -1 
+		if (_bnumber > -1 
 
 				//&& (_zerotag > mvacut0 || _plustag > mvacut || _minustag > mvacut )
 				//&& _btrusttag > mvacut
@@ -529,9 +529,9 @@ void chargeEfficiency2()
 				//&& (_breconumber %2 == 1)// || _breconumber == 3)
 				//&& _boffsetnumber <= 0//_breconumber
 			
-			  //&& _breconumber > 0
+			  && _breconumber > 0
 
-				_bnumber==_breconumber
+				//_bnumber==_breconumber
 				) 
 				{
 					momentumrecototal_after->Fill(_bmomentum);

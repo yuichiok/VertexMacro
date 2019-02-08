@@ -16,13 +16,13 @@ void format(TH2 * table)
 void table()
 {
 	string recofilepath 				= "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out";
-  string recofilename_after		= "/after_vtx_recovery/RecoTest_after.root";
-  string recofilename_before	= "/before_vtx_recovery/RecoTest_before.root";
+  string recofilename_after		= "/after_vtx_recovery/RecoTest_after_NewIsoLep_012819.root";
+  string recofilename_before	= "/before_vtx_recovery/RecoTest_before_NewIsoLep_012819.root";
 
 	string recofilename 				= recofilepath + recofilename_after;
 	//string recofilename 				= recofilepath + recofilename_before;
 
-	string mcfilename 					= "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest.root";
+	string mcfilename 					= "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest_NewIsoLep_012819.root";
 
 	int _vertex = 0;
 	int _pdg[MAXN];
@@ -32,6 +32,7 @@ void table()
 	int _numberOfParticles[MAXN];
 	
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,1000,500);
+	TCanvas * c2 = new TCanvas("c2", "The 3d view",0,0,500,500);
 	gStyle->SetCanvasColor(kWhite);
 	gStyle->SetPadColor(kWhite);
 	c1->Divide(2,1);
@@ -356,6 +357,14 @@ void table()
 	format(probhist_non);
 	probhist_non->SetStats(0);
 	probhist_non->Draw(opt.c_str());
+
+	c2->cd();
+	gPad->SetGrid();
+	gPad->SetRightMargin(0.15);
+	format(probhist);
+	probhist->SetStats(0);
+	probhist->Draw(opt.c_str());
+
 	//getMigrations(probhist_non, nbins);
 }
 void getMigrations(TH2I * table, int nbins)

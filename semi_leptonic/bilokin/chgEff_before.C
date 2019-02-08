@@ -64,7 +64,7 @@ void drawLegend()
 	TLegend *legendMean2 = new TLegend(0.2,0.7,0.6,0.85,NULL,"brNDC");
 	legendMean2->SetFillColor(kWhite);
 	legendMean2->SetBorderSize(0);
-	legendMean2->AddEntry(eff21,"After recovery","pl");
+	//legendMean2->AddEntry(eff21,"After recovery","pl");
 	legendMean2->AddEntry(eff1,"Before recovery","pl");
 	legendMean2->Draw();
 }
@@ -86,7 +86,7 @@ void chgEff_before()
 
 	// MC file
 	string genfilepath = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/";
-	string genfilename = "MCTest_NewIsoLep.root";
+	string genfilename = "MCTest_NewIsoLep_012819.root";
 	string genfile = genfilepath + genfilename;
 
 	//gStyle->SetCanvasPreferGL(kTRUE);
