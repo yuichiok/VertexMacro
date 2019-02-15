@@ -12,15 +12,21 @@ void makePretty(TH1F * cosAll, int color, int reconumber)
 }
 void OneTrack2()
 {
-	string filepath_af = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/" ;
-	string file_af		 = "RecoTest_after_NewIsoLep_020619.root";
-	string filename_af = filepath_af + file_af ;
+	string filepath_bf = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/" ;
+	string file_bf		 = "RecoTest_before_NewIsoLep_020619.root";
+	string filename_bf = filepath_bf + file_bf ;
 
-	TFile * file = TFile::Open(filename_af.c_str());
+	//string filepath_af = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/" ;
+	//string file_af		 = "RecoTest_after_NewIsoLep_020619.root";
+	//string filename_af = filepath_af + file_af ;
+
+	TFile * file = TFile::Open(filename_bf.c_str());
+	//TFile * file = TFile::Open(filename_af.c_str());
 	int bin_e = 50;
 	int max_e = 1;
-	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,1000,500);
-	c1->Divide(2,1);
+	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+
+	//c1->Divide(2,1);
 	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,.0,max_e);
 	TH1F * cosOne = new TH1F("cosOne", "E(Ntracks)", bin_e,.0,max_e);
 	TH1F * cosOtherLow = new TH1F("cosOtherLow", "tracks", bin_e,.0,max_e);
@@ -28,7 +34,7 @@ void OneTrack2()
 	TH1F * cosOtherLowDist = new TH1F("cosOtherLowDist", "tracks", bin_e,.0,max_e);
 	//	TH1F * cosAll = new TH1F("cosAll", "E(Ntracks)", bin_e,.0,max_e);
 
-	c1->cd(2);
+	//c1->cd(2);
 	TTree * normaltree = (TTree*)file->Get("MissedVertex");
 	cosOne->SetLineColor(kBlue);
 	cosOne->SetLineWidth(3);
@@ -75,7 +81,10 @@ void OneTrack2()
 	legendMean->Draw();
 	stack->GetXaxis()->SetTitle("|cos#theta|");
 	gPad->Modified();
-	c1->cd(1);
+	
+	
+	TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
+	//c1->cd(1);
 	TTree * tree = (TTree*)file->Get("MissedTracks");
 
 	TH1F * cosLowtr = new TH1F("cosLowtr", "tracks", bin_e,.0,max_e);
@@ -93,7 +102,7 @@ void OneTrack2()
 	tree->Draw("abs(costhetaMissed) >> cosLowtr","isrecoMissed > 0 && (vtxHitsMissed > 0 || ftdHitsMissed > 0 ) && (deviationMissed < 25*sqrt(vertexAngleMissed)+2 || vertexAngleMissed > 0.08)");
 	tree->Draw("abs(costhetaMissed) >> cosNoPFO","isrecoMissed == 0 && hastrackMissed == 1");
 	tree->Draw("abs(costhetaMissed) >> cosNoTrack","hastrackMissed == 0");
-	tree->Draw("abs(costhetaMissed) >> cosNoVTX"," ftdHitsMissed == 0 && vtxHitsMissed == 0 && isrecoMissed == 1");
+	tree->Draw("abs(costhetaMissed) >> cosNoVTX","ftdHitsMissed == 0 && vtxHitsMissed == 0 && isrecoMissed == 1");
 	//tree->Draw("abs(costhetaMissed) >> cosNoFTD"," (ftdHitsMissed == 0 || vtxHitsMissed == 0) && (ftdHitsMissed == 1 || vtxHitsMissed == 1) && isrecoMissed == 1");
 	//tree->Draw("abs(costhetaMissed) >> cosBtag"," (vtxHitsMissed > 0 || ftdHitsMissed > 0) && isrecoMissed == 1 && btagMissed < 0.8");
 	tree->Draw("abs(costhetaMissed) >> cosBtag"," (vtxHitsMissed > 0 || ftdHitsMissed > 0) && isrecoMissed == 1 && (btagMissed < 0.8)");
@@ -145,10 +154,48 @@ void OneTrack2()
 		  << " others: " << cosOtherHigh->Integral()
 		  << " \n";
 	//tree->Draw("costhetaMissed >> cosAll","","same");
-	TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,1000,500);
-	c2->cd();
-	c2->Divide(2,1);
-	c2->cd(1);
+	
+	// Yuichi Test
+	TCanvas * c21= new TCanvas("c21", "Data-MC",0,0,500,500);
+	TH1F * h_MCpidAll = new TH1F("h_MCpidAll", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidGoodTracks = new TH1F("h_MCpidGoodTracks", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidLowtr = new TH1F("h_MCpidLowtr", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidNoPFO = new TH1F("h_MCpidNoPFO", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidNoTrack = new TH1F("h_MCpidNoTrack", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidNoVTX = new TH1F("h_MCpidNoVTX", "MCpid", bin_e,0,400);
+
+
+	tree->Draw("abs(MCpidMissed) >> h_MCpidAll","");
+
+	tree->Draw("abs(MCpidMissed) >> h_MCpidGoodTracks","isrecoMissed > 0 && (vtxHitsMissed > 0 || ftdHitsMissed > 0 ) && momentumMissed > 1.0 && offsetMissed > 0.015");
+	tree->Draw("abs(MCpidMissed) >> h_MCpidLowtr","isrecoMissed > 0 && (vtxHitsMissed > 0 || ftdHitsMissed > 0 ) && (deviationMissed < 25*sqrt(vertexAngleMissed)+2 || vertexAngleMissed > 0.08)");
+	tree->Draw("abs(MCpidMissed) >> h_MCpidNoPFO","isrecoMissed == 0 && hastrackMissed == 1");
+	tree->Draw("abs(MCpidMissed) >> h_MCpidNoTrack","hastrackMissed == 0");
+	tree->Draw("abs(MCpidMissed) >> h_MCpidNoVTX","ftdHitsMissed == 0 && vtxHitsMissed == 0 && isrecoMissed == 1");
+
+	makePretty(h_MCpidAll,kRed,reconumber);
+	makePretty(h_MCpidNoVTX,kBlue,reconumber);
+	makePretty(h_MCpidNoTrack,kBlack,reconumber);
+	makePretty(h_MCpidLowtr,kMagenta,reconumber);
+	makePretty(h_MCpidNoPFO,kGreen,reconumber);
+
+	THStack * stack4 = new THStack("stack4",";MC PID; Entries (normalised to N_{rec})");
+	stack4->Add(h_MCpidNoTrack);
+	stack4->Add(h_MCpidNoVTX);
+	stack4->Add(h_MCpidNoPFO);
+	stack4->Add(h_MCpidLowtr);
+
+	h_MCpidAll->SetMinimum(0);
+	stack4->SetMinimum(0);
+	stack4->SetMaximum(h_MCpidAll->GetMaximum());
+
+	h_MCpidAll->Draw("histo");
+	stack4->Draw("histosame");
+	
+	TCanvas * c3 = new TCanvas("c3", "Data-MC",0,0,1000,500);
+	c3->cd();
+	c3->Divide(2,1);
+	c3->cd(1);
 	float max_p = 10;
 	TH1F * pLowtr = new TH1F("pLowtr", "tracks", bin_e,.0,max_p);
 	TH1F * pGoodTracks = new TH1F("pGoodTracks", "tracks", bin_e,.0,max_p);

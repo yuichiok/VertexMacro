@@ -240,6 +240,12 @@ void chargeEfficiency2()
 	}
 
 	int mTotalNumberOfEvents1 = MC2->GetEntries();
+
+
+	int b0num=0;
+	int bbar0num=0;
+	int breco0num=0;
+	int bbarreco0num=0;
 	
 	int counter = 0;
 	int total = 0;
@@ -279,6 +285,12 @@ void chargeEfficiency2()
 		float mvacut = 0.6;
 		float mvacut0 = 0.4;
 		//std::cout << "i: " << k << '\n';
+		
+		if(_bbarnumber <= 0) bbar0num++ ;
+		if(_bbarreconumber <= 0) bbarreco0num++ ;
+		if(_bnumber <= 0) b0num++ ;
+		if(_breconumber <= 0) breco0num++ ;
+
 		if (_bbarreconumber %2 == 1 && _bbarreconumber != 3) 
 		{
 			//btagcutbar = .9;
@@ -374,6 +386,11 @@ void chargeEfficiency2()
 					}
 				}
 	}
+
+	std::cout << "b0 = " << b0num << "\n";
+	std::cout << "breco0 = " << breco0num << "\n";
+	std::cout << "bbar0 = " << bbar0num << "\n";
+	std::cout << "bbarreco0 = " << bbarreco0num << "\n";
 
 	cout << "Correct charge: " << counter
 		<< " of " << total
