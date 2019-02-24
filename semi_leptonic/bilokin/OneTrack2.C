@@ -12,16 +12,16 @@ void makePretty(TH1F * cosAll, int color, int reconumber)
 }
 void OneTrack2()
 {
-	string filepath_bf = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/" ;
-	string file_bf		 = "RecoTest_before_NewIsoLep_020619.root";
-	string filename_bf = filepath_bf + file_bf ;
+	//string filepath_bf = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/before_vtx_recovery/" ;
+	//string file_bf		 = "RecoTest_before_NewIsoLep_020619.root";
+	//string filename_bf = filepath_bf + file_bf ;
 
-	//string filepath_af = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/" ;
-	//string file_af		 = "RecoTest_after_NewIsoLep_020619.root";
-	//string filename_af = filepath_af + file_af ;
+	string filepath_af = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/after_vtx_recovery/" ;
+	string file_af		 = "RecoTest_after_NewIsoLep_020619.root";
+	string filename_af = filepath_af + file_af ;
 
-	TFile * file = TFile::Open(filename_bf.c_str());
-	//TFile * file = TFile::Open(filename_af.c_str());
+	//TFile * file = TFile::Open(filename_bf.c_str());
+	TFile * file = TFile::Open(filename_af.c_str());
 	int bin_e = 50;
 	int max_e = 1;
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
@@ -157,12 +157,12 @@ void OneTrack2()
 	
 	// Yuichi Test
 	TCanvas * c21= new TCanvas("c21", "Data-MC",0,0,500,500);
-	TH1F * h_MCpidAll = new TH1F("h_MCpidAll", "MCpid", bin_e,0,400);
-	TH1F * h_MCpidGoodTracks = new TH1F("h_MCpidGoodTracks", "MCpid", bin_e,0,400);
-	TH1F * h_MCpidLowtr = new TH1F("h_MCpidLowtr", "MCpid", bin_e,0,400);
-	TH1F * h_MCpidNoPFO = new TH1F("h_MCpidNoPFO", "MCpid", bin_e,0,400);
-	TH1F * h_MCpidNoTrack = new TH1F("h_MCpidNoTrack", "MCpid", bin_e,0,400);
-	TH1F * h_MCpidNoVTX = new TH1F("h_MCpidNoVTX", "MCpid", bin_e,0,400);
+	TH1F * h_MCpidAll = new TH1F("h_MCpidAll", "MCpid", bin_e,0,600);
+	TH1F * h_MCpidGoodTracks = new TH1F("h_MCpidGoodTracks", "MCpid", bin_e,0,600);
+	TH1F * h_MCpidLowtr = new TH1F("h_MCpidLowtr", "MCpid", bin_e,0,600);
+	TH1F * h_MCpidNoPFO = new TH1F("h_MCpidNoPFO", "MCpid", bin_e,0,600);
+	TH1F * h_MCpidNoTrack = new TH1F("h_MCpidNoTrack", "MCpid", bin_e,0,600);
+	TH1F * h_MCpidNoVTX = new TH1F("h_MCpidNoVTX", "MCpid", bin_e,0,600);
 
 
 	tree->Draw("abs(MCpidMissed) >> h_MCpidAll","");

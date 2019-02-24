@@ -20,11 +20,11 @@ void efficiency()
 		cout << endl;
 
 		switch(token){
-				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small_QQbar_NewIsoLep_021919.root";
 						 break;
 				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
 						 break;
-				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_021919.root";
 						 break;
 				case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
 						 break;

@@ -21,7 +21,7 @@ void asymmetry_b()
 	cout << endl;
 
 	switch(token){
-		case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+		case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small_QQbar_NewIsoLep_021919.root";
 						 break;
 		case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
 						 break;
@@ -29,7 +29,7 @@ void asymmetry_b()
 						 break;
 		case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
 						 break;
-		case 4 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_121318.root";
+		case 4 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_021919.root";
 						 break;
 		case 5 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_beforeVR.root";
 						 break;

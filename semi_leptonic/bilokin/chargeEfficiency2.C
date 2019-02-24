@@ -77,20 +77,63 @@ void chargeEfficiency2()
 	TCanvas * c1 = NULL;
 
 	// reco files
-	string recofilepath_before = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
-	string recofilepath_after  = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/";
-	//string recofilename_before = "RecoTest_before_NoNewVtx.root";
-	//string recofilename_after  = "RecoTest_after_NoNewVtx.root";
 	
-	string recofilename_before = "RecoTest_before_NewIsoLep_020619.root";
-	string recofilename_after  = "RecoTest_after_NewIsoLep_020619.root";
-	
+	int isLarge = 0;
+
+	string recofilepath_before="";
+	string recofilepath_after  = "";
+	string genfilepath = "";
+
+	string recofilename_before = "";
+	string recofilename_after = "";
+	string genfilename = "";
+
+	if(isLarge){
+		// large
+		std::cout << "Processing Large Model" << "\n";
+		// RC file
+		recofilepath_before = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
+		recofilepath_after  = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/after_vtx_recovery/";
+		// MC file
+		genfilepath = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/";
+
+		// yyxyev
+		//recofilename_before = "trash_bf_l5_yyxyev.root";
+		//recofilename_after  = "trash_af_l5_yyxyev.root";
+
+		//genfilename = "truth_l5_yyxyev.root";
+
+		// yyxylv
+		recofilename_before = "trash_bf_l5_yyxylv.root";
+		recofilename_after  = "trash_af_l5_yyxylv.root";
+
+		genfilename = "truth_l5_yyxylv.root";
+
+	}else{
+		// small
+		std::cout << "Processing Small Model" << "\n";
+		// RC file
+		recofilepath_before = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
+		recofilepath_after  = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/after_vtx_recovery/";
+		// MC file
+		genfilepath = "/home/ilc/yokugawa/run_preset_small/root_merge/TruthVertexFinder_out/";
+
+		// yyxyev
+		//recofilename_before = "trash_bf_s5_yyxyev.root";
+		//recofilename_after  = "trash_af_s5_yyxyev.root";
+
+		//genfilename = "truth_s5_yyxyev.root";
+
+		// yyxylv
+		recofilename_before = "trash_bf_s5_yyxylv.root";
+		recofilename_after  = "trash_af_s5_yyxylv.root";
+
+		genfilename = "truth_s5_yyxylv.root";
+
+	}
+
 	string recofile_before = recofilepath_before + recofilename_before;
 	string recofile_after  = recofilepath_after + recofilename_after;
-
-	// MC file
-	string genfilepath = "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/";
-	string genfilename = "MCTest_NewIsoLep.root";
 	string genfile = genfilepath + genfilename;
 
 	//gStyle->SetCanvasPreferGL(kTRUE);
@@ -387,10 +430,10 @@ void chargeEfficiency2()
 				}
 	}
 
-	std::cout << "b0 = " << b0num << "\n";
-	std::cout << "breco0 = " << breco0num << "\n";
-	std::cout << "bbar0 = " << bbar0num << "\n";
-	std::cout << "bbarreco0 = " << bbarreco0num << "\n";
+	//std::cout << "b0 = " << b0num << "\n";
+	//std::cout << "breco0 = " << breco0num << "\n";
+	//std::cout << "bbar0 = " << bbar0num << "\n";
+	//std::cout << "bbarreco0 = " << bbarreco0num << "\n";
 
 	cout << "Correct charge: " << counter
 		<< " of " << total
