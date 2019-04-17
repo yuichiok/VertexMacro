@@ -10,31 +10,24 @@ void topHad_polar()
 		//string filename0 = "rootfile/"; 
 		string filename1;
 
-		cout << "0 = New/Small" << endl;
-		cout << "1 = New/Large" << endl;
-		cout << "2 = New/Large/QQbar" << endl;
-		cout << "3 = New/Large/QQbar_newTest" << endl;
-		//cout << "3 = Old      " 	  << endl;
-		//cout << "4 = Old/yyxylv      "       << endl;
+		cout << "0 = yyxylv/small" 	  << endl;
+		cout << "1 = yyxylv/large" 	  << endl;
+		cout << "2 = yyxyev/small" << endl;
+		cout << "3 = yyxyev/large" << endl;
 		cout << "Choose from 0-3: ";
 		cin  >> token;
 		cout << endl;
 
-		switch(token){
-				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
+	switch(token){
+		case 0 : filename1 = "new/small/QQbar_s5_yyxylv_eLeR.root";
 						 break;
-				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+		case 1 : filename1 = "new/large/QQbar_l5_yyxylv_eLeR.root";
 						 break;
-				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
+		case 2 : filename1 = "new/small/QQbar_s5_yyxyev_eLeR.root";
 						 break;
-		case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
+		case 3 : filename1 = "new/large/QQbar_l5_yyxyev_eLeR.root";
 						 break;
-		//case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
-		//				 break;
-		//case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
-		//				 break;
-		}
-
+	}
 
 		string filename = filename0 + filename1;
 		cout << "Processing : " << filename << " ..." << endl;

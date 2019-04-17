@@ -15,14 +15,52 @@ void format(TH2 * table)
 }
 void table()
 {
-	string recofilepath 				= "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out";
-  string recofilename_after		= "/after_vtx_recovery/RecoTest_after_NewIsoLep_020619.root";
-  string recofilename_before	= "/before_vtx_recovery/RecoTest_before_NewIsoLep_020619.root";
 
-	//string recofilename 				= recofilepath + recofilename_after;
-	string recofilename 				= recofilepath + recofilename_before;
+	int token=0;
+	string recofilepath = "";
+	string recofilename_before = "";
+	string recofilename_after = "";
+	string mcfilename = "";
 
-	string mcfilename 					= "/home/ilc/yokugawa/run_preset/root_merge/TruthVertexFinder_out/MCTest_NewIsoLep_020619.root";
+	cout << "0 = yyxylv/small" 	  << endl;
+	cout << "1 = yyxylv/large" 	  << endl;
+	cout << "2 = yyxyev/small" << endl;
+	cout << "3 = yyxyev/large" << endl;
+	cout << "Choose from 0-3: ";
+	cin  >> token;
+	cout << endl;
+
+	if(token==0||token==2){
+		recofilepath = "/home/ilc/yokugawa/run_preset_small/root_merge";
+	}else{
+		recofilepath = "/home/ilc/yokugawa/run_preset/root_merge";
+	}
+
+	switch(token){
+		case 0 : recofilename_before = "/TrashRecoProcessor_out/before_vtx_recovery/trash_bf_s5_yyxylv.root";
+						 recofilename_after = "/TrashRecoProcessor_out/after_vtx_recovery/trash_af_s5_yyxylv.root";
+						 mcfilename = "/TruthVertexFinder_out/truth_s5_yyxylv.root";
+						 break;
+		case 1 : recofilename_before = "/TrashRecoProcessor_out/before_vtx_recovery/trash_bf_l5_yyxylv.root";
+						 recofilename_after = "/TrashRecoProcessor_out/after_vtx_recovery/trash_af_l5_yyxylv.root";
+						 mcfilename = "/TruthVertexFinder_out/truth_l5_yyxylv.root";
+						 break;
+		case 2 : recofilename_before = "/TrashRecoProcessor_out/before_vtx_recovery/trash_bf_s5_yyxyev.root";
+						 recofilename_after = "/TrashRecoProcessor_out/after_vtx_recovery/trash_af_s5_yyxyev.root";
+						 mcfilename = "/TruthVertexFinder_out/truth_s5_yyxyev.root";
+						 break;
+		case 3 : recofilename_before = "/TrashRecoProcessor_out/before_vtx_recovery/trash_bf_l5_yyxyev.root";
+						 recofilename_after = "/TrashRecoProcessor_out/after_vtx_recovery/trash_af_l5_yyxyev.root";
+						 mcfilename = "/TruthVertexFinder_out/truth_l5_yyxyev.root";
+						 break;
+	}
+
+	//string recofile_after 	= recofilepath + recofilename_after;
+	//string recofile_before	= recofilepath + recofilename_before;
+	string mcfile 					= recofilepath + mcfilename;
+
+  string recofilename = recofilepath + recofilename_before;
+
 
 	int _vertex = 0;
 	int _pdg[MAXN];
@@ -51,7 +89,7 @@ void table()
 	TChain* T3 = new TChain("Stats");
 	T3->Add(recofilename.c_str());
 	TChain* T2 = new TChain("Stats");
-	T2->Add(mcfilename.c_str());
+	T2->Add(mcfile.c_str());
 	TChain* JETS = new TChain("Jets");
 	JETS->Add(recofilename.c_str());
 

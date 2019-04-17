@@ -23,7 +23,11 @@ void asymmetry()
 	cout << "1 = yyxylv/large" 	  << endl;
 	cout << "2 = yyxyev/small" << endl;
 	cout << "3 = yyxyev/large" << endl;
-	cout << "Choose from 0-3: ";
+	cout << "4 = yyxylv/large/muon ONLY" << endl;
+	cout << "5 = yyxylv/large/tau ONLY" << endl;
+	cout << "6 = yyxylv+yyxyev/large" << endl;
+	cout << "7 = yyxylv+yyxyev/large/muon_electron" << endl;
+	cout << "Choose from 0-7: ";
 	cin  >> token;
 	cout << endl;
 
@@ -35,6 +39,16 @@ void asymmetry()
 		case 2 : filename1 = "new/small/QQbar_s5_yyxyev_eLeR.root";
 						 break;
 		case 3 : filename1 = "new/large/QQbar_l5_yyxyev_eLeR.root";
+						 break;
+		case 4 : filename1 = "../../test2/root_merge/muonONLY.root";
+						 break;
+		case 5 : filename1 = "../../test2/root_merge/tauONLY.root";
+						 break;
+		case 6 : filename0 = "";
+						 filename1 = "/hsm/ilc/users/yokugawa/preset_N_run/QQbarProcessor_out/root_merge/mILD_l5_o1_v02.root";
+						 break;
+		case 7 : filename0 = "";
+						 filename1 = "/hsm/ilc/users/yokugawa/preset_N_run/QQbarProcessor_out/root_merge/mILD_l5_o1_v02_mu_e.root";
 						 break;
 	}
 

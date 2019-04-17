@@ -10,27 +10,30 @@ void efficiency()
 		//string filename0 = "rootfile/"; 
 		string filename1;
 
-		cout << "0 = New/Small" << endl;
-		cout << "1 = New/Large" << endl;
-		cout << "2 = New/Large/QQbar" << endl;
-		cout << "3 = New/Large/QQbar_newTest" << endl;
-		//cout << "3 = Old      " 	  << endl;
-		cout << "Choose from 0-3: ";
-		cin  >> token;
-		cout << endl;
+	cout << "0 = yyxylv/small" 	  << endl;
+	cout << "1 = yyxylv/large" 	  << endl;
+	cout << "2 = yyxyev/small" << endl;
+	cout << "3 = yyxyev/large" << endl;
+	cout << "4 = yyxylv/large/muon ONLY" << endl;
+	cout << "5 = yyxylv/large/tau ONLY" << endl;
+	cout << "Choose from 0-5: ";
+	cin  >> token;
+	cout << endl;
 
-		switch(token){
-				case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small_QQbar_NewIsoLep_021919.root";
+	switch(token){
+		case 0 : filename1 = "new/small/QQbar_s5_yyxylv_eLeR.root";
 						 break;
-				case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
+		case 1 : filename1 = "new/large/QQbar_l5_yyxylv_eLeR.root";
 						 break;
-				case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_NewIsoLep_021919.root";
+		case 2 : filename1 = "new/small/QQbar_s5_yyxyev_eLeR.root";
 						 break;
-				case 3 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
+		case 3 : filename1 = "new/large/QQbar_l5_yyxyev_eLeR.root";
 						 break;
-				//case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
-				//		 break;
-		}
+		case 4 : filename1 = "../../test2/root_merge/muonONLY.root";
+						 break;
+		case 5 : filename1 = "../../test2/root_merge/tauONLY.root";
+						 break;
+	}
 
 		string filename = filename0 + filename1;
 		cout << "Processing : " << filename << " ..." << endl;
