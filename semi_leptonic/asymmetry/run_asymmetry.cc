@@ -1,4 +1,4 @@
 {
   gROOT->ProcessLine(".L ../external/libFileSelector.so");
-  gROOT->ProcessLine(".x asymmetry.C");
+  gROOT->ProcessLine(".x macros/asymmetry.C");
 }
