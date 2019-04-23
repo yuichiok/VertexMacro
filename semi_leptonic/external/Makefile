@@ -9,4 +9,4 @@ FileSelectorDict.cc : include/FileSelector.hh include/LinkDef.h
 	rootcint -f FileSelectorDict.cc -c include/FileSelector.hh include/LinkDef.h
 
 clean :
-	rm *.o *.so src/*.pcm src/FileSelectorDict.cc
+	rm *.o *.so *.pcm FileSelectorDict.cc
