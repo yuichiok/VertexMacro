@@ -6,30 +6,28 @@
 void asymmetry_b()
 {
 	int token=0;
-	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-	//string filename0 = "rootfile/"; 
-	string filename1;
 
-	cout << "0 = yyxylv/small" 	  << endl;
-	cout << "1 = yyxylv/large" 	  << endl;
-	cout << "2 = yyxyev/small" << endl;
-	cout << "3 = yyxyev/large" << endl;
-	cout << "Choose from 0-3: ";
-	cin  >> token;
-	cout << endl;
+	FileSelector fs;
+	std::vector<FileSelector> rootfiles;
+	std::ifstream in( "../input/record.txt" );
 
-	switch(token){
-		case 0 : filename1 = "new/small/QQbar_s5_yyxylv_eLeR.root";
-						 break;
-		case 1 : filename1 = "new/large/QQbar_l5_yyxylv_eLeR.root";
-						 break;
-		case 2 : filename1 = "new/small/QQbar_s5_yyxyev_eLeR.root";
-						 break;
-		case 3 : filename1 = "new/large/QQbar_l5_yyxyev_eLeR.root";
-						 break;
+	while( fs.input(in) ){
+		rootfiles.push_back(fs);
 	}
 
-	string filename = filename0 + filename1;
+	int nrootfiles = 0;
+	nrootfiles = rootfiles.size();
+
+	std::cout << "Choose a file from below:" << std::endl;
+	for( int i=0; i < nrootfiles; i++){
+		std::cout << i << ": " << rootfiles[i].info() << endl;
+	}
+
+	std::cout << "Enter code: ";
+	std::cin >> token;
+	std::cout << std::endl;
+
+	std::string filename = rootfiles[token].filename();
 	cout << "Processing : " << filename << " ..." << endl;
 
 	TFile * file = TFile::Open(filename.c_str());

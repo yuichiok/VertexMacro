@@ -1,58 +1,44 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
+#include <vector>
+
 //#include "rootlogon.C"
 //#include "bilo_sty.C"
 #define MAXV 8
 
 using namespace std;
-//void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void asymmetry()
 {
+
 	int styl = 0;
 	int cx   = 500;
 	double Legx1 = 0.20;
 	double Legx2 = 0.6;
 
 	int token=0;
-	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-	//string filename0 = "rootfile/"; 
-	string filename1;
+	
+	FileSelector fs;
+	std::vector<FileSelector> rootfiles;
+	std::ifstream in( "../input/record.txt" );
 
-	cout << "0 = yyxylv/small" 	  << endl;
-	cout << "1 = yyxylv/large" 	  << endl;
-	cout << "2 = yyxyev/small" << endl;
-	cout << "3 = yyxyev/large" << endl;
-	cout << "4 = yyxylv/large/muon ONLY" << endl;
-	cout << "5 = yyxylv/large/tau ONLY" << endl;
-	cout << "6 = yyxylv+yyxyev/large" << endl;
-	cout << "7 = yyxylv+yyxyev/large/muon_electron" << endl;
-	cout << "Choose from 0-7: ";
-	cin  >> token;
-	cout << endl;
-
-	switch(token){
-		case 0 : filename1 = "new/small/QQbar_s5_yyxylv_eLeR.root";
-						 break;
-		case 1 : filename1 = "new/large/QQbar_l5_yyxylv_eLeR.root";
-						 break;
-		case 2 : filename1 = "new/small/QQbar_s5_yyxyev_eLeR.root";
-						 break;
-		case 3 : filename1 = "new/large/QQbar_l5_yyxyev_eLeR.root";
-						 break;
-		case 4 : filename1 = "../../test2/root_merge/muonONLY.root";
-						 break;
-		case 5 : filename1 = "../../test2/root_merge/tauONLY.root";
-						 break;
-		case 6 : filename0 = "";
-						 filename1 = "/hsm/ilc/users/yokugawa/preset_N_run/QQbarProcessor_out/root_merge/mILD_l5_o1_v02.root";
-						 break;
-		case 7 : filename0 = "";
-						 filename1 = "/hsm/ilc/users/yokugawa/preset_N_run/QQbarProcessor_out/root_merge/mILD_l5_o1_v02_mu_e.root";
-						 break;
+	while( fs.input(in) ){
+		rootfiles.push_back(fs);
 	}
 
-	string filename = filename0 + filename1;
+	int nrootfiles = 0;
+	nrootfiles = rootfiles.size();
+
+	std::cout << "Choose a file from below:" << std::endl;
+	for( int i=0; i < nrootfiles; i++){
+		std::cout << i << ": " << rootfiles[i].info() << endl;
+	}
+
+	std::cout << "Enter code: ";
+	std::cin >> token;
+	std::cout << std::endl;
+
+	std::string filename = rootfiles[token].filename();
 	cout << "Processing : " << filename << " ..." << endl;
 
 	TFile * file = TFile::Open(filename.c_str());
@@ -159,5 +145,6 @@ void asymmetry()
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 	//file->Close();
+	
 }
 
