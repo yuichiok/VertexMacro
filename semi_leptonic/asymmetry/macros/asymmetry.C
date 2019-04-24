@@ -102,7 +102,12 @@ void asymmetry()
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
-	cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	double intCosReco = cosReco->Integral(2,29);
+	double intCosGen  = cosGen->Integral(2,29);
+	cosGen->Scale(intCosReco / intCosGen);
+	
+	
 	cosGen->Fit("fgen","Q");
 	cosReco->Fit("freco", "QR");
 	cosGen->SetMinimum(0);
