@@ -1,4 +1,4 @@
 {
   gROOT->ProcessLine(".L ../external/libFileSelector.so");
-  gROOT->ProcessLine(".x macros/asymmetry.C");
+  gROOT->ProcessLine(".x /home/ilc/yokugawa/macros/semi_leptonic/asymmetry/macros/asymmetry.C");
 }

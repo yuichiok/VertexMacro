@@ -9,7 +9,7 @@ void asymmetry_b()
 
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "../../input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
