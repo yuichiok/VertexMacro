@@ -1,4 +1,6 @@
 
+using namespace std;
+
 void makePretty(TH2F * p, int color);
 void makePretty(TH1F * missed,  int color);
 
@@ -6,8 +8,33 @@ void dEdx()
 {
 	TCanvas * c1 = new TCanvas("c1", "The 3d view",0,0,1200,600);
 	c1->Divide(2,1);
-	string recofilepath = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
-	string recofilename = "RecoTest_before_NewIsoLep_012819.root";
+	//string recofilepath = "/home/ilc/yokugawa/run_preset/root_merge/TrashRecoProcessor_out/before_vtx_recovery/";
+	//string recofilename = "RecoTest_before_NewIsoLep_012819.root";
+
+	int token = 0;
+
+	cout << "0 = trash reco" << endl;
+	cout << "1 = pid" << endl;
+	cout << "choose from 0-1: ";
+	cin >> token;
+	cout << endl;
+
+	string recofilepath = "";
+	string recofilename = "";
+
+  switch(token){
+		case 0 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron_muon/TrashRecoProcessor_out/before_vtx_recovery/";
+						 recofilename = "IsoLepTagged.eL.pR_electron_muon_TRP_before.root";
+						 break;
+		case 1 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron_muon/particle_tagger_out/";
+						 recofilename = "IsoLepTagged.eL.pR_electron_muon_PT.root";
+						 break;
+		case 2 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron/particle_tagger_out/root_merge/";
+						 recofilename = "IsoLepTagged.eL.pR_electron_PT.root";
+						 break;
+	}
+	
+
 	string recofile			= recofilepath + recofilename;
 	TFile * file = TFile::Open(recofile.c_str());
 	TTree * TaggedVertices = (TTree*) file->Get( "TaggedVertices" ) ;
@@ -46,7 +73,8 @@ void dEdx()
 	int nprotons=0;
 	int nkaons=0;
 
-	if (recofilename == "RecoTest_before_NewIsoLep_012819.root") 
+	//if (recofilename == "RecoTest_before_NewIsoLep_012819.root") 
+  if( token == 0 )
 	{
 		//npions = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> pip","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 211  && generation ","");
 		//nprotons = TaggedVertices->Draw("dEdxOfParticles*pow(acos(abs(costhetaOfParticles)),0.15):momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
@@ -61,7 +89,8 @@ void dEdx()
 		//int nprotons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> prp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 2212&& generation","");
 		//int nkaons = TaggedVertices->Draw("dEdxOfParticles:momentumOfParticles >> kp","dEdxOfParticles > 0 && abs(trueTypeOfParticles) == 321 && generation ","");
 	}
-	if (recofilename == "pid.root") 
+	//if (recofilename == "pid.root") 
+	if( token == 1 || token == 2)
 	{
 		npions = Stats->Draw("dEdx:momentum >> pip","dEdx > 0 && abs(trueType) == 211","");
 		nprotons = Stats->Draw("dEdx:momentum >> prp","dEdx > 0 && abs(trueType) == 2212","");
@@ -87,7 +116,8 @@ void dEdx()
 	legendMean->AddEntry(kp,"K","fp");
 	legendMean->AddEntry(prp,"p","fp");
 	legendMean->Draw();
-	if (recofilename == "pid.root") 
+	//if (recofilename == "pid.root") 
+	if( token == 1 || token == 2)
 	{
 		return;
 	}

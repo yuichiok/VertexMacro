@@ -37,10 +37,12 @@ Double_t BetheBlochGeant(Double_t *bg,
 void dEdx()
 {
 	int token=0;
-	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+	//string filename0 = "/home/ilc/yokugawa/run/root_merge/";
+	string filename0 = "/hsm/ilc/users/yokugawa/preset_N_run/electron_muon/QQbarProcessor_out/";
 	string filename1;
 
-	filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_dEdx.root";
+	//filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_dEdx.root";
+	filename1 = "IsoLepTagged.eL.pR_electron_muon_QQbar.root";
 
 	string filename = filename0 + filename1;
 	cout << "Processing : " << filename << " ..." << endl;

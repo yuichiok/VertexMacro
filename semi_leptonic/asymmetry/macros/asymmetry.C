@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../../style/Style.C"
+#include "../../style/Labels.C"
 
 //#include "rootlogon.C"
 //#include "bilo_sty.C"
@@ -11,12 +13,28 @@ using namespace std;
 void asymmetry()
 {
 
+	// initialize variables
 	int styl = 0;
 	int cx   = 500;
 	double Legx1 = 0.20;
 	double Legx2 = 0.6;
 
 	int token=0;
+
+	int bin_e = 30;
+	int max_e = 1;
+
+	// set plot style
+	SetQQbarStyle();
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
+
 	
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
@@ -43,15 +61,27 @@ void asymmetry()
 
 	TFile * file = TFile::Open(filename.c_str());
 
+	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
+	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
+	cosReco->Sumw2();
+	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	cosGen->Sumw2();
+
+
+/*
 	int bin_e = 30;
 	int max_e = 1;
+
 
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
 
 	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 	cosReco->Sumw2();
-	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{top};Entries", bin_e,-1.0,max_e);
+	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
+*/
+
+	TGaxis::SetMaxDigits(3);
 
 	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
@@ -115,6 +145,8 @@ void asymmetry()
 	fgen->Draw("same");
 	cosGen->SetMinimum(0);
 	cosReco->Draw("samee");
+
+/*
 	TLegend *legendMean2 = new TLegend(Legx1,0.75,Legx2,0.85,NULL,"brNDC");
 	legendMean2->SetFillColor(kWhite);
 	legendMean2->SetBorderSize(0);
@@ -125,6 +157,20 @@ void asymmetry()
 	TLatex latex;
 	latex.SetTextFont(72);
 	latex.DrawLatexNDC(0.21,0.7,"ILD #bf{Preliminary}");
+*/
+
+	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
+	leg->SetTextFont(42);
+	leg->AddEntry(cosGen,"Parton level","l");
+	leg->AddEntry(cosReco,"Reconstructed","l");
+	leg->SetFillColor(0);
+	leg->SetLineColor(0);
+	leg->SetShadowColor(0);
+	leg->Draw();
+
+	QQBARLabel(0.8,0.2,"",1);
+
+	c1->Update();
 
 	float afbgen = (float)(forward - backward) / (float) (forward + backward);
 	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
@@ -140,11 +186,12 @@ void asymmetry()
 	float afbrecof = (freco->Integral(0,1) - freco->Integral(-1,0)) / (freco->Integral(0,1) + freco->Integral(-1,0));
 
 	gPad->SetLeftMargin(0.14);
-	cosGen->GetYaxis()->SetTitleOffset(1.7);
+	cosGen->GetYaxis()->SetTitleOffset(1);
 
 	cout << "Afb gen functional: " << afbgenf << endl;
 	cout << "Afb reco functional: " << afbrecof << "(" << afbrecof / afbgenf *100 << "%)"   << endl;
 	float nominal = 30.8;
+
 	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
 	cout << "Final efficiency: " << efficiency << "% (+" << efficiency / nominal *100 -100 << "%)\n" ;
 	cout << "--------------------------------------------------------------\n";

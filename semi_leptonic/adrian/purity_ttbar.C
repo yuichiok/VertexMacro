@@ -21,8 +21,9 @@
 #include "TStyle.h"
 #include "TMath.h"
 #include "TSystemFile.h"
-//#include "../style/Style.C"
-//#include "../style/Labels.C"
+
+#include "../style/Style.C"
+#include "../style/Labels.C"
 
 std::vector<float> CalculateP(int n_accepted,  int n_rejected)
 {
@@ -65,21 +66,22 @@ std::vector<float> CalculateP(int n_accepted,  int n_rejected)
 }
 
 void purity_ttbar() {
-    
-  //SetIrlesStyle();
-  gStyle->SetOptFit(0); 
-  gStyle->SetOptStat(0);
-  gStyle->SetOptTitle(1);
-  
-  gStyle->SetTitleBorderSize(0);
-  gStyle->SetTitleStyle(0);
-  gStyle->SetMarkerSize(0);
+
+	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar.root";
+	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar.root";
+
+	// set plot style
+	SetQQbarStyle();
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
 
   TCut cut_0="methodUsed>-1";
-  TString pol="yyxyev_eLeR";
-  TString folder="/home/ilc/yokugawa/run/root_merge/new/";
-  TString model;
-	TString prefolder;
   
   double n_l5_accepted[10];  for(int i=0; i<8; i++) n_l5_accepted[i] = 0;
   double n_l5_rejected[10];  for(int i=0; i<8; i++) n_l5_rejected[i] = 0;
@@ -100,9 +102,7 @@ void purity_ttbar() {
 
   // --------------------------------------------
   //   large model
-	prefolder = "large/";
-  model="l5";
-  TFile *f_l5 = new TFile(folder+prefolder+"QQbar_"+model+"_"+pol+".root");
+  TFile *f_l5 = new TFile( largeModel );
   TTree *Stats_l5 = (TTree*)f_l5->Get("Stats");
 
   TH1F *h_l5_accepted = new TH1F("h_l5_accepted","h_l5_accepted",12,0,12);
@@ -134,9 +134,7 @@ void purity_ttbar() {
   
   // --------------------------------------------
   //   small model
-  prefolder = "small/";
-	model="s5";
-  TFile *f_s5 = new TFile(folder+prefolder+"QQbar_"+model+"_"+pol+".root");
+  TFile *f_s5 = new TFile( smallModel );
   TTree *Stats_s5 = (TTree*)f_s5->Get("Stats");
 
   TH1F *h_s5_accepted = new TH1F("h_s5_accepted","h_s5_accepted",12,0,12);
@@ -182,13 +180,15 @@ void purity_ttbar() {
   s5_accepted->SetLineWidth(2);
   s5_accepted->Draw("histoesame");
   
-  TLegend *leg = new TLegend(0.6,0.2,0.8,0.35);
+  TLegend *leg = new TLegend(0.2,0.75,0.4,0.85);
   leg->AddEntry(l5_accepted,"IDR-L","l");
   leg->AddEntry(s5_accepted,"IDR-S","l");
   leg->SetFillColor(0);
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
   leg->Draw();
+
+	QQBARLabel(0.8,0.2,"",1);
 
   canvas->cd(2);
   gPad->SetGridy();
@@ -205,8 +205,8 @@ void purity_ttbar() {
   s5_rejected->SetLineWidth(2);
   s5_rejected->Draw("histosame");
 
+	QQBARLabel(0.8,0.2,"",1);
   leg->Draw();
-
 
   canvas->cd(3);
   gPad->SetGridy();
@@ -224,12 +224,16 @@ void purity_ttbar() {
   s5_ratio->SetLineWidth(2);
   s5_ratio->Draw("histosame");
 
+	QQBARLabel(0.8,0.2,"",1);
   leg->Draw();
 
-  TCanvas * canvas2 = new TCanvas("canvas2","canvas2",2000,800);
-  canvas2->Divide(2,1);
 
-  canvas2->cd(1);
+  // p value plots
+	
+  TCanvas * canvas2 = new TCanvas("canvas2","canvas2",500,500);
+  //canvas2->Divide(2,1);
+
+  //canvas2->cd(1);
 
   gPad->SetGridy();
   gPad->SetGridx();
@@ -256,10 +260,12 @@ void purity_ttbar() {
   s5_ratio->SetLineWidth(2);
   s5_ratio->Draw("histoesame");
 
+	QQBARLabel(0.8,0.2,"",1);
   leg->Draw();
   
+  TCanvas * canvas3 = new TCanvas("canvas3","canvas3",500,500);
 
-  canvas2->cd(2);
+  //canvas2->cd(2);
   gPad->SetGridy();
   gPad->SetGridx();
 
@@ -286,6 +292,7 @@ void purity_ttbar() {
   s5_purity->SetLineWidth(2);
   s5_purity->Draw("histoesame");
   
+	QQBARLabel(0.8,0.2,"",1);
   leg->Draw();
 
   
