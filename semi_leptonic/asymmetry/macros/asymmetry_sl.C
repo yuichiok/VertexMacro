@@ -56,22 +56,24 @@ void asymmetry_sl()
 	std::string filename_l5 = rootfiles[token_l5].filename();
 	cout << "Processing (l5) : " << filename_l5 << " ..." << endl;
 
-	TCanvas canvas1("canvas", "Data-MC",0,0,500,500);
+	TCanvas canvas1("canvas1", "Data-MC",0,0,500,500);
 
-	TH1F cosReco1("cosReco", "E(Ntracks)", 30, -1.0, 1.0);
+	TH1F cosReco1("cosReco1", "E(Ntracks)", 30, -1.0, 1.0);
 	cosReco1.Sumw2();
-	TH1F cosGen1("cosGen", ";cos#theta_{t};Entries", 30, -1.0, 1.0);
+	TH1F cosGen1("cosGen1", ";cos#theta_{t};Entries", 30, -1.0, 1.0);
 	cosGen1.Sumw2();
 
 	analysis(filename_l5, &canvas1, &cosReco1, &cosGen1);
 
+  canvas1.cd();
+	cosReco1.Draw();
 
 }
 
 void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 {
 
-	TFile * file = TFile::Open(fn.c_str());
+	//TFile * file = TFile::Open(fn.c_str());
 
 	int bin_e = 30;
 	int max_e = 1;
@@ -84,11 +86,17 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
 
+	TFile * file = TFile::Open(fn.c_str());
 
 	TGaxis::SetMaxDigits(3);
 
 	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
+
+  cout << "cosGen = " << cosGen << endl;
+	cout << "cosReco = " << cosReco << endl;
+	cout << "normaltree = " << normaltree << endl;
+	cout << "GenTree = " << GenTree << endl;
 
 	cosReco->SetLineWidth(3);
 	cosGen->SetLineWidth(3);
@@ -138,12 +146,12 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
-  cout << "before fit" << endl;
+  cout << "fgen = " << fgen << endl;
 
 	cosGen->Fit("fgen","Q");
 	cosReco->Fit("freco", "QR");
 
-  cout << "after fit" << endl;
+	cout << "freco = " << freco << endl;
 
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
@@ -163,7 +171,6 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	QQBARLabel(0.8,0.2,"",1);
 
 	c1->Update();
-	
 
 	float afbgen = (float)(forward - backward) / (float) (forward + backward);
 	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
@@ -189,6 +196,8 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	cout << "Final efficiency: " << efficiency << "% (+" << efficiency / nominal *100 -100 << "%)\n" ;
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
+
+  hReco = (TH1F*) cosReco->Clone();
 
 	//file->Close();
 
