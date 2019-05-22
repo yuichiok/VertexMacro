@@ -65,8 +65,8 @@ void asymmetry_sl()
 
 	analysis(filename_l5, &canvas1, &cosReco1, &cosGen1);
 
-  canvas1.cd();
-	cosReco1.Draw();
+  //canvas1.cd();
+	//cosReco1.Draw();
 
 }
 
@@ -78,25 +78,24 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	int bin_e = 30;
 	int max_e = 1;
 
-
+/*
 	TCanvas * c2 = new TCanvas("c1", "Data-MC",0,0,500,500);
 
 	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 	cosReco->Sumw2();
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
+*/
 
 	TFile * file = TFile::Open(fn.c_str());
+	file->Add(c2);
+	file->Add(cosReco);
+	file->Add(cosGen);
 
 	TGaxis::SetMaxDigits(3);
 
 	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
-
-  cout << "cosGen = " << cosGen << endl;
-	cout << "cosReco = " << cosReco << endl;
-	cout << "normaltree = " << normaltree << endl;
-	cout << "GenTree = " << GenTree << endl;
 
 	cosReco->SetLineWidth(3);
 	cosGen->SetLineWidth(3);
@@ -107,6 +106,8 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 
 	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+
+  cout << "forward = " << forward << endl;
 
 	// Selection lists
 	TCut thru = "Thrust < 0.9";
@@ -146,12 +147,10 @@ void analysis( std::string fn, TCanvas* c1, TH1F* hReco, TH1F* hGen )
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
-  cout << "fgen = " << fgen << endl;
+  cout << "cosGen Entry = " << cosGen->GetEntries() << endl;
 
 	cosGen->Fit("fgen","Q");
 	cosReco->Fit("freco", "QR");
-
-	cout << "freco = " << freco << endl;
 
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
