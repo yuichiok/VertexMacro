@@ -177,7 +177,7 @@ void asymmetry_sl()
 	cosGen_l5->SetStats(0);
 	cosGen_l5->SetMinimum(0);
 
-  cosGen_l5->SetTitle("e_{L}^{+}e_{R}^{-}#rightarrow t#bar{t} @ 500GeV, 46 fb^{-1}");
+  cosGen_l5->SetTitle("e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} @ 500GeV, 46 fb^{-1}");
   cosGen_l5->GetXaxis()->SetTitleOffset(1.1);
   cosGen_l5->GetXaxis()->SetTitleFont(42);
   cosGen_l5->GetXaxis()->SetTitleSize(0.05);
@@ -191,7 +191,6 @@ void asymmetry_sl()
   cosGen_l5->GetYaxis()->SetLabelSize(0.05);
   cosGen_l5->GetYaxis()->SetLabelOffset(0.015);
 
-	QQBARLabel(0.8,0.2,"",1);
 
   ////////////// Fitting //////////////
 
@@ -227,6 +226,8 @@ void asymmetry_sl()
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
 	leg->Draw();
+
+	QQBARLabel(0.8,0.2,"",1);
 
 	c1->Update();
 

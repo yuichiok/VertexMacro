@@ -191,7 +191,6 @@ void asymmetry_sl_b()
   cosGen_l5->GetYaxis()->SetLabelSize(0.05);
   cosGen_l5->GetYaxis()->SetLabelOffset(0.015);
 
-	QQBARLabel(0.8,0.2,"",1);
 
   ////////////// Fitting //////////////
 
@@ -227,6 +226,8 @@ void asymmetry_sl_b()
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
 	leg->Draw();
+
+	QQBARLabel(0.8,0.2,"",1);
 
 	c1->Update();
 
