@@ -67,8 +67,8 @@ std::vector<float> CalculateP(int n_accepted,  int n_rejected)
 
 void purity_ttbar() {
 
-	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar.root";
-	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar.root";
+	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar2.root";
+	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar2.root";
 
 	// set plot style
 	SetQQbarStyle();
