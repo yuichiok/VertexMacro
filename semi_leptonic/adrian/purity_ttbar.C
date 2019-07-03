@@ -67,8 +67,8 @@ std::vector<float> CalculateP(int n_accepted,  int n_rejected)
 
 void purity_ttbar() {
 
-	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar2.root";
-	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar2.root";
+	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar3.root";
+	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar3.root";
 
 	// set plot style
 	SetQQbarStyle();
@@ -86,19 +86,33 @@ void purity_ttbar() {
   double n_l5_accepted[10];  for(int i=0; i<8; i++) n_l5_accepted[i] = 0;
   double n_l5_rejected[10];  for(int i=0; i<8; i++) n_l5_rejected[i] = 0;
 
+/*
   TH1F *l5_accepted = new TH1F("l5_accepted","l5_accepted",8,0,8);
   TH1F *l5_rejected = new TH1F("l5_rejected","l5_rejected",8,0,8);
   TH1F *l5_ratio = new TH1F("l5_ratio","l5_ratio",8,0,8);
   TH1F *l5_purity = new TH1F("l5_purity","l5_purity",8,0,8);
+*/
+
+  TH1F *l5_accepted = new TH1F("l5_accepted","l5_accepted",6,2,8);
+  TH1F *l5_rejected = new TH1F("l5_rejected","l5_rejected",6,2,8);
+  TH1F *l5_ratio = new TH1F("l5_ratio","l5_ratio",6,2,8);
+  TH1F *l5_purity = new TH1F("l5_purity","l5_purity",6,2,8);
 
     
   double n_s5_accepted[10];  for(int i=0; i<8; i++) n_s5_accepted[i] = 0;
   double n_s5_rejected[10];  for(int i=0; i<8; i++) n_s5_rejected[i] = 0;
 
+/*
   TH1F *s5_accepted = new TH1F("s5_accepted","s5_accepted",8,0,8);
   TH1F *s5_rejected = new TH1F("s5_rejected","s5_rejected",8,0,8);
   TH1F *s5_ratio = new TH1F("s5_ratio","s5_ratio",8,0,8);
   TH1F *s5_purity = new TH1F("s5_purity","s5_purity",8,0,8);
+*/
+
+  TH1F *s5_accepted = new TH1F("s5_accepted","s5_accepted",6,2,8);
+  TH1F *s5_rejected = new TH1F("s5_rejected","s5_rejected",6,2,8);
+  TH1F *s5_ratio = new TH1F("s5_ratio","s5_ratio",6,2,8);
+  TH1F *s5_purity = new TH1F("s5_purity","s5_purity",6,2,8);
 
   // --------------------------------------------
   //   large model
@@ -110,23 +124,30 @@ void purity_ttbar() {
 
   TH1F *h_l5_rejected = new TH1F("h_l5_rejected","h_l5_rejected",12,0,12);
   Stats_l5->Draw("methodSameCharge>>h_l5_rejected",cut_0);
+	//Stats_l5->Draw("methodSameCharge>>h_l5_rejected");
 
-  for(int i=0; i<8; i++) {
+	int bin=7;
+
+  cout << "get bin content" << bin << " = " << h_l5_rejected->GetBinContent(bin) << endl;
+
+  //h_l5_rejected->Draw();
+
+  for(int i=1; i<8; i++) {
     n_l5_accepted[i]=h_l5_accepted->GetBinContent(i+1);
     n_l5_rejected[i]=h_l5_rejected->GetBinContent(i+1);
 
     // cout <<n_l5_accepted[i] << "  " << n_l5_rejected[i] <<"  " <<n_l5_accepted[i]/( n_l5_accepted[i]+ n_l5_rejected[i])<< endl;
-    l5_accepted->SetBinContent(i+1,n_l5_accepted[i]);
-    l5_rejected->SetBinContent(i+1,n_l5_rejected[i]);
+    l5_accepted->SetBinContent(i,n_l5_accepted[i]);
+    l5_rejected->SetBinContent(i,n_l5_rejected[i]);
     if(n_l5_accepted[i]+n_l5_rejected[i]>0) {
-      l5_ratio->SetBinContent(i+1,n_l5_accepted[i]/(n_l5_accepted[i]+n_l5_rejected[i]));
+      l5_ratio->SetBinContent(i,n_l5_accepted[i]/(n_l5_accepted[i]+n_l5_rejected[i]));
       double error = pow(sqrt(n_l5_accepted[i])/(n_l5_accepted[i]+n_l5_rejected[i]),2);// + pow(0.5*n_l5_accepted[i]*sqrt(n_l5_accepted[i]+n_l5_rejected[i])/pow(n_l5_accepted[i]+n_l5_rejected[i],2),2);
       error=sqrt(error);
-      l5_ratio->SetBinError(i+1,error);
+      l5_ratio->SetBinError(i,error);
 
       std::vector<float> purity_temp = CalculateP(n_l5_accepted[i],  n_l5_rejected[i]);
-      l5_purity->SetBinContent(i+1,purity_temp[0]);
-      l5_purity->SetBinError(i+1,purity_temp[1]);
+      l5_purity->SetBinContent(i,purity_temp[0]);
+      l5_purity->SetBinError(i,purity_temp[1]);
     }
   }
 
@@ -143,21 +164,21 @@ void purity_ttbar() {
   TH1F *h_s5_rejected = new TH1F("h_s5_rejected","h_s5_rejected",12,0,12);
   Stats_s5->Draw("methodSameCharge>>h_s5_rejected",cut_0);
 
-  for(int i=0; i<8; i++) {
+  for(int i=1; i<8; i++) {
     n_s5_accepted[i]=h_s5_accepted->GetBinContent(i+1);
     n_s5_rejected[i]=h_s5_rejected->GetBinContent(i+1);
 
-    s5_accepted->SetBinContent(i+1,n_s5_accepted[i]);
-    s5_rejected->SetBinContent(i+1,n_s5_rejected[i]);
+    s5_accepted->SetBinContent(i,n_s5_accepted[i]);
+    s5_rejected->SetBinContent(i,n_s5_rejected[i]);
     if(n_s5_accepted[i]+n_s5_rejected[i]>0) {
-      s5_ratio->SetBinContent(i+1,n_s5_accepted[i]/(n_s5_accepted[i]+n_s5_rejected[i]));
+      s5_ratio->SetBinContent(i,n_s5_accepted[i]/(n_s5_accepted[i]+n_s5_rejected[i]));
       double error = pow(sqrt(n_s5_accepted[i])/(n_s5_accepted[i]+n_s5_rejected[i]),2);// + pow(0.5*n_s5_accepted[i]*sqrt(n_s5_accepted[i]+n_s5_rejected[i])/pow(n_s5_accepted[i]+n_s5_rejected[i],2),2);
       error=sqrt(error);
-      s5_ratio->SetBinError(i+1,error);
+      s5_ratio->SetBinError(i,error);
       
       std::vector<float> purity_temp = CalculateP(n_s5_accepted[i],  n_s5_rejected[i]);
-      s5_purity->SetBinContent(i+1,purity_temp[0]);
-      s5_purity->SetBinError(i+1,purity_temp[1]);
+      s5_purity->SetBinContent(i,purity_temp[0]);
+      s5_purity->SetBinError(i,purity_temp[1]);
     }
 
   }
@@ -238,13 +259,13 @@ void purity_ttbar() {
   gPad->SetGridy();
   gPad->SetGridx();
 
-  l5_ratio->GetXaxis()->SetBinLabel(2, "Vtx+Vtx");
-  l5_ratio->GetXaxis()->SetBinLabel(3, "K+K");
-  l5_ratio->GetXaxis()->SetBinLabel(4, "Vtx+K");
-  l5_ratio->GetXaxis()->SetBinLabel(5, "Vtx+K'");
-  l5_ratio->GetXaxis()->SetBinLabel(6, "Vtx+L_{cut}");
-  l5_ratio->GetXaxis()->SetBinLabel(7, "K+L_{cut}");
-  l5_ratio->GetXaxis()->SetBinLabel(8, "L_{cut}");
+  l5_ratio->GetXaxis()->SetBinLabel(1, "Vtx+Vtx");
+  l5_ratio->GetXaxis()->SetBinLabel(2, "K+K");
+  l5_ratio->GetXaxis()->SetBinLabel(3, "Vtx+K");
+  l5_ratio->GetXaxis()->SetBinLabel(4, "Vtx+K'");
+  l5_ratio->GetXaxis()->SetBinLabel(5, "Vtx+L_{cut}");
+  l5_ratio->GetXaxis()->SetBinLabel(6, "K+L_{cut}");
+  //l5_ratio->GetXaxis()->SetBinLabel(8, "L_{cut}");
   
   l5_ratio->GetYaxis()->SetTitle("N_{acc.} / (N_{acc.}+N_{rej.})");
   l5_ratio->SetTitle("");
@@ -269,13 +290,13 @@ void purity_ttbar() {
   gPad->SetGridy();
   gPad->SetGridx();
 
-  l5_purity->GetXaxis()->SetBinLabel(2, "Vtx+Vtx");
-  l5_purity->GetXaxis()->SetBinLabel(3, "K+K");
-  l5_purity->GetXaxis()->SetBinLabel(4, "Vtx+K");
-  l5_purity->GetXaxis()->SetBinLabel(5, "Vtx+K'");
-  l5_purity->GetXaxis()->SetBinLabel(6, "Vtx+L_{cut}");
-  l5_purity->GetXaxis()->SetBinLabel(7, "K+L_{cut}");
-  l5_purity->GetXaxis()->SetBinLabel(8, "L_{cut}");
+  l5_purity->GetXaxis()->SetBinLabel(1, "Vtx+Vtx");
+  l5_purity->GetXaxis()->SetBinLabel(2, "K+K");
+  l5_purity->GetXaxis()->SetBinLabel(3, "Vtx+K");
+  l5_purity->GetXaxis()->SetBinLabel(4, "Vtx+K'");
+  l5_purity->GetXaxis()->SetBinLabel(5, "Vtx+L_{cut}");
+  l5_purity->GetXaxis()->SetBinLabel(6, "K+L_{cut}");
+  //l5_purity->GetXaxis()->SetBinLabel(8, "L_{cut}");
 
   l5_purity->SetTitle("");
   l5_purity->GetXaxis()->SetTitle("");
