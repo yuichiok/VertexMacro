@@ -116,8 +116,8 @@ void asymmetry_sl()
 	int recoforward_l5  = normaltree_l5->Draw("qCostheta >> cosReco_l5", fcuts);
 	int recobackward_l5 = normaltree_l5->Draw("qCostheta >> +cosReco_l5", bcuts);
 
-	double intCosReco = cosReco_l5->Integral(2,29);
-	double intCosGen  = cosGen_l5->Integral(2,29);
+	double intCosReco = cosReco_l5->Integral(2,19);
+	double intCosGen  = cosGen_l5->Integral(2,19);
 	cosGen_l5->Scale(intCosReco / intCosGen);
 
 
@@ -145,8 +145,8 @@ void asymmetry_sl()
 	int recoforward_s5  = normaltree_s5->Draw("qCostheta >> cosReco_s5", fcuts);
 	int recobackward_s5 = normaltree_s5->Draw("qCostheta >> +cosReco_s5", bcuts);
 
-	double intCosReco2 = cosReco_s5->Integral(2,29);
-	double intCosGen2  = cosGen_s5->Integral(2,29);
+	double intCosReco2 = cosReco_s5->Integral(2,19);
+	double intCosGen2  = cosGen_s5->Integral(2,19);
 	cosGen_s5->Scale(intCosReco2 / intCosGen2);
 
 	// test
@@ -177,8 +177,9 @@ void asymmetry_sl()
 	cosGen_l5->SetStats(0);
 	cosGen_l5->SetMinimum(0);
 
-  cosGen_l5->SetTitle("e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} @ 500GeV, 46 fb^{-1}");
-  cosGen_l5->GetXaxis()->SetTitleOffset(1.1);
+  //cosGen_l5->SetTitle("e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} @ 500GeV, 2.1 ab^{-1}");
+  cosGen_l5->SetTitle("e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} @ 500GeV");
+	cosGen_l5->GetXaxis()->SetTitleOffset(1.1);
   cosGen_l5->GetXaxis()->SetTitleFont(42);
   cosGen_l5->GetXaxis()->SetTitleSize(0.05);
   cosGen_l5->GetXaxis()->SetLabelSize(0.05);
