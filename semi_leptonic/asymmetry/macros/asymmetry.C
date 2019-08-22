@@ -126,6 +126,7 @@ void asymmetry()
 
 	cout << recoforward <<endl;
 
+
 	cosGen->SetStats(0);
 	TF1 * fgen = new TF1("fgen","pol2",-1,1);
 	TF1 * freco = new TF1("freco","pol2",-0.9,0.9);
@@ -198,6 +199,20 @@ void asymmetry()
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 	//file->Close();
+	//
+
+
+	TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,cx,500);
+	TH1F * bmom  = new TH1F("bmomhist", ";bmom (GeV); Entries", 100, 0,200);
+  
+  int bmomentum = normaltree->Draw("Top1bmomentum >> bmom","");
+  //int bmomentum2= normaltree->Draw("Top2bmomentum >> +bmom","");
+
+	bmom->Draw();
+
+
+
+
 	
 }
 

@@ -64,10 +64,10 @@ void efficiency()
 	// Begin efficiency calculation
 
 	int entrySum = Summary->GetEntries();
-	int nEvents, nAfterLeptonCuts, nAfterBtagCuts;
+	int nGenUsed, nAfterLeptonCuts, nAfterBtagCuts;
 	int nevt=0, nlcut=0, nbcut=0;
 
-	Summary->SetBranchAddress( "nEvents", &nEvents ) ;
+	Summary->SetBranchAddress( "nGenUsed", &nGenUsed ) ;
 	Summary->SetBranchAddress( "nAfterLeptonCuts", &nAfterLeptonCuts ) ;
 	Summary->SetBranchAddress( "nAfterBtagCuts", &nAfterBtagCuts ) ;
 
@@ -75,7 +75,7 @@ void efficiency()
 
 		Summary->GetEntry(i);
 
-		nevt  += nEvents;
+		nevt  += nGenUsed;
 		nlcut += nAfterLeptonCuts;
 		nbcut += nAfterBtagCuts;
 

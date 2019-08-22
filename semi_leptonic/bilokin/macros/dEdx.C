@@ -23,14 +23,11 @@ void dEdx()
 	string recofilename = "";
 
   switch(token){
-		case 0 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron_muon/TrashRecoProcessor_out/before_vtx_recovery/";
-						 recofilename = "IsoLepTagged.eL.pR_electron_muon_TRP_before.root";
+		case 0 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/TrashRecoProcessor_out/before_vtx_recovery/";
+						 recofilename = "IsoLepTagged.eL.pR_electron_muon_TRP_before_Chi15_NoMethod.root";
 						 break;
-		case 1 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron_muon/particle_tagger_out/";
-						 recofilename = "IsoLepTagged.eL.pR_electron_muon_PT.root";
-						 break;
-		case 2 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/electron/particle_tagger_out/root_merge/";
-						 recofilename = "IsoLepTagged.eL.pR_electron_PT.root";
+		case 1 : recofilepath = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/particle_tagger_out/";
+						 recofilename = "IsoLepTagged.eL.pR_electron_muon_PT_Chi15_NoMethod.root";
 						 break;
 	}
 	

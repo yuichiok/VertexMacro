@@ -70,6 +70,10 @@ void drawLegend()
 	legendMean2->AddEntry(eff21,"After recovery","pl");
 	legendMean2->AddEntry(eff1,"Before recovery","pl");
 	legendMean2->Draw();
+
+  delete eff1;
+	delete eff21;
+	delete legendMean2;
 }
 
 
@@ -295,6 +299,7 @@ void chargeEfficiency2()
 	int totalcounter = 0;
 	cout << "================================= Before Recovery =================================" << "\n";
 	cout << "Total events: " << mTotalNumberOfEvents1 << "\n";
+	cout << "Total events: " << RECO->GetEntries() << "\n";
 	
 	for (int k = 0; k < mTotalNumberOfEvents1; k++)
 	{

@@ -1,6 +1,8 @@
-
 #include <unistd.h>
+#include <cmath>
 #include <iostream>
+#include "../../style/Style.C"
+#include "../../style/Labels.C"
 #define MAXV 8
 void makePretty(TH1F * cosAll, int color, int reconumber)
 {
@@ -12,6 +14,44 @@ void makePretty(TH1F * cosAll, int color, int reconumber)
 }
 void OneTrack2()
 {
+
+	int token=0;
+
+	// set plot style
+	SetQQbarStyle();
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(1);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
+
+	FileSelector fs;
+	std::vector<FileSelector> rootfiles;
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/TVF_TRP.txt" );
+
+	while( fs.input(in) ){
+		rootfiles.push_back(fs);
+	}
+
+	int nrootfiles = 0;
+	nrootfiles = rootfiles.size();
+
+	std::cout << "Choose a file from below:" << std::endl;
+	for( int i=0; i < nrootfiles; i++){
+		std::cout << i << ": " << rootfiles[i].info() << endl;
+	}
+
+	std::cout << "TRP before: ";
+	std::cin >> token;
+
+	std::string filename_bf = rootfiles[token].filename();
+	cout << "TRP (before VR) = " << filename_bf << endl;
+	std::cout << std::endl;
+
+/*
 	string filepath_bf = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/before_vtx_recovery/" ;
 	string file_bf		 = "trash_bf_s5_yyxyev.root";
 	string filename_bf = filepath_bf + file_bf ;
@@ -19,9 +59,12 @@ void OneTrack2()
 	//string filepath_af = "/home/ilc/yokugawa/run_preset_small/root_merge/TrashRecoProcessor_out/after_vtx_recovery/" ;
 	//string file_af		 = "trash_af_s5_yyxyev.root";
 	//string filename_af = filepath_af + file_af ;
+*/
 
 	TFile * file = TFile::Open(filename_bf.c_str());
 	//TFile * file = TFile::Open(filename_af.c_str());
+	
+	
 	int bin_e = 50;
 	int max_e = 1;
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
