@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../../style/Style.C"
+#include "../../style/Labels.C"
 #define MAXV 8
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 
@@ -9,6 +11,19 @@ using namespace std;
 void efficiency_methods()
 {
 	int token=0;
+
+	// set plot style
+	SetQQbarStyle();
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
+
+	// File Selector
 
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
@@ -41,8 +56,8 @@ void efficiency_methods()
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
 	TTree * Summary = (TTree*) file->Get( "Summary" );
 
-	int forward  = GenTree->Draw("qMCcostheta","qMCcostheta > 0 && qMCcostheta > -2 ");
-	int backward = GenTree->Draw("qMCcostheta","qMCcostheta < 0 && qMCcostheta > -2");
+	//int forward  = GenTree->Draw("qMCcostheta","qMCcostheta > 0 && qMCcostheta > -2 ");
+	//int backward = GenTree->Draw("qMCcostheta","qMCcostheta < 0 && qMCcostheta > -2");
 
 	// Begin efficiency calculation
 
@@ -71,6 +86,27 @@ void efficiency_methods()
 
 
 
+	// Histograms
+	
+	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", 30,-1.0,1.0);
+	cosReco->Sumw2();
+	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", 30,-1.0,1.0);
+	cosGen->Sumw2();
+
+	TGaxis::SetMaxDigits(3);
+	cosReco->SetLineWidth(3);
+	cosGen->SetLineWidth(3);
+	cosGen->SetLineStyle(2);
+	cosGen->SetLineColor(kGreen+1);
+	cosGen->SetFillColor(kGreen+1);
+	cosGen->SetFillStyle(3004);
+
+	// Gen Info
+	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
+	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+
+
 	int entryStat = normaltree->GetEntries();
 
 	float Thrust=0,
@@ -81,11 +117,16 @@ void efficiency_methods()
 				Top2bmomentum=0,
 				Top1gamma=0,
 				Top2gamma=0;
+
+	float qMCcostheta[2],
+				qCostheta[2];
 	
-	int methodUsed=0;
+	int recoforward=0,
+			recobackward=0,
+			methodUsed=0;
+
 	int methodTaken[100],
 			chgValue[100];
-
 				
   int afterthrucut=0,
 			afterhadMcut=0,
@@ -112,12 +153,18 @@ void efficiency_methods()
 	normaltree->SetBranchAddress("methodUsed", &methodUsed);
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
 	normaltree->SetBranchAddress("chgValue", chgValue);
+	//normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
+	normaltree->SetBranchAddress("qCostheta", qCostheta);
 
 	int temp=0;
+
+	int beforecut=0, aftercut=0;
 
   for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
 		normaltree->GetEntry(iStatEntry);
+
+		if(qCostheta[0]==-2) beforecut++;
 
 		if(Thrust<0.9){
 
@@ -130,6 +177,8 @@ void efficiency_methods()
 				if(Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50){
 
 					afterrcTWcut++;
+
+					if(qCostheta[0]==-2) aftercut++;
 
 					bool methodCheck1=false,
 			 				 methodCheck2=false,
@@ -162,6 +211,15 @@ void efficiency_methods()
 						temp++;
 						continue;
 					}else{
+
+						if(qCostheta[0] > 0){
+							recoforward++;
+							cosReco->Fill(qCostheta[0]);
+						}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
+							recobackward++;
+							cosReco->Fill(qCostheta[0]);
+						}
+
 						if(methodCheck7) aftermethod7++;
 						if(methodCheck7 || methodCheck5) aftermethod75++;
 						if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
@@ -197,7 +255,56 @@ void efficiency_methods()
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
+  cout << "beforecut (cos = -2)         = " << beforecut << endl;
+  cout << "aftercut (cos = -2)          = " << aftercut << endl;
 	cout << endl;
+
+
+	// Plot and Fit
+
+	cosGen->SetStats(0);
+	TF1 * fgen = new TF1("fgen","pol2",-1,1);
+	TF1 * freco = new TF1("freco","pol2",-0.9,0.9);
+	fgen->SetLineColor(kGreen);
+	fgen->SetLineStyle(3);
+	freco->SetLineStyle(3);
+
+	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	double intCosReco = cosReco->Integral(2,29);
+	double intCosGen  = cosGen->Integral(2,29);
+	cosGen->Scale(intCosReco / intCosGen);
+	
+	
+	cosGen->Fit("fgen","Q");
+	cosReco->Fit("freco", "QR");
+	cosGen->SetMinimum(0);
+	cosGen->Draw("he");
+	fgen->Draw("same");
+	cosGen->SetMinimum(0);
+	cosReco->Draw("samee");
+
+	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
+	leg->SetTextFont(42);
+	leg->AddEntry(cosGen,"Parton level","l");
+	leg->AddEntry(cosReco,"Reconstructed","l");
+	leg->SetFillColor(0);
+	leg->SetLineColor(0);
+	leg->SetShadowColor(0);
+	leg->Draw();
+
+	QQBARLabel(0.8,0.2,"",1);
+
+	c1->Update();
+
+	float afbgen = (float)(forward - backward) / (float) (forward + backward);
+	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
+
+	cout << "--------------------------------------------------------------\n";
+	cout << "--------------------------------------------------------------\n";
+	std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";
+	std::cout << "Afb reco: " << afbreco << " N: " << recoforward + recobackward << "(" << afbreco / afbgen *100 << "%)"  << "\n";
+	std::cout << "Chi2: " << cosReco->Chi2Test(cosGen,"UUNORMCHI2/NDF") << "\n";
+	cout << "--------------------------------------------------------------\n";
 
 /*
 
