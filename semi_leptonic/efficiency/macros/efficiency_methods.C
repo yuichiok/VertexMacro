@@ -83,7 +83,8 @@ void efficiency_methods()
 				Top2gamma=0;
 	
 	int methodUsed=0;
-	int methodTaken[100];
+	int methodTaken[100],
+			chgValue[100];
 
 				
   int afterthrucut=0,
@@ -110,7 +111,9 @@ void efficiency_methods()
 	normaltree->SetBranchAddress("Top2gamma", &Top2gamma);
 	normaltree->SetBranchAddress("methodUsed", &methodUsed);
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
+	normaltree->SetBranchAddress("chgValue", chgValue);
 
+	int temp=0;
 
   for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
@@ -136,9 +139,14 @@ void efficiency_methods()
 			 				 methodCheck6=false,
 			 				 methodCheck7=false;
 
-					for(int imethod=0; imethod<methodUsed; imethod++){
+					int sum = 0;
+
+					for(int imethod = 0; imethod < methodUsed; imethod++){
 
 						int Nmethod = methodTaken[imethod];
+						int charge  = chgValue[imethod];
+
+						sum += charge;
 
 						if(Nmethod==1) methodCheck1=true;
 						if(Nmethod==2) methodCheck2=true;
@@ -150,13 +158,18 @@ void efficiency_methods()
 
 					}
 
-					if(methodCheck7) aftermethod7++;
-					if(methodCheck7 || methodCheck5) aftermethod75++;
-					if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
-					if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
-					if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
-					if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
-					if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod7561234++;
+					if(sum == 0){
+						temp++;
+						continue;
+					}else{
+						if(methodCheck7) aftermethod7++;
+						if(methodCheck7 || methodCheck5) aftermethod75++;
+						if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
+						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
+						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
+						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
+						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod7561234++;
+					}
 
 					if(Top1bmomentum > 15 && Top2bmomentum > 15){
 
@@ -182,6 +195,8 @@ void efficiency_methods()
 	cout << "after method75612            = " << aftermethod75612 << " (" << (float)(aftermethod75612)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method756123           = " << aftermethod756123 << " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
+	cout << endl;
+	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 
 /*

@@ -132,6 +132,10 @@ void efficiency()
 	cout << "recoforward  = " << recoforward  << endl;
 	cout << "recobackward = " << recobackward << endl;
 
+	TCut noneCut = "qCostheta[1] == 2";
+	int recoNONE = normaltree->GetEntries(noneCut);
+
+	cout << "none = " << recoNONE << endl;
 
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
