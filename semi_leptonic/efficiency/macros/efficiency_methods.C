@@ -178,62 +178,83 @@ void efficiency_methods()
 
 					afterrcTWcut++;
 
-					if(qCostheta[0]==-2) aftercut++;
+					if( (Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ){
 
-					bool methodCheck1=false,
-			 				 methodCheck2=false,
-			 				 methodCheck3=false,
-			 				 methodCheck4=false,
-			 				 methodCheck5=false,
-			 				 methodCheck6=false,
-			 				 methodCheck7=false;
+						aftergcut++;
 
-					int sum = 0;
+						if(Top1bmomentum > 15 && Top2bmomentum > 15){
 
-					for(int imethod = 0; imethod < methodUsed; imethod++){
+							afterpcut++;
 
-						int Nmethod = methodTaken[imethod];
-						int charge  = chgValue[imethod];
+							if(qCostheta[0]==-2) aftercut++;
 
-						sum += charge;
+							bool methodCheck1=false,
+									 methodCheck2=false,
+									 methodCheck3=false,
+									 methodCheck4=false,
+									 methodCheck5=false,
+									 methodCheck6=false,
+									 methodCheck7=false;
 
-						if(Nmethod==1) methodCheck1=true;
-						if(Nmethod==2) methodCheck2=true;
-						if(Nmethod==3) methodCheck3=true;
-						if(Nmethod==4) methodCheck4=true;
-						if(Nmethod==5) methodCheck5=true;
-						if(Nmethod==6) methodCheck6=true;
-						if(Nmethod==7) methodCheck7=true;
+							int sum = 0;
 
-					}
+							for(int imethod = 0; imethod < methodUsed; imethod++){
 
-					if(sum == 0){
-						temp++;
-						continue;
-					}else{
+								int Nmethod = methodTaken[imethod];
+								int charge  = chgValue[imethod];
 
-						if(qCostheta[0] > 0){
-							recoforward++;
-							cosReco->Fill(qCostheta[0]);
-						}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
-							recobackward++;
-							cosReco->Fill(qCostheta[0]);
-						}
+								sum += charge;
 
-						if(methodCheck7) aftermethod7++;
-						if(methodCheck7 || methodCheck5) aftermethod75++;
-						if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
-						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
-						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
-						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
-						if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod7561234++;
-					}
+								if(Nmethod==1) methodCheck1=true;
+								if(Nmethod==2) methodCheck2=true;
+								if(Nmethod==3) methodCheck3=true;
+								if(Nmethod==4) methodCheck4=true;
+								if(Nmethod==5) methodCheck5=true;
+								if(Nmethod==6) methodCheck6=true;
+								if(Nmethod==7) methodCheck7=true;
 
-					if(Top1bmomentum > 15 && Top2bmomentum > 15){
+							}
 
-						afterpcut++;
+							if(sum == 0){
+								temp++;
+								continue;
+							}else{
 
-					}//pcut
+
+								if(methodCheck7){
+									aftermethod7++;
+		/*
+									if(qCostheta[0] > 0){
+										recoforward++;
+										cosReco->Fill(qCostheta[0]);
+									}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
+										recobackward++;
+										cosReco->Fill(qCostheta[0]);
+									}
+		*/
+								}
+								if(methodCheck7 || methodCheck5) aftermethod75++;
+								if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
+									aftermethod7561234++;
+
+									if(qCostheta[0] > 0){
+										recoforward++;
+										cosReco->Fill(qCostheta[0]);
+									}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
+										recobackward++;
+										cosReco->Fill(qCostheta[0]);
+									}
+									
+								}
+							}//consistency
+
+
+						}//pcuti
+					}//gcut
 				}//rcTW cut
 			}//hadM cut
 		}//thrust cut
@@ -244,8 +265,6 @@ void efficiency_methods()
 	cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
 
 	cout << "============================ Non-baseline Cuts ============================" << endl;
-	//cout << "after gcut                   = " << aftergcut << " (" << (float)(aftergcut)/(float)(nevt) *100 << "%)" << endl;
-	//cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7                = " << aftermethod7 << " (" << (float)(aftermethod7)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method75               = " << aftermethod75 << " (" << (float)(aftermethod75)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method756              = " << aftermethod756 << " (" << (float)(aftermethod756)/(float)(nevt) *100 << "%)" << endl;
@@ -257,6 +276,8 @@ void efficiency_methods()
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
   cout << "beforecut (cos = -2)         = " << beforecut << endl;
   cout << "aftercut (cos = -2)          = " << aftercut << endl;
+	cout << "after gcut                   = " << aftergcut << " (" << (float)(aftergcut)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 
 
@@ -304,6 +325,10 @@ void efficiency_methods()
 	std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";
 	std::cout << "Afb reco: " << afbreco << " N: " << recoforward + recobackward << "(" << afbreco / afbgen *100 << "%)"  << "\n";
 	std::cout << "Chi2: " << cosReco->Chi2Test(cosGen,"UUNORMCHI2/NDF") << "\n";
+	cout << "--------------------------------------------------------------\n";
+	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
+	cout << "Final efficiency: " << efficiency << "%)\n" ;
+	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 
 /*
