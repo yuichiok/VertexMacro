@@ -67,8 +67,8 @@ std::vector<float> CalculateP(int n_accepted,  int n_rejected)
 
 void purity_ttbar() {
 
-	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar3.root";
-	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar3.root";
+	TString largeModel="/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar_MethodAll_082119.root";
+	TString smallModel="/hsm/ilc/users/yokugawa/preset_N_run/s5/electron_muon/QQbarProcessor_out/IsoLepTagged.eL.pR_electron_muon_QQbar_MethodAll_082119.root";
 
 	// set plot style
 	SetQQbarStyle();
@@ -95,8 +95,8 @@ void purity_ttbar() {
 
   TH1F *l5_accepted = new TH1F("l5_accepted","l5_accepted",6,2,8);
   TH1F *l5_rejected = new TH1F("l5_rejected","l5_rejected",6,2,8);
-  TH1F *l5_ratio = new TH1F("l5_ratio","l5_ratio",6,2,8);
-  TH1F *l5_purity = new TH1F("l5_purity","l5_purity",6,2,8);
+  TH1F *l5_ratio = new TH1F("l5_ratio","l5_ratio",6,1,7);
+  TH1F *l5_purity = new TH1F("l5_purity","l5_purity",6,1,7);
 
     
   double n_s5_accepted[10];  for(int i=0; i<8; i++) n_s5_accepted[i] = 0;
@@ -111,8 +111,8 @@ void purity_ttbar() {
 
   TH1F *s5_accepted = new TH1F("s5_accepted","s5_accepted",6,2,8);
   TH1F *s5_rejected = new TH1F("s5_rejected","s5_rejected",6,2,8);
-  TH1F *s5_ratio = new TH1F("s5_ratio","s5_ratio",6,2,8);
-  TH1F *s5_purity = new TH1F("s5_purity","s5_purity",6,2,8);
+  TH1F *s5_ratio = new TH1F("s5_ratio","s5_ratio",6,1,7);
+  TH1F *s5_purity = new TH1F("s5_purity","s5_purity",6,1,7);
 
   // --------------------------------------------
   //   large model
@@ -131,10 +131,15 @@ void purity_ttbar() {
   cout << "get bin content" << bin << " = " << h_l5_rejected->GetBinContent(bin) << endl;
 
   //h_l5_rejected->Draw();
+	int nacc = 0;
+	int nrej = 0;
 
   for(int i=1; i<8; i++) {
     n_l5_accepted[i]=h_l5_accepted->GetBinContent(i+1);
     n_l5_rejected[i]=h_l5_rejected->GetBinContent(i+1);
+
+	//	nacc += n_l5_accepted[i];
+	//	nrej += n_l5_rejected[i];
 
     // cout <<n_l5_accepted[i] << "  " << n_l5_rejected[i] <<"  " <<n_l5_accepted[i]/( n_l5_accepted[i]+ n_l5_rejected[i])<< endl;
     l5_accepted->SetBinContent(i,n_l5_accepted[i]);
@@ -150,6 +155,10 @@ void purity_ttbar() {
       l5_purity->SetBinError(i,purity_temp[1]);
     }
   }
+
+	//if(nacc + nrej > 0) {
+	//	l5_ratio->SetBinContent(7,nacc/(nacc+nrej));
+	//}
 
 
   
@@ -187,8 +196,8 @@ void purity_ttbar() {
   canvas->Divide(3,1);
   
   canvas->cd(1);
-  gPad->SetGridy();
-  gPad->SetGridx();
+//  gPad->SetGridy();
+//  gPad->SetGridx();
   l5_accepted->SetTitle("compatible charge events");
   l5_accepted->GetXaxis()->SetTitle("method");
   l5_accepted->SetLineColor(4);
@@ -201,9 +210,9 @@ void purity_ttbar() {
   s5_accepted->SetLineWidth(2);
   s5_accepted->Draw("histoesame");
   
-  TLegend *leg = new TLegend(0.2,0.75,0.4,0.85);
-  leg->AddEntry(l5_accepted,"IDR-L","l");
-  leg->AddEntry(s5_accepted,"IDR-S","l");
+  TLegend *leg = new TLegend(0.2,0.75,0.5,0.85);
+  leg->AddEntry(l5_accepted,"IDR-L, 500 GeV","l");
+  leg->AddEntry(s5_accepted,"IDR-S, 500 GeV","l");
   leg->SetFillColor(0);
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
@@ -212,8 +221,8 @@ void purity_ttbar() {
 	QQBARLabel(0.8,0.2,"",1);
 
   canvas->cd(2);
-  gPad->SetGridy();
-  gPad->SetGridx();
+//  gPad->SetGridy();
+//  gPad->SetGridx();
   l5_rejected->SetTitle("uncompatible charge events");
   l5_rejected->GetXaxis()->SetTitle("method");
   l5_rejected->SetLineColor(4);
@@ -230,8 +239,8 @@ void purity_ttbar() {
   leg->Draw();
 
   canvas->cd(3);
-  gPad->SetGridy();
-  gPad->SetGridx();
+//  gPad->SetGridy();
+//  gPad->SetGridx();
   l5_ratio->SetTitle("comp/ (comp+uncomp) charges");
   l5_ratio->GetXaxis()->SetTitle("method");
   l5_ratio->GetYaxis()->SetRangeUser(0.4,0.9);
@@ -256,8 +265,8 @@ void purity_ttbar() {
 
   //canvas2->cd(1);
 
-  gPad->SetGridy();
-  gPad->SetGridx();
+//  gPad->SetGridy();
+//  gPad->SetGridx();
 
   l5_ratio->GetXaxis()->SetBinLabel(1, "Vtx+Vtx");
   l5_ratio->GetXaxis()->SetBinLabel(2, "K+K");
@@ -287,8 +296,8 @@ void purity_ttbar() {
   TCanvas * canvas3 = new TCanvas("canvas3","canvas3",500,500);
 
   //canvas2->cd(2);
-  gPad->SetGridy();
-  gPad->SetGridx();
+//  gPad->SetGridy();
+//  gPad->SetGridx();
 
   l5_purity->GetXaxis()->SetBinLabel(1, "Vtx+Vtx");
   l5_purity->GetXaxis()->SetBinLabel(2, "K+K");
@@ -306,12 +315,13 @@ void purity_ttbar() {
   l5_purity->SetLineColor(4);
   l5_purity->SetLineStyle(1);
   l5_purity->SetLineWidth(2);
-  l5_purity->Draw("histoe");
+  //l5_purity->Draw("histoe");
+  l5_purity->Draw("oe");
 
   s5_purity->SetLineColor(2);
   s5_purity->SetLineStyle(2);
   s5_purity->SetLineWidth(2);
-  s5_purity->Draw("histoesame");
+  s5_purity->Draw("oesame");
   
 	QQBARLabel(0.8,0.2,"",1);
   leg->Draw();
