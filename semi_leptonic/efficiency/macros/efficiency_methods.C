@@ -140,7 +140,8 @@ void efficiency_methods()
 			aftermethod7561=0,
 			aftermethod75612=0,
 			aftermethod756123=0,
-			aftermethod7561234=0;
+			aftermethod7561234=0,
+			aftermethod1234=0;
 
 	normaltree->SetBranchAddress("Thrust", &Thrust);
 	normaltree->SetBranchAddress("hadMass", &hadMass);
@@ -220,10 +221,9 @@ void efficiency_methods()
 								continue;
 							}else{
 
-
 								if(methodCheck7){
 									aftermethod7++;
-		/*
+/*
 									if(qCostheta[0] > 0){
 										recoforward++;
 										cosReco->Fill(qCostheta[0]);
@@ -231,16 +231,17 @@ void efficiency_methods()
 										recobackward++;
 										cosReco->Fill(qCostheta[0]);
 									}
-		*/
+*/
 								}
 								if(methodCheck7 || methodCheck5) aftermethod75++;
 								if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
-									aftermethod7561234++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4)aftermethod7561234++;
 
+								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
+									 aftermethod1234++;
 									if(qCostheta[0] > 0){
 										recoforward++;
 										cosReco->Fill(qCostheta[0]);
@@ -248,12 +249,11 @@ void efficiency_methods()
 										recobackward++;
 										cosReco->Fill(qCostheta[0]);
 									}
-									
 								}
+							
 							}//consistency
 
-
-						}//pcuti
+						}//pcut
 					}//gcut
 				}//rcTW cut
 			}//hadM cut
@@ -272,6 +272,7 @@ void efficiency_methods()
 	cout << "after method75612            = " << aftermethod75612 << " (" << (float)(aftermethod75612)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method756123           = " << aftermethod756123 << " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method1234             = " << aftermethod1234 << " (" << (float)(aftermethod1234)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
   cout << "beforecut (cos = -2)         = " << beforecut << endl;
@@ -327,7 +328,7 @@ void efficiency_methods()
 	std::cout << "Chi2: " << cosReco->Chi2Test(cosGen,"UUNORMCHI2/NDF") << "\n";
 	cout << "--------------------------------------------------------------\n";
 	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
-	cout << "Final efficiency: " << efficiency << "%)\n" ;
+	cout << "Final efficiency: " << efficiency << "%\n" ;
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 
