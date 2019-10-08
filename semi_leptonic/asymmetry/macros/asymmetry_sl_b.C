@@ -185,7 +185,7 @@ void asymmetry_sl_b()
   cosGen_l5->GetXaxis()->SetLabelSize(0.05);
   cosGen_l5->GetXaxis()->SetLabelOffset(0.015);
 
-  cosGen_l5->GetYaxis()->SetTitle("entries / 0.1 rad");
+  cosGen_l5->GetYaxis()->SetTitle("Entries / 0.1");
 	cosGen_l5->GetYaxis()->SetTitleOffset(1.4);
   cosGen_l5->GetYaxis()->SetTitleFont(42);
   cosGen_l5->GetYaxis()->SetTitleSize(0.05);

@@ -247,6 +247,7 @@ void chargeEfficiency2()
 	int _bnvtx = 0;
 	int _bbarnvtx = 0;
 
+
 	//RECO->SetBranchAddress("numberOfTagged", &_numberOfTagged);
 	//RECO->SetBranchAddress("PDG", _PDGreco);
 	//RECO->SetBranchAddress("charge", _chargereco);
@@ -275,6 +276,7 @@ void chargeEfficiency2()
 	RECO->SetBranchAddress("btag", &_btag);
 	RECO->SetBranchAddress("bbartag", &_bbartag);
 
+
 	if (usemva) 
 	{
 		RECO->SetBranchAddress("zerotag", &_zerotag);
@@ -285,6 +287,8 @@ void chargeEfficiency2()
 	}
 
 	int mTotalNumberOfEvents1 = MC2->GetEntries();
+
+cout << "this is test" << endl;
 
 
 	int b0num=0;
@@ -638,8 +642,8 @@ void chargeEfficiency2()
 	c1->cd(2);
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
-	getEfficiency(momentumreco, momentumrecototal, same, color, ";|p|_{had};Charge purity");
-	getEfficiency(momentumreco_after, momentumrecototal_after, 1, kBlue, ";|p|_{had};Charge purity");
+	getEfficiency(momentumreco, momentumrecototal, same, color, ";|p_{B,had}|;Charge purity");
+	getEfficiency(momentumreco_after, momentumrecototal_after, 1, kBlue, ";|p_{B,had}|;Charge purity");
 	drawLegend();
 	QQBARLabel(0.8,0.2,"",1);
 	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-pb.pdf");
@@ -657,8 +661,8 @@ void chargeEfficiency2()
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.03);
 	//getEfficiency(numbergen, numbergentotal, same, color,  "Purity by N_{gen};N_{gen};p_{B}(N_{gen})");
-	getEfficiency(cosgen, cosgentotal, same, color, ";|cos#theta|;Charge purity");
-	getEfficiency(cosgen_after, cosgentotal_after, 1, kBlue, ";|cos#theta|;Charge purity");
+	getEfficiency(cosgen, cosgentotal, same, color, ";|cos#theta_{B}|;Charge purity");
+	getEfficiency(cosgen_after, cosgentotal_after, 1, kBlue, ";|cos#theta_{B}|;Charge purity");
 	drawLegend();
 	QQBARLabel(0.2,0.2,"",1);
 	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-costheta.pdf");

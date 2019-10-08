@@ -141,7 +141,8 @@ void efficiency_methods()
 			aftermethod75612=0,
 			aftermethod756123=0,
 			aftermethod7561234=0,
-			aftermethod1234=0;
+			aftermethod1234=0,
+			aftermethod1=0;
 
 	normaltree->SetBranchAddress("Thrust", &Thrust);
 	normaltree->SetBranchAddress("hadMass", &hadMass);
@@ -240,8 +241,10 @@ void efficiency_methods()
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4)aftermethod7561234++;
 
-								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
-									 aftermethod1234++;
+								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod1234++;
+								if(methodCheck1){
+									aftermethod1++;
+							
 									if(qCostheta[0] > 0){
 										recoforward++;
 										cosReco->Fill(qCostheta[0]);
@@ -250,7 +253,7 @@ void efficiency_methods()
 										cosReco->Fill(qCostheta[0]);
 									}
 								}
-							
+
 							}//consistency
 
 						}//pcut
@@ -265,14 +268,15 @@ void efficiency_methods()
 	cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
 
 	cout << "============================ Non-baseline Cuts ============================" << endl;
-	cout << "after method7                = " << aftermethod7 << " (" << (float)(aftermethod7)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method75               = " << aftermethod75 << " (" << (float)(aftermethod75)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method756              = " << aftermethod756 << " (" << (float)(aftermethod756)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method7561             = " << aftermethod7561 << " (" << (float)(aftermethod7561)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method75612            = " << aftermethod75612 << " (" << (float)(aftermethod75612)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method756123           = " << aftermethod756123 << " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method7                = " << aftermethod7 			<< " (" << (float)(aftermethod7)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method75               = " << aftermethod75 			<< " (" << (float)(aftermethod75)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method756              = " << aftermethod756 		<< " (" << (float)(aftermethod756)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method7561             = " << aftermethod7561 		<< " (" << (float)(aftermethod7561)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method75612            = " << aftermethod75612 	<< " (" << (float)(aftermethod75612)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method756123           = " << aftermethod756123 	<< " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method1234             = " << aftermethod1234 << " (" << (float)(aftermethod1234)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method1234             = " << aftermethod1234 		<< " (" << (float)(aftermethod1234)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method1             		= " << aftermethod1				<< " (" << (float)(aftermethod1)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
   cout << "beforecut (cos = -2)         = " << beforecut << endl;
