@@ -339,7 +339,8 @@ void asymmetry_fullHad(){
 		
 			bmomentum_pass++;
 
-			if( Top1bcharge==0 || Top2bcharge==0) oneZero++;
+			//if( Top1bcharge==0 || Top2bcharge==0) oneZero++;
+			if( Top1bcharge==0) oneZero++;
 
 			if( isbsign ){
 				FillandAdd(Top1bcharge,Top1costheta,Top1bcostheta,topplus,topminus,bottomplus,bottomminus,fillweight,htop,hbottom);

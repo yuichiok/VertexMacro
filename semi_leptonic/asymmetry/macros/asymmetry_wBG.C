@@ -194,13 +194,13 @@ void asymmetry_wBG()
 	leg->SetTextFont(42);
 	leg->AddEntry(cosGen,"Parton level","l");
 	leg->AddEntry(cosReco,"Reconstructed","l");
-	leg->AddEntry(cosBG,"Background (6f)","l");
+	leg->AddEntry(cosBG,"Background","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
 	leg->Draw();
 
-	QQBARLabel(0.8,0.2,"",1);
+	QQBARLabel(0.45,0.2,"ILD Preliminary",1);
 
 	c1->Update();
 

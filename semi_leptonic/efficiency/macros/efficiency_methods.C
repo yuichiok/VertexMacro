@@ -112,7 +112,6 @@ void efficiency_methods()
 	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
 
-
 	int entryStat = normaltree->GetEntries();
 
 	float Thrust=0,
@@ -122,7 +121,9 @@ void efficiency_methods()
 				Top1bmomentum=0,
 				Top2bmomentum=0,
 				Top1gamma=0,
-				Top2gamma=0;
+				Top2gamma=0,
+				cosbjets=0,
+				jet_E=0;
 
 	float qMCcostheta[2],
 				qCostheta[2];
@@ -163,6 +164,8 @@ void efficiency_methods()
 	normaltree->SetBranchAddress("chgValue", chgValue);
 	//normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
 	normaltree->SetBranchAddress("qCostheta", qCostheta);
+	normaltree->SetBranchAddress("cosbjets", &cosbjets);
+	normaltree->SetBranchAddress("jet_E", &jet_E);
 
 	int temp=0;
 
@@ -171,6 +174,9 @@ void efficiency_methods()
   for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
 		normaltree->GetEntry(iStatEntry);
+
+	//std::cout << "cosbjets = " << cosbjets << std::endl;
+
 
 		if(qCostheta[0]==-2) beforecut++;
 
@@ -250,7 +256,7 @@ void efficiency_methods()
 								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod1234++;
 								if(methodCheck1){
 									aftermethod1++;
-							
+
 									if(qCostheta[0] > 0){
 										recoforward++;
 										cosReco->Fill(qCostheta[0]);
@@ -258,6 +264,11 @@ void efficiency_methods()
 										recobackward++;
 										cosReco->Fill(qCostheta[0]);
 									}
+								}else{
+
+									cosbjets_rej->Fill(cosbjets);
+									jetE_rej->Fill(jet_E);
+
 								}
 
 							}//consistency
@@ -282,7 +293,7 @@ void efficiency_methods()
 	cout << "after method756123           = " << aftermethod756123 	<< " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method1234             = " << aftermethod1234 		<< " (" << (float)(aftermethod1234)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method1             		= " << aftermethod1				<< " (" << (float)(aftermethod1)/(float)(nevt) *100 << "%)" << endl;
+	cout << "after method1                = " << aftermethod1				<< " (" << (float)(aftermethod1)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
   cout << "beforecut (cos = -2)         = " << beforecut << endl;
@@ -342,64 +353,6 @@ void efficiency_methods()
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 
-/*
-
-	TCut thru = "Thrust < 0.9";
-	TCut hadM = "hadMass > 180 && hadMass < 420";
-	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
-
-	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
-	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
-
-	TCut method = "methodTaken > 0";
-
-	TCut cuts = thru && hadM && rcTW && pcut && gcut && method;
-
-	int afterbcut    = normaltree->GetEntries();
-	int afterthrucut = normaltree->GetEntries( thru );
-	int afterhadMcut = normaltree->GetEntries( thru && hadM );
-	int afterrcTWcut = normaltree->GetEntries( thru && hadM && rcTW );
-
-	cout << "after thrust cut             = " << afterthrucut << " (" << (float)(afterthrucut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after hadronic mass cut      = " << afterhadMcut << " (" << (float)(afterhadMcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
-
-	int afterpcut = normaltree->GetEntries( thru && hadM && rcTW && pcut );
-	int aftergcut = normaltree->GetEntries( thru && hadM && rcTW && gcut );
-
-	cout << "============================ Non-baseline Cuts ============================" << endl;
-	cout << "after gcut                   = " << aftergcut << " (" << (float)(aftergcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << endl;
-
-	TCut fcoscut = "qCostheta > 0";
-	TCut bcoscut = "qCostheta < 0 && qCostheta > -1.0";
-
-	TCut fcuts = fcoscut && cuts;
-	TCut bcuts = bcoscut && cuts;
-
-	int recoforward = normaltree->GetEntries(fcuts);
-	int recobackward = normaltree->GetEntries(bcuts);
-
-	float afbgen = (float)(forward - backward) / (float) (forward + backward);
-	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
-
-	cout << "recoforward  = " << recoforward  << endl;
-	cout << "recobackward = " << recobackward << endl;
-
-
-	cout << "--------------------------------------------------------------\n";
-	cout << "--------------------------------------------------------------\n";
-	std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";
-	std::cout << "Afb reco: " << afbreco << " N: " << recoforward + recobackward << "(" << afbreco / afbgen *100 << "%)"  << "\n";
-	cout << "--------------------------------------------------------------\n";
-	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
-	cout << "Final efficiency: " << efficiency << "%\n" ;
-	cout << "--------------------------------------------------------------\n";
-	cout << "--------------------------------------------------------------\n";
-	//file->Close();
-	
-	*/
 	
 }
 

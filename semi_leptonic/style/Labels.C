@@ -17,7 +17,7 @@ void QQBARLabel(Double_t x,Double_t y,char* text,Color_t color)
 
   double delx = 800*gPad->GetWh()/(1000*gPad->GetWw());
   
-  l.DrawLatex(x,y,"ILD");
+  //l.DrawLatex(x,y,"ILD");
   if (text) {
     TLatex p;
     p.SetNDC();
@@ -25,7 +25,9 @@ void QQBARLabel(Double_t x,Double_t y,char* text,Color_t color)
     p.SetTextFont(42);
     p.SetTextColor(color);
     p.DrawLatex(x+0.105,y,text);
-  }
+  }else{
+		l.DrawLatex(x,y,"ILD");
+	}
 }
 
 
