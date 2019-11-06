@@ -123,10 +123,10 @@ void efficiency_methods()
 				Top1gamma=0,
 				Top2gamma=0,
 				cosbjets=0,
-				jet_E=0;
 
 	float qMCcostheta[2],
-				qCostheta[2];
+				qCostheta[2],
+				jet_E[2];
 	
 	int recoforward=0,
 			recobackward=0,
@@ -174,9 +174,6 @@ void efficiency_methods()
   for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
 		normaltree->GetEntry(iStatEntry);
-
-	//std::cout << "cosbjets = " << cosbjets << std::endl;
-
 
 		if(qCostheta[0]==-2) beforecut++;
 
@@ -266,8 +263,8 @@ void efficiency_methods()
 									}
 								}else{
 
-									cosbjets_rej->Fill(cosbjets);
-									jetE_rej->Fill(jet_E);
+									//cosbjets_rej->Fill(cosbjets);
+									//jetE_rej->Fill(jet_E);
 
 								}
 
