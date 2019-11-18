@@ -168,10 +168,11 @@ void asymmetry_sl_b()
 
 	cosGen_l5->SetLineWidth(3);
 	//cosGen_l5->SetLineStyle(2);
-	//cosGen_l5->SetLineColor(kGreen+1);
-	//cosGen_l5->SetFillColor(kGreen+1);
-	cosGen_l5->SetLineColor(kGray+1);
-	cosGen_l5->SetFillColor(kGray+1);
+	cosGen_l5->SetLineColor(kGreen+1);
+	cosGen_l5->SetFillColor(kGreen+1);
+	
+	//cosGen_l5->SetLineColor(kGray+1);
+	//cosGen_l5->SetFillColor(kGray+1);
 
 	cosGen_l5->SetFillStyle(3004);
 	cosGen_l5->SetStats(0);
@@ -198,8 +199,9 @@ void asymmetry_sl_b()
 	TF1 * fgen = new TF1("fgen","pol2",-1,1);
 	TF1 * freco_l5 = new TF1("freco_l5","pol2",-0.9,0.9);
 	TF1 * freco_s5 = new TF1("freco_s5","pol2",-0.9,0.9);
-	//fgen->SetLineColor(kGreen);
-	fgen->SetLineColor(kGray);
+	fgen->SetLineColor(kGreen);
+	
+	//fgen->SetLineColor(kGray);
 	fgen->SetLineStyle(3);
 	freco_l5->SetLineStyle(3);
 	freco_l5->SetLineColor(kBlue+1);
