@@ -10,8 +10,22 @@
 #include <TCut.h>
 #include <TEventList.h>
 #include <TStyle.h>
+#include "../../style/Style.C"
+#include "../../style/Labels.C"
+#define MAXV 8
 
 using namespace std ;
+
+
+void sethist(Color_t clr, TH1F* h = 0){
+
+	h->SetLineWidth(3);
+	h->SetLineStyle(1);
+	h->SetLineColor(clr);
+	h->SetFillColor(clr);
+	h->SetFillStyle(3004);
+
+}
 
 float LorentzF( float energy, float mass){
 	return energy/mass ;
@@ -39,97 +53,59 @@ void FillMCRC( TH2F* hist = 0, float chg1 = 0, float t1cos = 0, float t2cos = 0,
 	}
 }
 
-//void FillandAdd( int b1, int b2, float tcos1, float tcos2, float bcos1, float bcos2, int& tpl, int& tmi, int& bpl, int& bmi, double weight = 0, TH1F* top = 0, TH1F* bottom = 0){
-
 void FillandAdd( int b1, float tcos1, float bcos1, int& tpl, int& tmi, int& bpl, int& bmi, double weight = 0, TH1F* top = 0, TH1F* bottom = 0){
-	//std::cout <<"Begin FillandAdd b1 ,b2: " << b1 << ", " << b2 << std::endl;
 	if( b1 < 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
 		top->Fill( tcos1, weight ) ;
-		//top->Fill( -tcos2, weight ) ;
 		bottom->Fill( bcos1, weight ) ;
-		//bottom->Fill( -bcos2, weight ) ;
 		AddAFBvalue( tcos1, tpl, tmi ) ;
-		//AddAFBvalue( -tcos2, tpl, tmi ) ;
 		AddAFBvalue( bcos1, bpl, bmi ) ;
-		//AddAFBvalue( -bcos2, bpl, bmi ) ;
 	}else {  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
 		top->Fill( -tcos1, weight ) ;
-		//top->Fill( tcos2, weight ) ;
 		bottom->Fill( -bcos1, weight ) ;
-		//bottom->Fill( bcos2, weight ) ;
 		AddAFBvalue( -tcos1, tpl, tmi ) ;
-		//AddAFBvalue( tcos2, tpl, tmi ) ;
 		AddAFBvalue( -bcos1, bpl, bmi ) ;
-		//AddAFBvalue( bcos2, bpl, bmi ) ;
 	}
-	/*
-		 }else if( b1 > 0 ){  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
-		 top->Fill( -tcos1, weight ) ;
-		 top->Fill( tcos2, weight ) ;
-		 bottom->Fill( -bcos1, weight ) ;
-		 bottom->Fill( bcos2, weight ) ;
-		 AddAFBvalue( -tcos1, tpl, tmi ) ;
-		 AddAFBvalue( tcos2, tpl, tmi ) ;
-		 AddAFBvalue( -bcos1, bpl, bmi ) ;
-		 AddAFBvalue( bcos2, bpl, bmi ) ;
-		 }else if( b2 > 0 ){  //Top1 = top, Top2 = antitop, Top1b = bottom, Top2b = antibottom
-		 top->Fill( tcos1, weight ) ;
-		 top->Fill( -tcos2, weight ) ;
-		 bottom->Fill( bcos1, weight ) ;
-		 bottom->Fill( -bcos2, weight ) ;
-		 AddAFBvalue( tcos1, tpl, tmi ) ;
-		 AddAFBvalue( -tcos2, tpl, tmi ) ;
-		 AddAFBvalue( bcos1, bpl, bmi ) ;
-		 AddAFBvalue( -bcos2, bpl, bmi ) ;
-		 }else{  //Top1 = antitop, Top2 = top, Top1b = antibottom, Top2b = bottom
-		 std::cout <<"b1 ,b2: " << b1 << ", " << b2 << std::endl;
-		 top->Fill( -tcos1, weight ) ;
-		 top->Fill( tcos2, weight ) ;
-		 bottom->Fill( -bcos1, weight ) ;
-		 bottom->Fill( bcos2, weight ) ;
-		 AddAFBvalue( -tcos1, tpl, tmi ) ;
-		 AddAFBvalue( tcos2, tpl, tmi ) ;
-		 AddAFBvalue( -bcos1, bpl, bmi ) ;
-		 AddAFBvalue( bcos2, bpl, bmi ) ;
-		 }*/
 
 }
 
+void asymmetry_fullHad2(){
 
-//#ifdef __CINT__
-void asymmetry_fullHad(){
-	//#else
-	//int main( int argc, char **argv ){
-	//TApplication app( "app", &argc, argv ) ;
-	//#endif
+	// set plot style
+	SetQQbarStyle();
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
 
-	//CRP 4/6/18 Define histos here to make sure that they don't go out of scope 
-	//Check root manual -> owership of objects for details
-	//... or use SetDirectory as below to enable creating histograms on the fly
-	TH1F* htop = new TH1F( "htop", "top polar angle (reconstructed)", 40, -1, 1 ) ;
-	htop->SetMinimum(0) ;
-	htop->SetLineColor(2) ;
-	htop->GetXaxis()->SetTitle("cos #theta");
-	TH1F* hbottom = new TH1F( "hbottom", "bottom polar angle (reconstructed)", 40, -1, 1 ) ;
-	hbottom->SetMinimum(0) ;
-	hbottom->SetLineColor(2) ;
-	hbottom->GetXaxis()->SetTitle("cos #theta");
-	TH1F* htopgen = new TH1F( "htopgen", "top polar angle (generated)", 40, -1, 1 ) ;
-	htopgen->SetMinimum(0) ;
-	htopgen->SetMaximum(0.11) ;
-	htopgen->SetLineColor(4) ;
-	htopgen->GetXaxis()->SetTitle("cos #theta");
-	TH1F* hbottomgen = new TH1F( "hbottomgen", "bottom polar angle (generated)", 40, -1, 1 ) ;
-	hbottomgen->SetMinimum(0) ;
-	hbottomgen->SetMaximum(0.11) ;
-	hbottomgen->SetLineColor(4) ;
-	hbottomgen->GetXaxis()->SetTitle("cos #theta");
-	TH1F* hLzFbf = new TH1F( "hLzFbf", "Lorentz factor #gamma", 100, 2, 4 ) ;
-	hLzFbf->SetLineColor(2) ;
-	TH1F* hLzFaf = new TH1F( "hLzFaf", "Lorentz factor #gamma", 100, 2, 4 ) ;
-	hLzFaf->SetLineColor(3) ;
+	TGaxis::SetMaxDigits(3);
+
+	TH1F* htop = new TH1F( "htop", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kRed+1, htop);
+	//htop->SetMinimum(0) ;
+	//htop->SetLineColor(2) ;
+
+	TH1F* hbottom = new TH1F( "hbottom", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kRed+1, hbottom);
+	//hbottom->SetMinimum(0) ;
+	//hbottom->SetLineColor(2) ;
+
+	TH1F* htopgen = new TH1F( "htopgen", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kGray+1, htopgen);
+	//htopgen->SetMinimum(0) ;
+	//htopgen->SetMaximum(0.11) ;
+	//htopgen->SetLineColor(4) ;
+
+	TH1F* hbottomgen = new TH1F( "hbottomgen", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kGray+1, hbottomgen);
+	//hbottomgen->SetMinimum(0) ;
+	//hbottomgen->SetMaximum(0.11) ;
+	//hbottomgen->SetLineColor(4) ;
+
 	TH2F* hCosMCRCbf = new TH2F( "hCosMCRCbf", "Top cos#theta MC vs RC (before vtx recovery)", 100, -1, 1, 100, -1, 1 ) ;
-	//hCosMCRCbf->Draw("colz");
 	TH2F* hCosMCRCaf = new TH2F( "hCosMCRCaf", "Top cos#theta MC vs RC (after vtx recovery)", 100, -1, 1, 100, -1, 1 ) ;
 
 	// normalize histogram to have proper error
@@ -138,43 +114,39 @@ void asymmetry_fullHad(){
 	hbottom->Sumw2();
 	hbottomgen->Sumw2();
 
-	TH1F* htopafter = new TH1F( "htopafter", "top polar angle (after vertex restorer)", 40, -1, 1 ) ;
-	htopafter->SetMinimum(0) ;
-	htopafter->SetLineColor(3) ;
-	htopafter->GetXaxis()->SetTitle("cos #theta");
-	TH1F* hbottomafter = new TH1F( "hbottomafter", "bottom polar angle (after vertex restorer)", 40, -1, 1 ) ;
-	hbottomafter->SetMinimum(0) ;
-	hbottomafter->SetLineColor(3) ;
-	hbottomafter->GetXaxis()->SetTitle("cos #theta");
+	TH1F* htopafter = new TH1F( "htopafter", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kGreen+1, htopafter);
+	//htopafter->SetMinimum(0) ;
+	//htopafter->SetLineColor(3) ;
+	TH1F* hbottomafter = new TH1F( "hbottomafter", ";cos #theta;Entries", 40, -1, 1 ) ;
+	sethist(kGreen+1, hbottomafter);
+	//hbottomafter->SetMinimum(0) ;
+	//hbottomafter->SetLineColor(3) ;
 
 	htopafter->Sumw2();
 	hbottomafter->Sumw2();
 	//End of histogram definition
 
 	// declare canvas for later usage
-	TCanvas* c1 = new TCanvas( "c1", "c1", 1280, 480 ) ;
-	TCanvas* c2 = new TCanvas( "c2", "c2", 680, 480 ) ;
-	TCanvas* c3 = new TCanvas( "c3", "c3", 1280, 480 ) ;
-	TCanvas* c4 = new TCanvas( "c4", "c4", 1280, 480 ) ;
+	//TCanvas* c1 = new TCanvas( "c1", "c1", 1280, 480 ) ;
+	//TCanvas* c2 = new TCanvas( "c2", "c2", 1280, 480 ) ;
+	TCanvas* c1 = new TCanvas( "c1", "c1", 500, 500 ) ;
+	TCanvas* c2 = new TCanvas( "c2", "c2", 500, 500 ) ;
 	//
 
 	//opening the root files
-	//string rootfiledir = "/home/ilc/yokugawa/TTBarAnalysis/test/";
 	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/" ;
-	//string rootfiledir = "/Users/poeschl/ownCloud/lc/lcphys/tt-had/rootfiles/" ;
-	//string beforefilename = "semi_leptonic.root";
+
 	string beforefilename = "fullHad.eL.pR_QQbar.root" ;
 	string afterfilename = "fullHad.eL.pR_QQbar_noVR.root" ;
 	string rootfilename ;
 	string treename = "Stats" ;
 
 	rootfilename = rootfiledir + beforefilename ;
-	//rootfilename = rootfiledir + afterfilename ;
 	cout << "filename '" << rootfilename << "'." << endl ;
 	TFile file1( rootfilename.c_str() ) ;
 	if( file1.IsZombie() ){
 		cout << "cannot open the file '" << rootfilename << "'." << endl ;
-		//return 1 ;
 		return ;
 	}
 
@@ -188,7 +160,7 @@ void asymmetry_fullHad(){
 	float Top1bmomentum, Top2bmomentum;
 	float Top1btag, Top2btag;
 	float Top1energy, Top1mass;
-	float Top2mass, Top2energy;
+	float Top2mass;
 	float MCTopcostheta, MCTopBarcostheta ;
 	float qMCBcostheta[2] ;
 	int topplus = 0, topminus = 0, bottomplus = 0, bottomminus = 0 ;
@@ -197,10 +169,6 @@ void asymmetry_fullHad(){
 
 	// setting precuts
 	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.30 ) " ;
-	TCut chi2_1 = "chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
-	TCut chi2_2 = "chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
-	TCut chi2 = chi2_1 + chi2_2 ;
-	//TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) && ( Top2mass > 140 ) && ( Top2mass < 210 ) " ;
 	TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) " ;
 	TCut samecharge = "  Top1bcharge * Top2bcharge > 0 " ;
 	TCut both0charge = " ( Top1bcharge == 0 ) || ( Top2bcharge == 0 ) " ;
@@ -217,33 +185,18 @@ void asymmetry_fullHad(){
 	cout << "after b-tag cut     = " << afterbtag << " (" << (float)100*afterbtag/eventnum << "%)" << endl ;
 	int afterkinematic = tree1->GetEntries( btag && kinematic ) ;
 	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
-	//int afterchi2 = tree1->GetEntries( btag && kinematic && chi2 ) ;
-	int afterchi2 = tree1->GetEntries( btag && kinematic ) ;
-	cout << "after chi2 cut      = " << afterchi2 << " (" << (float)100*afterchi2/eventnum << "%)" << endl;
-
-	// number of events after precuts
-	//int samesignnum = tree1->GetEntries( btag && kinematic && chi2 && samecharge ) ;
-	//int samesignKaonbnum = tree1->GetEntries( btag && kinematic && chi2 && sameKaonbcharge ) ;
-	//int both0num = tree1->GetEntries( btag && kinematic && chi2 && both0charge ) ;
-	//int usednum = afterchi2 - samesignnum - both0num ;
 	
 	int samesignnum = tree1->GetEntries( btag && kinematic && samecharge ) ;
-	//int samesignKaonbnum = tree1->GetEntries( btag && kinematic && chi2 && sameKaonbcharge ) ;
 	int both0num = tree1->GetEntries( btag && kinematic && both0charge ) ;
 	
-	int usednum = afterchi2 ;
+	int usednum = afterkinematic ;
 
 	cout << endl ;
 	cout << "used number = " << usednum << endl ; // number of events before cuts (not precuts!)
 
 	TEventList *elist1 = new TEventList( "elist1", "Reconstructed Event List" ) ;
 
-	//tree1->Draw( ">>elist1", btag && kinematic && chi2 && !samecharge  && !both0charge ) ;
-	//tree1->Draw( ">>elist1", btag && kinematic && chi2 ) ;
 	tree1->Draw( ">>elist1", btag && kinematic) ;
-
-	//usednum = elist->GetN() ;
-	//cout << "used number = " << usednum << endl ;
 
 	// setting tree branch address
 	tree1->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
@@ -265,7 +218,6 @@ void asymmetry_fullHad(){
 	tree1->SetBranchAddress( "Top1mass", &Top1mass ) ;
 	tree1->SetBranchAddress( "Top1energy", &Top1energy ) ;
 	tree1->SetBranchAddress( "Top2mass", &Top2mass ) ;
-	tree1->SetBranchAddress( "Top2energy", &Top2energy ) ;
 
 	tree1->SetBranchAddress( "Top1bmomentum", &Top1bmomentum ) ;
 	tree1->SetBranchAddress( "Top2bmomentum", &Top2bmomentum ) ;
@@ -316,26 +268,11 @@ void asymmetry_fullHad(){
 		if( (Top1TotalKaonCharge*Top2TotalKaonCharge < 0) &&  ( fabs(Top1TotalKaonCharge)<5 &&  fabs(Top2TotalKaonCharge)<5)) iskaonsign = true;
 		if( (Top1bcharge*Top2TotalKaonCharge < 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  isb1k2sign = true;
 		if( (Top2bcharge*Top1TotalKaonCharge < 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  isb2k1sign = true;
-		//CRP 03/06/18 Add same side charges
-		if( (Top1bcharge*Top1TotalKaonCharge > 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  { 
-			//std::cout << "b1k1 cond fulfilled" << std::endl;
-			isb1k1sign = true;
-		}
-		if( (Top2bcharge*Top2TotalKaonCharge > 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  { 
-			//std::cout << "b2k2 cond fulfilled" << std::endl;
-			isb2k2sign = true;
-		}
-		//if( Top1bmomentum > 30 && Top2bmomentum > 30 ) isbMomentum = true;
+		if( (Top1bcharge*Top1TotalKaonCharge > 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  isb1k1sign = true;
+		if( (Top2bcharge*Top2TotalKaonCharge > 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  isb2k2sign = true;
+
 		if( Top1bmomentum > 20 && Top2bmomentum > 20 ) isbMomentum = true;
 
-		//if( isbsign || iskaonsign || isb1k2sign || isb2k1sign ){
-		G1 = LorentzF(Top1energy,Top1mass);
-		G2 = LorentzF(Top2energy,Top2mass);
-		hLzFbf->Fill(G1+G2);
-		//}
-
-
-		//if(G1+G2>2.5 && G1+G2<3.0  && isbMomentum){
 		if( isbMomentum) {
 		
 			bmomentum_pass++;
@@ -392,11 +329,6 @@ void asymmetry_fullHad(){
 	bottomAFB = getAFB( bottomplus, bottomminus ) ;
 	cout << "AFB(top) = " << topAFB << ", AFB(bottom) = " << bottomAFB << endl ;
 
-	//tree1->SetBranchStatus( "Top*", 0 ) ;
-	//tree1->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
-	//tree1->SetBranchAddress( "MCTopBarcostheta", &MCTopBarcostheta ) ;
-	//tree1->SetBranchAddress( "qMCBcostheta", &qMCBcostheta ) ;
-
 	TEventList* elistgen = new TEventList( "elistgen", "Generated Event List" ) ;
 	tree1->Draw( ">>elistgen", " ( MCTopcostheta != -2 ) && ( MCTopBarcostheta != -2 ) && ( qMCBcostheta[0] != -2 ) && ( qMCBcostheta[1] != -2 ) " ) ;
 	int usedgennum = elistgen->GetN() ;
@@ -449,8 +381,6 @@ void asymmetry_fullHad(){
 	cout << "after b-tag cut     = " << afterbtag << " (" << (float)100*afterbtag/eventnum << "%)" << endl ;
 	afterkinematic = tree2->GetEntries( btag && kinematic ) ;
 	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
-	afterchi2 = tree2->GetEntries( btag && kinematic ) ;
-	cout << "after chi2 cut      = " << afterchi2 << " (" << (float)100*afterchi2/eventnum << "%)" << endl;
 
 	//samesignnum = tree2->GetEntries( btag && kinematic && chi2 && samecharge ) ;
 	//samesignKaonbnum = tree2->GetEntries( btag && kinematic && chi2 && sameKaonbcharge ) ;
@@ -462,7 +392,7 @@ void asymmetry_fullHad(){
 
 
 	//usednum = afterchi2 - samesignnum - both0num ;
-	usednum = afterchi2 ;
+	usednum = afterkinematic ;
 	cout << endl ;
 	cout << "used number = " << usednum << endl ;
 	//cout << "same charge sign number = " << samesignnum << endl ;
@@ -472,8 +402,6 @@ void asymmetry_fullHad(){
 	TEventList *elist2 = new TEventList( "elist2", "Reconstructed Event List" ) ;
 	//tree2->Draw( ">>elist2", btag && kinematic && chi2 && !samecharge && !both0charge ) ;
 	tree2->Draw( ">>elist2", btag && kinematic ) ;
-	//usednum = elist2->GetN() ;
-	//cout << "used number = " << usednum << endl ;
 
 	tree2->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
 	tree2->SetBranchAddress( "MCTopBarcostheta", &MCTopBarcostheta ) ;
@@ -494,7 +422,6 @@ void asymmetry_fullHad(){
 	tree2->SetBranchAddress( "Top1mass", &Top1mass ) ;
 	tree2->SetBranchAddress( "Top1energy", &Top1energy ) ;
 	tree2->SetBranchAddress( "Top2mass", &Top2mass ) ;
-	tree2->SetBranchAddress( "Top2energy", &Top2energy ) ;
 
 	tree2->SetBranchAddress( "Top1bmomentum", &Top1bmomentum ) ;
 	tree2->SetBranchAddress( "Top2bmomentum", &Top2bmomentum ) ;
@@ -531,38 +458,17 @@ void asymmetry_fullHad(){
 		isb2k2sign = false ;
 		isbMomentum = false ;
 
-		//CRP 23/05/18 Avoid cases on which abs(b2) = 5
-		//if( Top1bcharge*Top2bcharge < 0 && Top2btag > 0.80 ) isbsign = true;
-		//if( Top1TotalKaonCharge*Top2TotalKaonCharge < 0 ) iskaonsign = true;
-		//if( Top1bcharge*Top2TotalKaonCharge < 0 ) isb1k2sign = true;
-		//if( Top2bcharge*Top1TotalKaonCharge < 0 ) isb2k1sign = true;
-		//if( Top1bmomentum > 30 && Top2bmomentum > 30 ) isbMomentum = true;
 		if( (Top1bcharge*Top2bcharge < 0 && Top2btag > 0.80) && (fabs(Top1bcharge) < 5 && fabs(Top2bcharge) < 5) ) isbsign = true;
 		if( (Top1TotalKaonCharge*Top2TotalKaonCharge < 0) &&  ( fabs(Top1TotalKaonCharge)<5 &&  fabs(Top2TotalKaonCharge)<5)) iskaonsign = true;
 		if( (Top1bcharge*Top2TotalKaonCharge < 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  isb1k2sign = true;
 		if( (Top2bcharge*Top1TotalKaonCharge < 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  isb2k1sign = true;
-		//CRP 03/06/18 Add same side charges
-		if( (Top1bcharge*Top1TotalKaonCharge > 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  { 
-			//std::cout << "b1k1 cond fulfilled" << std::endl;
-			isb1k1sign = true;
-		}
-		if( (Top2bcharge*Top2TotalKaonCharge > 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  { 
-			//std::cout << "b2k2 cond fulfilled" << std::endl;
-			isb2k2sign = true;
-		}
-		//if( Top1bmomentum > 30 && Top2bmomentum > 30 ) isbMomentum = true;
+		if( (Top1bcharge*Top1TotalKaonCharge > 0) && ( fabs(Top1bcharge)<5 &&  fabs(Top1TotalKaonCharge)<5) )  isb1k1sign = true;
+		if( (Top2bcharge*Top2TotalKaonCharge > 0) && ( fabs(Top2bcharge)<5 &&  fabs(Top2TotalKaonCharge)<5) )  isb2k2sign = true;
 		if( Top1bmomentum > 20 && Top2bmomentum > 20 ) isbMomentum = true;
 
 		G1=0;
 		G2=0;
 
-		//if( isbsign || iskaonsign || isb1k2sign || isb2k1sign ){
-		G1 = LorentzF(Top1energy,Top1mass);
-		G2 = LorentzF(Top2energy,Top2mass);
-		hLzFaf->Fill(G1+G2);
-		//}
-
-		//if(G1+G2>2.5 && G1+G2<3.0  && isbMomentum){
 		if(isbMomentum){
 
 			bmomentum_pass++;
@@ -627,45 +533,37 @@ void asymmetry_fullHad(){
 	//Variable to normalise histos
 	double norm(0.0);
 
-	c4->cd();
-	c4->Divide(2,1) ;
-	c4->cd(1) ;
-	TH1F* htopraw = (TH1F*) htop->Clone(); 
-	TH1F* htopafterraw = (TH1F*) htopafter->Clone(); 
-	htopraw->SetDirectory(0);
-	htopafterraw->SetDirectory(0);
-	htopafterraw->Draw();
-	htopraw->Draw("SAME");
-	c4->cd(2) ;
-	//Divide before and after vtx recovery
-	TH1F* hdiv = (TH1F*) htop->Clone(); 
-	hdiv->SetDirectory(0);
-	hdiv->Divide(htopafterraw);
-	hdiv->Draw();
+	c1->cd();
+
+	norm = htop->GetEntries()/2 ;
+	htop->Scale(1/norm);
+	norm = htopafter->GetEntries()/2 ;
+	htopafter->Scale(1/norm);
+
+	htopgen->SetTitle( "bottom polar angle (before:Red after:Green Gen:Blue)" ) ;
+	htopgen->GetXaxis()->SetTitleOffset(1.1);
+  htopgen->GetXaxis()->SetTitleFont(42);
+  htopgen->GetXaxis()->SetTitleSize(0.05);
+  htopgen->GetXaxis()->SetLabelSize(0.05);
+  htopgen->GetXaxis()->SetLabelOffset(0.015);
+	
+	htopgen->Draw() ;
+	htop->Draw( "SAME" ) ;
+	htopafter->Draw( "SAME" ) ;
 
 
 
+/*
 	c2->cd();
-	norm = hLzFbf->GetEntries();
-	hLzFbf->Scale(1/norm);
-	norm = hLzFaf->GetEntries();
-	hLzFaf->Scale(1/norm);
-	hLzFbf->Draw();
-	hLzFaf->Draw("same");
-
-
-	c3->cd();
-	c3->Divide(2,1) ;
-	c3->cd(1);
+	c2->Divide(2,1) ;
+	c2->cd(1);
 	hCosMCRCbf->GetYaxis()->SetTitle("MC cos #theta");
 	hCosMCRCbf->GetXaxis()->SetTitle("RC cos #theta");
 	hCosMCRCbf->Draw("colz");
-	c3->cd(2);
+	c2->cd(2);
 	hCosMCRCaf->GetYaxis()->SetTitle("MC cos #theta");
 	hCosMCRCaf->GetXaxis()->SetTitle("RC cos #theta");
 	hCosMCRCaf->Draw("colz");
-
-
 
 
 	c1->cd();
@@ -788,7 +686,7 @@ void asymmetry_fullHad(){
 
 	file1.Close() ;
 	file2.Close() ;
-
+*/
 
 
 	//return 0;
