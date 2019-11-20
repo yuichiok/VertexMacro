@@ -97,8 +97,7 @@ void bjet_EvE()
 	normaltree->SetBranchAddress("jet_E", jet_E);
 
 	int temp=0;
-
-	int beforecut=0, aftercut=0;
+	int total=0, afBaseLine=0, mth1=0;
 
   for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
@@ -110,6 +109,8 @@ void bjet_EvE()
 
 	//	if(Thrust<0.9){
 
+		total++;
+
 			if(hadMass > 180 && hadMass < 420){
 
 				if(Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50){
@@ -117,6 +118,8 @@ void bjet_EvE()
 	//				if( (Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ){
 
 						if(Top1bmomentum > 15 && Top2bmomentum > 15){
+
+							afBaseLine++;
 
 							bool methodCheck1=false,
 									 methodCheck2=false,
@@ -157,6 +160,8 @@ void bjet_EvE()
 
 									if(methodCheck1){
 
+										mth1++;
+
 										cosbjets_acc->Fill(cosbjets);
 										bjetE_acc->Fill(jet_E[0]);
 										bjetE_acc->Fill(jet_E[1]);
@@ -180,6 +185,8 @@ void bjet_EvE()
 //		}//thrust cut
 
 	}
+
+	std::cout << "total = " << total << "\t" << "afBaseLine = " << afBaseLine << "\t" << "mth1 = " << mth1 << std::endl;
 
 	// Plot
 	cosbjets_all->SetMinimum(0);

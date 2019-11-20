@@ -168,7 +168,7 @@ void asymmetry_fullHad2(){
 
 
 	// setting precuts
-	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.30 ) " ;
+	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.80 ) " ;
 	TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) " ;
 	TCut samecharge = "  Top1bcharge * Top2bcharge > 0 " ;
 	TCut both0charge = " ( Top1bcharge == 0 ) || ( Top2bcharge == 0 ) " ;

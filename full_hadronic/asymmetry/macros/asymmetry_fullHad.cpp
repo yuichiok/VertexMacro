@@ -217,8 +217,10 @@ void asymmetry_fullHad(){
 	cout << "after b-tag cut     = " << afterbtag << " (" << (float)100*afterbtag/eventnum << "%)" << endl ;
 	int afterkinematic = tree1->GetEntries( btag && kinematic ) ;
 	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
+
 	//int afterchi2 = tree1->GetEntries( btag && kinematic && chi2 ) ;
 	int afterchi2 = tree1->GetEntries( btag && kinematic ) ;
+	
 	cout << "after chi2 cut      = " << afterchi2 << " (" << (float)100*afterchi2/eventnum << "%)" << endl;
 
 	// number of events after precuts

@@ -66,7 +66,7 @@ void asymmetry_sl()
 	TCut thru = "Thrust < 0.9";
 	TCut hadM = "hadMass > 180 && hadMass < 420";
 	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
-	//TCut kinematic = "( Top1mass > 140 ) && ( Top1mass < 210 )";
+	TCut kinematic = "( Top1mass > 140 ) && ( Top1mass < 210 )";
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
