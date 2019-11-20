@@ -79,14 +79,14 @@ void bjet_EvE()
 	int entryStat = normaltree->GetEntries();	
 
 
-	normaltree->SetBranchAddress("Thrust", &Thrust);
+//	normaltree->SetBranchAddress("Thrust", &Thrust);
 	normaltree->SetBranchAddress("hadMass", &hadMass);
 	normaltree->SetBranchAddress("Top1mass", &Top1mass);
 	normaltree->SetBranchAddress("W1mass", &W1mass);
 	normaltree->SetBranchAddress("Top1bmomentum", &Top1bmomentum);
 	normaltree->SetBranchAddress("Top2bmomentum", &Top2bmomentum);
 	normaltree->SetBranchAddress("Top1gamma", &Top1gamma);
-	normaltree->SetBranchAddress("Top2gamma", &Top2gamma);
+//	normaltree->SetBranchAddress("Top2gamma", &Top2gamma);
 	normaltree->SetBranchAddress("methodUsed", &methodUsed);
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
 	normaltree->SetBranchAddress("chgValue", chgValue);
@@ -108,13 +108,13 @@ void bjet_EvE()
 		//bjetE_all->Fill(jet_E[0]);
 		//bjetE_all->Fill(jet_E[1]);
 
-		if(Thrust<0.9){
+	//	if(Thrust<0.9){
 
 			if(hadMass > 180 && hadMass < 420){
 
 				if(Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50){
 
-					if( (Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ){
+	//				if( (Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ){
 
 						if(Top1bmomentum > 15 && Top2bmomentum > 15){
 
@@ -174,10 +174,10 @@ void bjet_EvE()
 							}// qCos > 0.9
 
 						}//pcut
-					}//gcut
+//					}//gcut
 				}//rcTW cut
 			}//hadM cut
-		}//thrust cut
+//		}//thrust cut
 
 	}
 

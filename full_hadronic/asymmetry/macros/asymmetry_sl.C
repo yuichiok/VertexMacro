@@ -36,7 +36,7 @@ void asymmetry_sl()
 	
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/full_hadronic/input/record.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -66,6 +66,7 @@ void asymmetry_sl()
 	TCut thru = "Thrust < 0.9";
 	TCut hadM = "hadMass > 180 && hadMass < 420";
 	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
+	//TCut kinematic = "( Top1mass > 140 ) && ( Top1mass < 210 )";
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
@@ -80,7 +81,9 @@ void asymmetry_sl()
 	TCut method7 = "methodTaken == 7";
 
 	// Total cut applied
-	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	//TCut cuts = kinematic + hadM + pcut + methodAll;
+	TCut cuts = rcTW + hadM + pcut + methodAll;
 
 	TCut fcuts = "qCostheta > 0" + cuts;
 	TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
