@@ -39,13 +39,16 @@ void chi2(){
 	/*
 	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/" ;
 	string beforefilename = "fullHad.eL.pR_QQbar.root" ;
-	string afterfilename = "fullHad.eL.pR_QQbar_noVR.root" ;
-	*/
 	
 	// DBD
 	string rootfiledir = "/home/ilc/yokugawa/TTBarAnalysis/root_merge/" ;
 	string beforefilename = "hadronic_eLpR_kekcc_500k.root" ;
-	string afterfilename = "aftervertexrestore_" + beforefilename ;
+	*/
+
+	// Semi-leptonic
+	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/" ;
+	string beforefilename = "IsoLepTagged.eL.pR_electron_muon_QQbar_MethodAll_110119.root" ;
+
 
 	string rootfilename ;
 	string treename = "Stats" ;
@@ -78,10 +81,10 @@ void chi2(){
 	// setting precuts
 	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.30 ) " ;
 
-	//TCut chi2_1 = "chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
-	//TCut chi2_2 = "chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
-	TCut chi2_1 = "chiTopMass1 + chiTopE1 < 30 " ;
-	TCut chi2_2 = "chiTopMass2 + chiTopE2 < 30 " ;
+	TCut chi2_1 = "chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
+	TCut chi2_2 = "chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
+	//TCut chi2_1 = "chiTopMass1 + chiTopE1 < 30 " ;
+	//TCut chi2_2 = "chiTopMass2 + chiTopE2 < 30 " ;
 
 	TCut chi2 = chi2_1 + chi2_2 ;
 	//TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) && ( Top2mass > 140 ) && ( Top2mass < 210 ) " ;
@@ -100,8 +103,8 @@ void chi2(){
 	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
 
 
-	//int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 + chiPbstar1 >> h_chiSum", btag && kinematic);
-	int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 >> h_chiSum", btag && kinematic);
+	int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 + chiPbstar1 >> h_chiSum", btag && kinematic);
+	//int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 >> h_chiSum", btag && kinematic);
 
 	int val_chiTopMass1 = tree1->Draw("chiTopMass1 >> h_chiTopMass1", btag && kinematic);
 	int val_chiTopE1    = tree1->Draw("chiTopE1 >> h_chiTopE1", btag && kinematic);
