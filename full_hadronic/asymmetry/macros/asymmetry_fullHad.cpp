@@ -197,8 +197,12 @@ void asymmetry_fullHad(){
 
 	// setting precuts
 	TCut btag = " ( Top1btag > 0.80 ) && ( Top2btag > 0.30 ) " ;
+
 	TCut chi2_1 = "chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
 	TCut chi2_2 = "chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
+	//TCut chi2_1 = "chiTopMass1 + chiTopE1 < 30 " ;
+	//TCut chi2_2 = "chiTopMass2 + chiTopE2 < 30 " ;
+
 	TCut chi2 = chi2_1 + chi2_2 ;
 	//TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) && ( Top2mass > 140 ) && ( Top2mass < 210 ) " ;
 	TCut kinematic = " ( Top1mass > 140 ) && ( Top1mass < 210 ) " ;

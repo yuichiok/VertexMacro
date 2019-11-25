@@ -36,18 +36,15 @@ void chi2(){
 
 	//opening the root files
 	// IDR
-	/*
 	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/" ;
 	string beforefilename = "fullHad.eL.pR_QQbar.root" ;
 	
+
+	/*
 	// DBD
 	string rootfiledir = "/home/ilc/yokugawa/TTBarAnalysis/root_merge/" ;
 	string beforefilename = "hadronic_eLpR_kekcc_500k.root" ;
 	*/
-
-	// Semi-leptonic
-	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/QQbarProcessor_out/" ;
-	string beforefilename = "IsoLepTagged.eL.pR_electron_muon_QQbar_MethodAll_110119.root" ;
 
 
 	string rootfilename ;

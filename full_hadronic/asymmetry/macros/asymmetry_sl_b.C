@@ -36,7 +36,7 @@ void asymmetry_sl_b()
 	
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/full_hadronic/input/record.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -66,6 +66,7 @@ void asymmetry_sl_b()
 	TCut thru = "Thrust < 0.9";
 	TCut hadM = "hadMass > 180 && hadMass < 420";
 	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
+	TCut kinematic = "( Top1mass > 140 ) && ( Top1mass < 210 )";
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
@@ -80,7 +81,9 @@ void asymmetry_sl_b()
 	TCut method7 = "methodTaken == 7";
 
 	// Total cut applied
-	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	//TCut cuts = kinematic + hadM + pcut + methodAll;
+	TCut cuts = rcTW + hadM + pcut + methodAll;
 
 	TCut fcuts = "qBCostheta > 0" + cuts;
 	TCut bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
@@ -130,7 +133,7 @@ void asymmetry_sl_b()
 
 	TH1F * cosReco_s5 = new TH1F("cosReco_s5", "E(Ntracks)", bin_e,-1.0,max_e);
 	cosReco_s5->Sumw2();
-	TH1F * cosGen_s5 = new TH1F("cosGen_s5", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
+	TH1F * cosGen_s5 = new TH1F("cosGen_s5", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGen_s5->Sumw2();
 
 	TTree * normaltree_s5 = (TTree*) file_s5->Get( "Stats" ) ;
@@ -139,8 +142,8 @@ void asymmetry_sl_b()
 	cout << "s5Reco Entry = " << normaltree_s5->GetEntries() << endl;
 	cout << "s5Gen Entry = " << GenTree_s5->GetEntries() << endl;
 
-	int forward_s5  = GenTree_s5->Draw("qMCcostheta >> cosGen_s5","qMCcostheta > 0 && qMCcostheta > -2 ");
-	int backward_s5 = GenTree_s5->Draw("qMCcostheta >> +cosGen_s5","qMCcostheta < 0 && qMCcostheta > -2");
+	int forward_s5  = GenTree_s5->Draw("qMCBcostheta >> cosGen_s5","qMCBcostheta > 0 && qMCBcostheta > -2 ");
+	int backward_s5 = GenTree_s5->Draw("qMCBcostheta >> +cosGen_s5","qMCBcostheta < 0 && qMCBcostheta > -2");
 
 	int recoforward_s5  = normaltree_s5->Draw("qBCostheta >> cosReco_s5", fcuts);
 	int recobackward_s5 = normaltree_s5->Draw("qBCostheta >> +cosReco_s5", bcuts);
