@@ -8,6 +8,19 @@
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 
 using namespace std;
+
+void fill_hist(TH1F * cosReco, int& recoforward, int &recobackward, float qCostheta[2])
+{
+	if(qCostheta[0] > 0){
+		recoforward++;
+		cosReco->Fill(qCostheta[0]);
+	}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
+		recobackward++;
+		cosReco->Fill(qCostheta[0]);
+	}
+
+}
+
 void efficiency_methods()
 {
 	int token=0;
@@ -109,8 +122,11 @@ void efficiency_methods()
 	cosGen->SetFillStyle(3004);
 
 	// Gen Info
-	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
-	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
+	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+
+	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
 
 	int entryStat = normaltree->GetEntries();
 
@@ -122,7 +138,7 @@ void efficiency_methods()
 				Top2bmomentum=0,
 				Top1gamma=0,
 				Top2gamma=0,
-				cosbjets=0,
+				cosbjets=0;
 
 	float qMCcostheta[2],
 				qCostheta[2],
@@ -233,40 +249,71 @@ void efficiency_methods()
 
 								if(methodCheck7){
 									aftermethod7++;
-/*
-									if(qCostheta[0] > 0){
-										recoforward++;
-										cosReco->Fill(qCostheta[0]);
-									}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
-										recobackward++;
-										cosReco->Fill(qCostheta[0]);
-									}
-*/
-								}
-								if(methodCheck7 || methodCheck5) aftermethod75++;
-								if(methodCheck7 || methodCheck5 || methodCheck6) aftermethod756++;
+
+									fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+								}// method check 7
+
+								if(methodCheck7 || methodCheck5){
+									aftermethod75++;
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+								
+								}// method check 75
+
+								if(methodCheck7 || methodCheck6){
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+								
+								}// method check 76
+
+								if(methodCheck5 || methodCheck6){
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+								
+								}// method check 56
+
+								if(methodCheck7 || methodCheck5 || methodCheck6){
+									aftermethod756++;
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+								
+								}// method check 756
+
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4)aftermethod7561234++;
+								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
+									aftermethod7561234++;
 
-								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4) aftermethod1234++;
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+								}// method check 1234567
+
+								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
+									aftermethod1234++;
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+								}// method check 1234
+
+								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4 || methodCheck7){
+
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+								}// method check 1234
+
 								if(methodCheck1){
 									aftermethod1++;
 
-									if(qCostheta[0] > 0){
-										recoforward++;
-										cosReco->Fill(qCostheta[0]);
-									}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
-										recobackward++;
-										cosReco->Fill(qCostheta[0]);
-									}
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
 								}else{
 
 									//cosbjets_rej->Fill(cosbjets);
 									//jetE_rej->Fill(jet_E);
 
-								}
+								}// method check 1
 
 							}//consistency
 
@@ -310,8 +357,11 @@ void efficiency_methods()
 	freco->SetLineStyle(3);
 
 	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	
 	double intCosReco = cosReco->Integral(2,29);
 	double intCosGen  = cosGen->Integral(2,29);
+	//double intCosReco = cosReco->Integral(10,21);
+	//double intCosGen  = cosGen->Integral(10,21);
 	cosGen->Scale(intCosReco / intCosGen);
 	
 	
