@@ -63,7 +63,7 @@ void FillandAdd( int b1, float tcos1, float bcos1, int& tpl, int& tmi, int& bpl,
 		top->Fill( -tcos1, weight ) ;
 		bottom->Fill( -bcos1, weight ) ;
 		AddAFBvalue( -tcos1, tpl, tmi ) ;
-		AddAFBvalue( -bcos1, bpl, bmi ) ;
+		AddAFBvalue( bcos1, bpl, bmi ) ; //SWITCHED SIGN
 	}
 
 }

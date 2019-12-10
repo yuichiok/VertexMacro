@@ -25,7 +25,7 @@ void bjet_EvE()
 	gStyle->SetTitleY(0.9); 
 
 	// set file path
-	std::string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/fullHad.eL.pR_QQbar.root";
+	std::string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/fullHad.eL.pR_QQbar_temp.root";
 
 	TFile * file = TFile::Open(filename.c_str());
 

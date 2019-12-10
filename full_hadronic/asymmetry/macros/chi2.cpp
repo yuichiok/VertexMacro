@@ -37,7 +37,7 @@ void chi2(){
 	//opening the root files
 	// IDR
 	string rootfiledir = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/" ;
-	string beforefilename = "fullHad.eL.pR_QQbar.root" ;
+	string beforefilename = "fullHad.eL.pR_QQbar_temp.root" ;
 	
 
 	/*

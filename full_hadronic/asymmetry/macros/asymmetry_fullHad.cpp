@@ -59,7 +59,7 @@ void FillandAdd( int b1, float tcos1, float bcos1, int& tpl, int& tmi, int& bpl,
 		//bottom->Fill( bcos2, weight ) ;
 		AddAFBvalue( -tcos1, tpl, tmi ) ;
 		//AddAFBvalue( tcos2, tpl, tmi ) ;
-		AddAFBvalue( -bcos1, bpl, bmi ) ;
+		AddAFBvalue( bcos1, bpl, bmi ) ; //SWITCHED SIGN
 		//AddAFBvalue( bcos2, bpl, bmi ) ;
 	}
 	/*
@@ -254,7 +254,7 @@ void asymmetry_fullHad(){
 	// setting tree branch address
 	tree1->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
 	tree1->SetBranchAddress( "MCTopBarcostheta", &MCTopBarcostheta ) ;
-	tree1->SetBranchAddress( "qMCBcostheta", &qMCBcostheta ) ;
+	tree1->SetBranchAddress( "qMCBcostheta", qMCBcostheta ) ;
 
 	tree1->SetBranchAddress( "Top1bcharge", &Top1bcharge ) ;
 	tree1->SetBranchAddress( "Top1costheta", &Top1costheta ) ;
@@ -271,7 +271,7 @@ void asymmetry_fullHad(){
 	tree1->SetBranchAddress( "Top1mass", &Top1mass ) ;
 	tree1->SetBranchAddress( "Top1energy", &Top1energy ) ;
 	tree1->SetBranchAddress( "Top2mass", &Top2mass ) ;
-	tree1->SetBranchAddress( "Top2energy", &Top2energy ) ;
+	//tree1->SetBranchAddress( "Top2energy", &Top2energy ) ;
 
 	tree1->SetBranchAddress( "Top1bmomentum", &Top1bmomentum ) ;
 	tree1->SetBranchAddress( "Top2bmomentum", &Top2bmomentum ) ;
@@ -335,9 +335,9 @@ void asymmetry_fullHad(){
 		if( Top1bmomentum > 20 && Top2bmomentum > 20 ) isbMomentum = true;
 
 		//if( isbsign || iskaonsign || isb1k2sign || isb2k1sign ){
-		G1 = LorentzF(Top1energy,Top1mass);
-		G2 = LorentzF(Top2energy,Top2mass);
-		hLzFbf->Fill(G1+G2);
+		//G1 = LorentzF(Top1energy,Top1mass);
+		//G2 = LorentzF(Top2energy,Top2mass);
+		//hLzFbf->Fill(G1+G2);
 		//}
 
 
@@ -425,6 +425,7 @@ void asymmetry_fullHad(){
 		htopgen->Fill( -MCTopBarcostheta, fillweight ) ;
 		hbottomgen->Fill( qMCBcostheta[0], fillweight ) ;
 		hbottomgen->Fill( -qMCBcostheta[1], fillweight ) ;
+		//hbottomgen->Fill( qMCBcostheta[1], fillweight ) ;
 		AddAFBvalue( MCTopcostheta, topplus, topminus ) ;
 		AddAFBvalue( -MCTopBarcostheta, topplus, topminus ) ;
 		AddAFBvalue( qMCBcostheta[0], bottomplus, bottomminus ) ;
@@ -483,7 +484,7 @@ void asymmetry_fullHad(){
 
 	tree2->SetBranchAddress( "MCTopcostheta", &MCTopcostheta ) ;
 	tree2->SetBranchAddress( "MCTopBarcostheta", &MCTopBarcostheta ) ;
-	tree2->SetBranchAddress( "qMCBcostheta", &qMCBcostheta ) ;
+	tree2->SetBranchAddress( "qMCBcostheta", qMCBcostheta ) ;
 
 	tree2->SetBranchAddress( "Top1bcharge", &Top1bcharge ) ;
 	tree2->SetBranchAddress( "Top1costheta", &Top1costheta ) ;
@@ -500,7 +501,7 @@ void asymmetry_fullHad(){
 	tree2->SetBranchAddress( "Top1mass", &Top1mass ) ;
 	tree2->SetBranchAddress( "Top1energy", &Top1energy ) ;
 	tree2->SetBranchAddress( "Top2mass", &Top2mass ) ;
-	tree2->SetBranchAddress( "Top2energy", &Top2energy ) ;
+	//tree2->SetBranchAddress( "Top2energy", &Top2energy ) ;
 
 	tree2->SetBranchAddress( "Top1bmomentum", &Top1bmomentum ) ;
 	tree2->SetBranchAddress( "Top2bmomentum", &Top2bmomentum ) ;
@@ -563,9 +564,11 @@ void asymmetry_fullHad(){
 		G2=0;
 
 		//if( isbsign || iskaonsign || isb1k2sign || isb2k1sign ){
-		G1 = LorentzF(Top1energy,Top1mass);
-		G2 = LorentzF(Top2energy,Top2mass);
-		hLzFaf->Fill(G1+G2);
+		
+		//G1 = LorentzF(Top1energy,Top1mass);
+		//G2 = LorentzF(Top2energy,Top2mass);
+		//hLzFaf->Fill(G1+G2);
+		
 		//}
 
 		//if(G1+G2>2.5 && G1+G2<3.0  && isbMomentum){
