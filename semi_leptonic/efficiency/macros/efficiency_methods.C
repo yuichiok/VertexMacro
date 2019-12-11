@@ -9,14 +9,30 @@
 
 using namespace std;
 
-void fill_hist(TH1F * cosReco, int& recoforward, int &recobackward, float qCostheta[2])
+void fill_hist(TH1F * cosReco, int& recoforward, int &recobackward, float qCostheta[2], float q)
 {
-	if(qCostheta[0] > 0){
+	float qCos = q * qCostheta[0];
+
+	if(qCos > 0){
 		recoforward++;
-		cosReco->Fill(qCostheta[0]);
-	}else if(qCostheta[0] < 0 && qCostheta[0] >= -1.0){
+		cosReco->Fill(qCos);
+	}else if(qCos < 0 && qCos >= -1.0){
 		recobackward++;
-		cosReco->Fill(qCostheta[0]);
+		cosReco->Fill(qCos);
+	}
+
+}
+
+void fill_hist2(TH1F * cosReco, int& recoforward, int &recobackward, float Top1costheta, float q)
+{
+	float qCos = q * Top1costheta;
+
+	if(qCos > 0){
+		recoforward++;
+		cosReco->Fill(qCos);
+	}else if(qCos < 0 && qCos >= -1.0){
+		recobackward++;
+		cosReco->Fill(qCos);
 	}
 
 }
@@ -138,6 +154,7 @@ void efficiency_methods()
 				Top2bmomentum=0,
 				Top1gamma=0,
 				Top2gamma=0,
+				Top1costheta=0,
 				cosbjets=0;
 
 	float qMCcostheta[2],
@@ -179,6 +196,7 @@ void efficiency_methods()
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
 	normaltree->SetBranchAddress("chgValue", chgValue);
 	//normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
+	normaltree->SetBranchAddress("Top1costheta", &Top1costheta);
 	normaltree->SetBranchAddress("qCostheta", qCostheta);
 	normaltree->SetBranchAddress("cosbjets", &cosbjets);
 	normaltree->SetBranchAddress("jet_E", &jet_E);
@@ -236,10 +254,18 @@ void efficiency_methods()
 
 								sum += charge;
 
+								if(imethod==1){
+									sum += 10*charge;
+								}
+
 								if(imethod<4){
 									sumHad += charge;
+									//sum += 100*charge;
 								}else if(imethod==7){
 									sumLep += charge;
+
+									//test
+									sum += 20*charge;
 								}
 
 								if(Nmethod==1) methodCheck1=true;
@@ -267,33 +293,32 @@ void efficiency_methods()
 								if(methodCheck7){
 									aftermethod7++;
 
-									fill_hist(cosReco, recoforward, recobackward, qCostheta);
 
 								}// method check 7
 
 								if(methodCheck7 || methodCheck5){
 									aftermethod75++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 								
 								}// method check 75
 
 								if(methodCheck7 || methodCheck6){
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 								
 								}// method check 76
 
 								if(methodCheck5 || methodCheck6){
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 								
 								}// method check 56
 
 								if(methodCheck7 || methodCheck5 || methodCheck6){
 									aftermethod756++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 								
 								}// method check 756
 
@@ -302,6 +327,12 @@ void efficiency_methods()
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
 									aftermethod7561234++;
+
+									if(sum > 0){
+										fill_hist2(cosReco, recoforward, recobackward, Top1costheta, -1);
+									}else{
+										fill_hist2(cosReco, recoforward, recobackward, Top1costheta, 1);
+									}
 
 									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
 
