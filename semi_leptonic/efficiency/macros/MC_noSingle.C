@@ -21,7 +21,7 @@ void fill_hist(TH1F * cosReco, int& recoforward, int &recobackward, float qCosth
 
 }
 
-void efficiency_methods()
+void MC_noSingle()
 {
 	int token=0;
 
@@ -68,9 +68,6 @@ void efficiency_methods()
 	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
 	TTree * Summary = (TTree*) file->Get( "Summary" );
-
-	//int forward  = GenTree->Draw("qMCcostheta","qMCcostheta > 0 && qMCcostheta > -2 ");
-	//int backward = GenTree->Draw("qMCcostheta","qMCcostheta < 0 && qMCcostheta > -2");
 
 	// Begin efficiency calculation
 
@@ -125,8 +122,11 @@ void efficiency_methods()
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
 
-	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
-	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
+	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+
+	int forward = 0;
+	int backward = 0;
 
 	int entryStat = normaltree->GetEntries();
 
@@ -178,7 +178,7 @@ void efficiency_methods()
 	normaltree->SetBranchAddress("methodUsed", &methodUsed);
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
 	normaltree->SetBranchAddress("chgValue", chgValue);
-	//normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
+	normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
 	normaltree->SetBranchAddress("qCostheta", qCostheta);
 	normaltree->SetBranchAddress("cosbjets", &cosbjets);
 	normaltree->SetBranchAddress("jet_E", &jet_E);
@@ -258,6 +258,7 @@ void efficiency_methods()
 								continue;
 							}else{
 
+
 								if(sumHad*sumLep > 0){
 									HadLepMatch++;
 								}else{
@@ -266,6 +267,21 @@ void efficiency_methods()
 
 								if(methodCheck7){
 									aftermethod7++;
+
+									// mc loop
+									for(int imc=0; imc < 2; imc++){
+
+										float qMCcos = qMCcostheta[imc];
+
+										if(qMCcos > 0 && qMCcos > -2){
+											forward++;
+											cosGen->Fill(qMCcos);
+										}else if(qMCcos < 0 && qMCcos > -2){
+											backward++;
+											cosGen->Fill(qMCcos);
+										}
+
+									}// end for mc loop
 
 									fill_hist(cosReco, recoforward, recobackward, qCostheta);
 
@@ -302,6 +318,7 @@ void efficiency_methods()
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
 									aftermethod7561234++;
+
 
 									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
 
