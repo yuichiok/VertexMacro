@@ -105,13 +105,20 @@ void MC_noSingle()
 	// Histograms
 	
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-	TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", 30,-1.0,1.0);
-	cosReco->Sumw2();
+	TH1F * cosRecoOK = new TH1F("cosRecoOK", "E(Ntracks)", 30,-1.0,1.0);
+	cosRecoOK->Sumw2();
+	TH1F * cosRecoNG = new TH1F("cosRecoNG", "E(Ntracks)", 30,-1.0,1.0);
+	cosRecoNG->Sumw2();
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", 30,-1.0,1.0);
 	cosGen->Sumw2();
 
 	TGaxis::SetMaxDigits(3);
-	cosReco->SetLineWidth(3);
+	cosRecoOK->SetLineWidth(3);
+	cosRecoNG->SetLineWidth(3);
+
+	cosRecoOK->SetLineColor(kBlue+1);
+	cosRecoNG->SetLineColor(kRed+1);
+
 	cosGen->SetLineWidth(3);
 	cosGen->SetLineStyle(2);
 	cosGen->SetLineColor(kGreen+1);
@@ -122,11 +129,11 @@ void MC_noSingle()
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
 
-	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
-	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
 
-	int forward = 0;
-	int backward = 0;
+	//int forward = 0;
+	//int backward = 0;
 
 	int entryStat = normaltree->GetEntries();
 
@@ -149,6 +156,7 @@ void MC_noSingle()
 			methodUsed=0;
 
 	int methodTaken[100],
+			methodCheck[100],
 			chgValue[100];
 				
   int afterthrucut=0,
@@ -177,6 +185,7 @@ void MC_noSingle()
 	normaltree->SetBranchAddress("Top2gamma", &Top2gamma);
 	normaltree->SetBranchAddress("methodUsed", &methodUsed);
 	normaltree->SetBranchAddress("methodTaken", methodTaken);
+	normaltree->SetBranchAddress("methodCheck", methodCheck);
 	normaltree->SetBranchAddress("chgValue", chgValue);
 	normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
 	normaltree->SetBranchAddress("qCostheta", qCostheta);
@@ -225,7 +234,16 @@ void MC_noSingle()
 									 methodCheck6=false,
 									 methodCheck7=false;
 
+							bool method1OK=false,
+									 method2OK=false,
+									 method3OK=false,
+									 method4OK=false,
+									 method5OK=false,
+									 method6OK=false,
+									 method7OK=false;
+
 							int sum = 0;
+							int sumCorrect = 0;
 							int sumHad=0;
 							int sumLep=0;
 
@@ -233,8 +251,10 @@ void MC_noSingle()
 
 								int Nmethod = methodTaken[imethod];
 								int charge  = chgValue[imethod];
+								int check		= methodCheck[imethod];
 
 								sum += charge;
+								sumCorrect += check;
 
 								if(imethod<4){
 									sumHad += charge;
@@ -249,6 +269,10 @@ void MC_noSingle()
 								if(Nmethod==5) methodCheck5=true;
 								if(Nmethod==6) methodCheck6=true;
 								if(Nmethod==7) methodCheck7=true;
+
+								if(Nmethod==1&&check) method1OK=true;
+								if(Nmethod==2&&check) method2OK=true;
+								if(Nmethod==7&&check) method7OK=true;
 
 							}
 
@@ -268,48 +292,44 @@ void MC_noSingle()
 								if(methodCheck7){
 									aftermethod7++;
 
-									// mc loop
-									for(int imc=0; imc < 2; imc++){
+									if(method7OK){
+										fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
+									}else{
+										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
+									}
 
-										float qMCcos = qMCcostheta[imc];
-
-										if(qMCcos > 0 && qMCcos > -2){
-											forward++;
-											cosGen->Fill(qMCcos);
-										}else if(qMCcos < 0 && qMCcos > -2){
-											backward++;
-											cosGen->Fill(qMCcos);
-										}
-
-									}// end for mc loop
-
-									fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
 								}// method check 7
+
+								if(methodCheck2){
+
+
+								}// method check 2
 
 								if(methodCheck7 || methodCheck5){
 									aftermethod75++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 75
 
 								if(methodCheck7 || methodCheck6){
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 76
 
 								if(methodCheck5 || methodCheck6){
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 56
 
 								if(methodCheck7 || methodCheck5 || methodCheck6){
 									aftermethod756++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 756
 
@@ -319,28 +339,36 @@ void MC_noSingle()
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
 									aftermethod7561234++;
 
-
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
-
 								}// method check 1234567
 
 								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
 									aftermethod1234++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
 								}// method check 1234
 
 								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4 || methodCheck7){
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
-								}// method check 1234
+								}// method check 12347
 
 								if(methodCheck1){
 									aftermethod1++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+
+
+/*
+									if(methodUsed - sumCorrect < sumCorrect){
+										fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
+									}else{
+										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
+									}
+*/
+
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
 								}else{
 
@@ -390,27 +418,30 @@ void MC_noSingle()
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
-	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	//cosGen->Scale(cosRecoOK->GetEntries()/ cosGen->GetEntries());
 	
-	double intCosReco = cosReco->Integral(2,29);
-	double intCosGen  = cosGen->Integral(2,29);
-	//double intCosReco = cosReco->Integral(10,21);
-	//double intCosGen  = cosGen->Integral(10,21);
+	//double intCosReco = cosRecoOK->Integral(2,29);
+	//double intCosGen  = cosGen->Integral(2,29);
+	double intCosReco = cosRecoOK->Integral(10,21);
+	double intCosGen  = cosGen->Integral(10,21);
 	cosGen->Scale(intCosReco / intCosGen);
 	
 	
 	cosGen->Fit("fgen","Q");
-	cosReco->Fit("freco", "QR");
+	cosRecoOK->Fit("freco", "QR");
+	cosRecoNG->Fit("freco", "QR");
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
 	fgen->Draw("same");
 	cosGen->SetMinimum(0);
-	cosReco->Draw("samee");
+	cosRecoOK->Draw("samee");
+	cosRecoNG->Draw("samee");
 
 	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
 	leg->AddEntry(cosGen,"Parton level","l");
-	leg->AddEntry(cosReco,"Reconstructed","l");
+	leg->AddEntry(cosRecoOK,"Reco. Correct","l");
+	leg->AddEntry(cosRecoNG,"Reco. Wrong","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
@@ -427,13 +458,32 @@ void MC_noSingle()
 	cout << "--------------------------------------------------------------\n";
 	std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";
 	std::cout << "Afb reco: " << afbreco << " N: " << recoforward + recobackward << "(" << afbreco / afbgen *100 << "%)"  << "\n";
-	std::cout << "Chi2: " << cosReco->Chi2Test(cosGen,"UUNORMCHI2/NDF") << "\n";
+	std::cout << "Chi2: " << cosRecoOK->Chi2Test(cosGen,"UUNORMCHI2/NDF") << "\n";
 	cout << "--------------------------------------------------------------\n";
 	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
 	cout << "Final efficiency: " << efficiency << "%\n" ;
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 
+
+	// some garbage I might use later
+
+/*
+									// mc loop
+									for(int imc=0; imc < 2; imc++){
+
+										float qMCcos = qMCcostheta[imc];
+
+										if(qMCcos > 0 && qMCcos > -2){
+											forward++;
+											cosGen->Fill(qMCcos);
+										}else if(qMCcos < 0 && qMCcos > -2){
+											backward++;
+											cosGen->Fill(qMCcos);
+										}
+
+									}// end for mc loop
+*/
 	
 }
 

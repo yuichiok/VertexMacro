@@ -255,7 +255,7 @@ void efficiency_methods()
 								sum += charge;
 
 								if(imethod==1){
-									sum += 10*charge;
+									//sum += 10*charge;
 								}
 
 								if(imethod<4){
@@ -265,7 +265,7 @@ void efficiency_methods()
 									sumLep += charge;
 
 									//test
-									sum += 20*charge;
+									//sum += 20*charge;
 								}
 
 								if(Nmethod==1) methodCheck1=true;
@@ -293,6 +293,7 @@ void efficiency_methods()
 								if(methodCheck7){
 									aftermethod7++;
 
+									fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 
 								}// method check 7
 
@@ -328,13 +329,15 @@ void efficiency_methods()
 								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
 									aftermethod7561234++;
 
+/*
 									if(sum > 0){
 										fill_hist2(cosReco, recoforward, recobackward, Top1costheta, -1);
 									}else{
 										fill_hist2(cosReco, recoforward, recobackward, Top1costheta, 1);
 									}
+*/
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta, 1);
 
 								}// method check 1234567
 
