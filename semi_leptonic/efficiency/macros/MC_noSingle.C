@@ -21,6 +21,20 @@ void fill_hist(TH1F * cosReco, int& recoforward, int &recobackward, float qCosth
 
 }
 
+void fill_hist2(TH1F * cosReco, int& recoforward, int &recobackward, float Top1costheta, float q)
+{
+	float qCos = q * Top1costheta;
+
+	if(qCos > 0){
+		recoforward++;
+		cosReco->Fill(qCos);
+	}else if(qCos < 0 && qCos >= -1.0){
+		recobackward++;
+		cosReco->Fill(qCos);
+	}
+
+}
+
 void MC_noSingle()
 {
 	int token=0;
@@ -105,6 +119,9 @@ void MC_noSingle()
 	// Histograms
 	
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+	THStack * cosRecoStack = new THStack("cosRecoStack","");
+	TH1F * cosRecoAll = new TH1F("cosRecoAll", "E(Ntracks)", 30,-1.0,1.0);
+	cosRecoAll->Sumw2();
 	TH1F * cosRecoOK = new TH1F("cosRecoOK", "E(Ntracks)", 30,-1.0,1.0);
 	cosRecoOK->Sumw2();
 	TH1F * cosRecoNG = new TH1F("cosRecoNG", "E(Ntracks)", 30,-1.0,1.0);
@@ -112,10 +129,14 @@ void MC_noSingle()
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", 30,-1.0,1.0);
 	cosGen->Sumw2();
 
+	TH2F * cosMCRC = new TH2F("cosMCRC",";Reco cos#theta_{t};Gen cos#theta_{t}", 30, -1.0, 1.0, 30, -1.0, 1.0);
+
 	TGaxis::SetMaxDigits(3);
 	cosRecoOK->SetLineWidth(3);
 	cosRecoNG->SetLineWidth(3);
+	cosRecoAll->SetLineWidth(3);
 
+	cosRecoAll->SetLineColor(kGray+1);
 	cosRecoOK->SetLineColor(kBlue+1);
 	cosRecoNG->SetLineColor(kRed+1);
 
@@ -145,7 +166,8 @@ void MC_noSingle()
 				Top2bmomentum=0,
 				Top1gamma=0,
 				Top2gamma=0,
-				cosbjets=0;
+				cosbjets=0,
+				Top1costheta=0;
 
 	float qMCcostheta[2],
 				qCostheta[2],
@@ -163,7 +185,8 @@ void MC_noSingle()
 			afterhadMcut=0,
 			afterrcTWcut=0,
 			afterpcut=0,
-			aftergcut=0;
+			aftergcut=0,
+			afterchgconfig=0;
 	
 	int	aftermethod7=0,
 			aftermethod75=0,
@@ -174,6 +197,13 @@ void MC_noSingle()
 			aftermethod7561234=0,
 			aftermethod1234=0,
 			aftermethod1=0;
+	
+	int aftermethod[8] = {0};
+	int methodcorrect[8] = {0};
+
+	int method1correct=0,
+			method7correct=0,
+			methodAllcorrect=0;
 
 	normaltree->SetBranchAddress("Thrust", &Thrust);
 	normaltree->SetBranchAddress("hadMass", &hadMass);
@@ -190,7 +220,8 @@ void MC_noSingle()
 	normaltree->SetBranchAddress("qMCcostheta", qMCcostheta);
 	normaltree->SetBranchAddress("qCostheta", qCostheta);
 	normaltree->SetBranchAddress("cosbjets", &cosbjets);
-	normaltree->SetBranchAddress("jet_E", &jet_E);
+	normaltree->SetBranchAddress("jet_E", jet_E);
+	normaltree->SetBranchAddress("Top1costheta", &Top1costheta);
 
 	int temp=0;
 	int HadLepMatch=0;
@@ -226,21 +257,8 @@ void MC_noSingle()
 
 							if(qCostheta[0]==-2) aftercut++;
 
-							bool methodCheck1=false,
-									 methodCheck2=false,
-									 methodCheck3=false,
-									 methodCheck4=false,
-									 methodCheck5=false,
-									 methodCheck6=false,
-									 methodCheck7=false;
-
-							bool method1OK=false,
-									 method2OK=false,
-									 method3OK=false,
-									 method4OK=false,
-									 method5OK=false,
-									 method6OK=false,
-									 method7OK=false;
+							bool methodUsedFlag[8] = {0};
+							bool methodOK[8] = {0};
 
 							int sum = 0;
 							int sumCorrect = 0;
@@ -254,25 +272,46 @@ void MC_noSingle()
 								int check		= methodCheck[imethod];
 
 								sum += charge;
+
+
+/*
+								if(charge>0){
+									if(Nmethod==1) sum += 6;
+									if(Nmethod==2) sum += 3;
+									if(Nmethod==3) sum += 4;
+									if(Nmethod==4) sum += 5;
+									//if(Nmethod==5) sum += 2;
+									//if(Nmethod==6) sum += 1;
+									if(Nmethod==7) sum += 7;
+								}else{
+									if(Nmethod==1) sum -= 6;
+									if(Nmethod==2) sum -= 3;
+									if(Nmethod==3) sum -= 4;
+									if(Nmethod==4) sum -= 5;
+									//if(Nmethod==5) sum -= 2;
+									//if(Nmethod==6) sum -= 1;
+									if(Nmethod==7) sum -= 7;
+								}
+
+								if(charge>0){
+									sum++;
+								}else{
+									sum--;
+								}
+*/
+
 								sumCorrect += check;
 
-								if(imethod<4){
+								if(Nmethod<4){
 									sumHad += charge;
-								}else if(imethod==7){
+								}else if(Nmethod==7){
 									sumLep += charge;
 								}
 
-								if(Nmethod==1) methodCheck1=true;
-								if(Nmethod==2) methodCheck2=true;
-								if(Nmethod==3) methodCheck3=true;
-								if(Nmethod==4) methodCheck4=true;
-								if(Nmethod==5) methodCheck5=true;
-								if(Nmethod==6) methodCheck6=true;
-								if(Nmethod==7) methodCheck7=true;
-
-								if(Nmethod==1&&check) method1OK=true;
-								if(Nmethod==2&&check) method2OK=true;
-								if(Nmethod==7&&check) method7OK=true;
+								for(int n=1; n<8; n++){
+									if(n == Nmethod) methodUsedFlag[n]=true;
+									if(n == Nmethod && check) methodOK[n]=true;
+								}
 
 							}
 
@@ -282,6 +321,7 @@ void MC_noSingle()
 								continue;
 							}else{
 
+								afterchgconfig++;
 
 								if(sumHad*sumLep > 0){
 									HadLepMatch++;
@@ -289,76 +329,90 @@ void MC_noSingle()
 									HadLepMissMatch++;
 								}
 
-								if(methodCheck7){
-									aftermethod7++;
+								for(int jmethod = 1; jmethod < 8; jmethod++){
 
-									if(method7OK){
+									if(methodUsedFlag[jmethod]){
+										aftermethod[jmethod]++;
+										if(methodOK[jmethod]){
+											methodcorrect[jmethod]++;
+										}
+									}
+
+								} // end jmethod
+
+
+								if(methodUsedFlag[7]){
+
+									aftermethod7++;
+/*
+									if(methodOK[7]){
+										method7correct++;
 										fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 									}else{
 										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
 									}
+*/
+
+									if(methodOK[7]) method7correct++;
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
 								}// method check 7
 
-								if(methodCheck2){
-
-
-								}// method check 2
-
-								if(methodCheck7 || methodCheck5){
+								if(methodUsedFlag[7] || methodUsedFlag[5]){
 									aftermethod75++;
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 75
 
-								if(methodCheck7 || methodCheck6){
+								if(methodUsedFlag[7] || methodUsedFlag[6]){
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 76
 
-								if(methodCheck5 || methodCheck6){
+								if(methodUsedFlag[5] || methodUsedFlag[6]){
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 56
 
-								if(methodCheck7 || methodCheck5 || methodCheck6){
+								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6]){
 									aftermethod756++;
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 								
 								}// method check 756
 
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1) aftermethod7561++;
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2) aftermethod75612++;
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3) aftermethod756123++;
-								if(methodCheck7 || methodCheck5 || methodCheck6 || methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
+								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6] || methodUsedFlag[1]) aftermethod7561++;
+								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6] || methodUsedFlag[1] || methodUsedFlag[2]) aftermethod75612++;
+								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6] || methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3]) aftermethod756123++;
+								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6] || methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4]){
 									aftermethod7561234++;
 
-								}// method check 1234567
+									if(sum<0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, 1);
+									}else if(sum>0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, -1);
+									}
 
-								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4){
-									aftermethod1234++;
+									if(methodUsed - sumCorrect < sumCorrect){
+										if(sum<0){
+											fill_hist2(cosRecoOK, recoforward, recobackward, Top1costheta, 1);
+										}else if(sum>0){
+											fill_hist2(cosRecoOK, recoforward, recobackward, Top1costheta, -1);
+										}
+									}else{
+										if(sum<0){
+											fill_hist2(cosRecoNG, recoforward, recobackward, Top1costheta, 1);
+										}else if(sum>0){
+											fill_hist2(cosRecoNG, recoforward, recobackward, Top1costheta, -1);
+										}
+									}
 
 
-									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
-
-								}// method check 1234
-
-								if(methodCheck1 || methodCheck2 || methodCheck3 || methodCheck4 || methodCheck7){
-
-									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
-
-								}// method check 12347
-
-								if(methodCheck1){
-									aftermethod1++;
-
-
+									if(methodUsed - sumCorrect < sumCorrect) methodAllcorrect++;
 
 /*
 									if(methodUsed - sumCorrect < sumCorrect){
@@ -367,15 +421,20 @@ void MC_noSingle()
 										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
 									}
 */
+								}// method check 1234567
+
+								if(methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4]){
+									aftermethod1234++;
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
-								}else{
+								}// method check 1234
 
-									//cosbjets_rej->Fill(cosbjets);
-									//jetE_rej->Fill(jet_E);
+								if(methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4] || methodUsedFlag[7]){
 
-								}// method check 1
+									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
+
+								}// method check 12347
 
 							}//consistency
 
@@ -391,7 +450,6 @@ void MC_noSingle()
 	cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
 
 	cout << "============================ Non-baseline Cuts ============================" << endl;
-	cout << "after method7                = " << aftermethod7 			<< " (" << (float)(aftermethod7)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method75               = " << aftermethod75 			<< " (" << (float)(aftermethod75)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method756              = " << aftermethod756 		<< " (" << (float)(aftermethod756)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561             = " << aftermethod7561 		<< " (" << (float)(aftermethod7561)/(float)(nevt) *100 << "%)" << endl;
@@ -399,7 +457,6 @@ void MC_noSingle()
 	cout << "after method756123           = " << aftermethod756123 	<< " (" << (float)(aftermethod756123)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method7561234          = " << aftermethod7561234 << " (" << (float)(aftermethod7561234)/(float)(nevt) *100 << "%)" << endl;
 	cout << "after method1234             = " << aftermethod1234 		<< " (" << (float)(aftermethod1234)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after method1                = " << aftermethod1				<< " (" << (float)(aftermethod1)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "skipped (sum = 0)            = " << temp << " (" << (float)(temp)/(float)(nevt) *100 << "%)" << endl;
   cout << "beforecut (cos = -2)         = " << beforecut << endl;
@@ -408,6 +465,14 @@ void MC_noSingle()
 	cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
 	cout << endl;
 	cout << "HadLepMatch = " << HadLepMatch << ", HadLepMissMatch = " << HadLepMissMatch << endl;
+
+	cout << "============================ Method Correct Ratio ============================" << endl;
+	cout << "after charge config = " << (float)(afterchgconfig)/(float)(nevt) *100 << "%" << endl;
+	for(int kmethod = 1; kmethod < 8; kmethod++){
+		cout << "Method" << kmethod << "\t number used = " << aftermethod[kmethod] << "\t (" << (float)(aftermethod[kmethod])/(float)(afterchgconfig) *100 << "%)\t correct ratio = " << (float)(methodcorrect[kmethod])/(float)(aftermethod[kmethod]) * 100 << "%" << endl;
+	}
+	cout << "MethodAll = " << (float)(methodAllcorrect)/(float)(aftermethod7561234) * 100 << "%" << endl;
+
 
 	// Plot and Fit
 
@@ -418,30 +483,52 @@ void MC_noSingle()
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
+
 	//cosGen->Scale(cosRecoOK->GetEntries()/ cosGen->GetEntries());
 	
-	//double intCosReco = cosRecoOK->Integral(2,29);
-	//double intCosGen  = cosGen->Integral(2,29);
-	double intCosReco = cosRecoOK->Integral(10,21);
-	double intCosGen  = cosGen->Integral(10,21);
-	cosGen->Scale(intCosReco / intCosGen);
+	double intCosRecoAll = cosRecoAll->Integral(2,29);
+	double intCosRecoOK = cosRecoOK->Integral(2,29);
+	double intCosRecoNG = cosRecoNG->Integral(2,29);
+	double intCosGen  = cosGen->Integral(2,29);
+	//double intCosReco = cosRecoOK->Integral(10,21);
+	//double intCosGen  = cosGen->Integral(10,21);
 	
+	//cosGen->Scale(intCosRecoOK / intCosGen);
+	
+	cosRecoAll->Scale(1 / intCosRecoAll);
+	cosRecoOK->Scale(intCosRecoAll / intCosGen);
+	cosRecoNG->Scale(intCosRecoAll / intCosGen);
+	cosGen->Scale(1 / intCosGen);
+
+
 	
 	cosGen->Fit("fgen","Q");
-	cosRecoOK->Fit("freco", "QR");
+	cosRecoAll->Fit("freco", "QR");
+	cosRecoOK->Fit("freco", "QR");	
 	cosRecoNG->Fit("freco", "QR");
+	
+
+	cosRecoStack->Add(cosRecoOK);
+	cosRecoStack->Add(cosRecoNG);
+
+	//cosRecoStack->Draw("");
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
 	fgen->Draw("same");
 	cosGen->SetMinimum(0);
+	cosRecoAll->Draw("samee");
 	cosRecoOK->Draw("samee");
 	cosRecoNG->Draw("samee");
 
 	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
 	leg->AddEntry(cosGen,"Parton level","l");
+
+	leg->AddEntry(cosRecoAll,"Reco. All","l");
+
 	leg->AddEntry(cosRecoOK,"Reco. Correct","l");
 	leg->AddEntry(cosRecoNG,"Reco. Wrong","l");
+
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
@@ -450,6 +537,10 @@ void MC_noSingle()
 	QQBARLabel(0.8,0.2,"",1);
 
 	c1->Update();
+
+
+	//TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
+	//cosMCRC->Draw("COLZ");
 
 	float afbgen = (float)(forward - backward) / (float) (forward + backward);
 	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);

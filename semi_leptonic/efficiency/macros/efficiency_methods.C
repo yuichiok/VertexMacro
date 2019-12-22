@@ -94,7 +94,7 @@ void efficiency_methods()
 	int nGenUsed, nAfterLeptonCuts, nAfterBtagCuts;
 	int nevt=0, nlcut=0, nbcut=0;
 
-	if(token==15||token==16){
+	if(token==16||token==17){
 		Summary->SetBranchAddress( "nEvents", &nGenUsed ) ;
 	}else{
 		Summary->SetBranchAddress( "nGenUsed", &nGenUsed ) ;
