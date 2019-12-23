@@ -63,9 +63,9 @@ void chi2(){
 
 	TCanvas* c2 = new TCanvas( "c2", "c2", 500, 500 ) ;
 
-	TH1F* h_chiSum = new TH1F( "h_chiSum", "h_chiSum", 1000, 0, 300 ) ;
+	TH1F* h_chiSum = new TH1F( "h_chiSum", ";#chi^{2}_{top};Events", 1000, 0, 300 ) ;
 
-	TH1F* h_chiTopMass1 = new TH1F( "h_chiTopMass1", "h_chiTopMass1", 1000, 0, 300 ) ;
+	TH1F* h_chiTopMass1 = new TH1F( "h_chiTopMass1", "#chi^{2}_{m_{t}}", 1000, 0, 300 ) ;
 	TH1F* h_chiTopE1    = new TH1F( "h_chiTopE1", "h_chiTopE1", 1000, 0, 300 ) ;
 	TH1F* h_chiPbstar1  = new TH1F( "h_chiPbstar1", "h_chiPbstar1", 1000, 0, 100 ) ;
 
@@ -100,7 +100,7 @@ void chi2(){
 	cout << "atfer kinematic cut = " << afterkinematic << " (" << (float)100*afterkinematic/eventnum << "%)" << endl;
 
 
-	int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 + chiPbstar1 >> h_chiSum", btag && kinematic);
+	int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 + chiPbstar1 + chiCosWb1 + chiGammaT1 >> h_chiSum", btag && kinematic);
 	//int val_chiSum = tree1->Draw("chiTopMass1 + chiTopE1 >> h_chiSum", btag && kinematic);
 
 	int val_chiTopMass1 = tree1->Draw("chiTopMass1 >> h_chiTopMass1", btag && kinematic);

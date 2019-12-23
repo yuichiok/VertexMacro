@@ -70,6 +70,10 @@ void asymmetry_sl()
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
+	TCut chi2_1 = " chiTopMass1 + chiTopE1 + chiPbstar1 < 30 " ;
+	TCut chi2_2 = " chiTopMass2 + chiTopE2 + chiPbstar2 < 30 " ;
+	TCut chi2 = chi2_1 + chi2_2 ;
+
 	// Methods selection
 	TCut methodAll = "methodTaken > 0";
 	TCut method1 = "methodTaken == 1";
@@ -84,6 +88,7 @@ void asymmetry_sl()
 	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
 	//TCut cuts = kinematic + hadM + pcut + methodAll;
 	TCut cuts = rcTW + hadM + pcut + methodAll;
+	//TCut cuts = rcTW + hadM + chi2 + pcut + methodAll;
 
 	TCut fcuts = "qCostheta > 0" + cuts;
 	TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;

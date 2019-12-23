@@ -119,7 +119,7 @@ void MC_noSingle()
 	// Histograms
 	
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-	THStack * cosRecoStack = new THStack("cosRecoStack","");
+	THStack * cosRecoStack = new THStack("cosRecoStack",";cos#theta_{t};Entries / 0.07");
 	TH1F * cosRecoAll = new TH1F("cosRecoAll", "E(Ntracks)", 30,-1.0,1.0);
 	cosRecoAll->Sumw2();
 	TH1F * cosRecoOK = new TH1F("cosRecoOK", "E(Ntracks)", 30,-1.0,1.0);
@@ -136,15 +136,21 @@ void MC_noSingle()
 	cosRecoNG->SetLineWidth(3);
 	cosRecoAll->SetLineWidth(3);
 
-	cosRecoAll->SetLineColor(kGray+1);
+	//cosRecoAll->SetLineColor(kGray+1);
 	cosRecoOK->SetLineColor(kBlue+1);
 	cosRecoNG->SetLineColor(kRed+1);
+
+	//cosRecoOK->SetFillColorAlpha(kBlue+1,0.35);
+	//cosRecoNG->SetFillColorAlpha(kRed+1,0.35);
+
+	//cosRecoOK->SetFillStyle(3004);
+	//cosRecoNG->SetFillStyle(3004);
 
 	cosGen->SetLineWidth(3);
 	cosGen->SetLineStyle(2);
 	cosGen->SetLineColor(kGreen+1);
-	cosGen->SetFillColor(kGreen+1);
-	cosGen->SetFillStyle(3004);
+	//cosGen->SetFillColor(kGreen+1);
+	//cosGen->SetFillStyle(3004);
 
 	// Gen Info
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
@@ -173,6 +179,9 @@ void MC_noSingle()
 				qCostheta[2],
 				jet_E[2];
 	
+	float MCTop1charge=0,
+				MCTop2charge=0;
+
 	int recoforward=0,
 			recobackward=0,
 			methodUsed=0;
@@ -198,6 +207,9 @@ void MC_noSingle()
 			aftermethod1234=0,
 			aftermethod1=0;
 	
+	int temp1=0,
+			temp2=0;
+
 	int aftermethod[8] = {0};
 	int methodcorrect[8] = {0};
 
@@ -222,6 +234,8 @@ void MC_noSingle()
 	normaltree->SetBranchAddress("cosbjets", &cosbjets);
 	normaltree->SetBranchAddress("jet_E", jet_E);
 	normaltree->SetBranchAddress("Top1costheta", &Top1costheta);
+	normaltree->SetBranchAddress("MCTop1charge", &MCTop1charge);
+	normaltree->SetBranchAddress("MCTop2charge", &MCTop2charge);
 
 	int temp=0;
 	int HadLepMatch=0;
@@ -259,9 +273,10 @@ void MC_noSingle()
 
 							bool methodUsedFlag[8] = {0};
 							bool methodOK[8] = {0};
+							bool sumCorrect = false;
 
 							int sum = 0;
-							int sumCorrect = 0;
+							//int sumCorrect = 0;
 							int sumHad=0;
 							int sumLep=0;
 
@@ -271,8 +286,8 @@ void MC_noSingle()
 								int charge  = chgValue[imethod];
 								int check		= methodCheck[imethod];
 
-								sum += charge;
 
+								sum += charge;
 
 /*
 								if(charge>0){
@@ -295,14 +310,14 @@ void MC_noSingle()
 
 								if(charge>0){
 									sum++;
-								}else{
+								}else if(charge<0){
 									sum--;
 								}
 */
 
-								sumCorrect += check;
+								//sumCorrect += check;
 
-								if(Nmethod<4){
+								if(Nmethod<=4){
 									sumHad += charge;
 								}else if(Nmethod==7){
 									sumLep += charge;
@@ -322,6 +337,7 @@ void MC_noSingle()
 							}else{
 
 								afterchgconfig++;
+								if(sum * MCTop1charge < 0) sumCorrect = true;
 
 								if(sumHad*sumLep > 0){
 									HadLepMatch++;
@@ -344,18 +360,32 @@ void MC_noSingle()
 								if(methodUsedFlag[7]){
 
 									aftermethod7++;
+
 /*
+									if(sumLep<0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, 1);
+									}else if(sumLep>0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, -1);
+									}
+
+									int recof0=0;
+									int recob0=0;
 									if(methodOK[7]){
-										method7correct++;
-										fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
+										if(sumLep<0){
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, 1);
+										}else if(sumLep>0){
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, -1);
+										}
 									}else{
-										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
+										if(sumLep<0){
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, 1);
+										}else if(sumLep>0){
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, -1);
+										}
 									}
 */
 
 									if(methodOK[7]) method7correct++;
-
-									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
 								}// method check 7
 
@@ -391,40 +421,59 @@ void MC_noSingle()
 								if(methodUsedFlag[7] || methodUsedFlag[5] || methodUsedFlag[6] || methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4]){
 									aftermethod7561234++;
 
+/*
 									if(sum<0){
 										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, 1);
 									}else if(sum>0){
 										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, -1);
 									}
 
-									if(methodUsed - sumCorrect < sumCorrect){
+									int recof0=0;
+									int recob0=0;
+									if(sumCorrect){
 										if(sum<0){
-											fill_hist2(cosRecoOK, recoforward, recobackward, Top1costheta, 1);
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, 1);
 										}else if(sum>0){
-											fill_hist2(cosRecoOK, recoforward, recobackward, Top1costheta, -1);
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, -1);
 										}
 									}else{
 										if(sum<0){
-											fill_hist2(cosRecoNG, recoforward, recobackward, Top1costheta, 1);
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, 1);
 										}else if(sum>0){
-											fill_hist2(cosRecoNG, recoforward, recobackward, Top1costheta, -1);
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, -1);
 										}
-									}
-
-
-									if(methodUsed - sumCorrect < sumCorrect) methodAllcorrect++;
-
-/*
-									if(methodUsed - sumCorrect < sumCorrect){
-										fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
-									}else{
-										fill_hist(cosRecoNG, recoforward, recobackward, qCostheta);
 									}
 */
+
+									if(sumCorrect) methodAllcorrect++;
+
 								}// method check 1234567
 
 								if(methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4]){
 									aftermethod1234++;
+
+									if(sumHad<0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, 1);
+									}else if(sumHad>0){
+										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, -1);
+									}
+
+									int recof0=0;
+									int recob0=0;
+									if(sumHad * MCTop1charge < 0){
+										if(sumHad<0){
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, 1);
+										}else if(sumHad>0){
+											fill_hist2(cosRecoOK, recof0, recob0, Top1costheta, -1);
+										}
+									}else{
+										if(sumHad<0){
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, 1);
+										}else if(sumHad>0){
+											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, -1);
+										}
+									}
+
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
@@ -493,32 +542,36 @@ void MC_noSingle()
 	//double intCosReco = cosRecoOK->Integral(10,21);
 	//double intCosGen  = cosGen->Integral(10,21);
 	
-	//cosGen->Scale(intCosRecoOK / intCosGen);
+	//cosGen->Scale(intCosRecoAll / intCosGen);
 	
 	cosRecoAll->Scale(1 / intCosRecoAll);
-	cosRecoOK->Scale(intCosRecoAll / intCosGen);
-	cosRecoNG->Scale(intCosRecoAll / intCosGen);
-	cosGen->Scale(1 / intCosGen);
+	//cosRecoOK->Scale(intCosRecoAll / intCosGen);
+	//cosRecoNG->Scale(intCosRecoAll / intCosGen);
+	
+	cosRecoOK->Scale(1 / intCosRecoAll);
+	cosRecoNG->Scale(1 / intCosRecoAll);
+	
+	cosGen->Scale( 1 / intCosGen);
 
 
 	
 	cosGen->Fit("fgen","Q");
 	cosRecoAll->Fit("freco", "QR");
-	cosRecoOK->Fit("freco", "QR");	
-	cosRecoNG->Fit("freco", "QR");
+	//cosRecoOK->Fit("freco", "QR");	
+	//cosRecoNG->Fit("freco", "QR");
 	
 
-	cosRecoStack->Add(cosRecoOK);
 	cosRecoStack->Add(cosRecoNG);
+	cosRecoStack->Add(cosRecoOK);
 
-	//cosRecoStack->Draw("");
-	cosGen->SetMinimum(0);
-	cosGen->Draw("he");
-	fgen->Draw("same");
-	cosGen->SetMinimum(0);
-	cosRecoAll->Draw("samee");
-	cosRecoOK->Draw("samee");
-	cosRecoNG->Draw("samee");
+	cosRecoStack->Draw("");
+	//cosGen->SetMinimum(0);
+	cosGen->Draw("samehe");
+	//fgen->Draw("same");
+	//cosGen->SetMinimum(0);
+	cosRecoAll->Draw("same");
+	//cosRecoOK->Draw("samee");
+	//cosRecoNG->Draw("samee");
 
 	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
@@ -526,7 +579,7 @@ void MC_noSingle()
 
 	leg->AddEntry(cosRecoAll,"Reco. All","l");
 
-	leg->AddEntry(cosRecoOK,"Reco. Correct","l");
+	//leg->AddEntry(cosRecoOK,"Reco. Correct","l");
 	leg->AddEntry(cosRecoNG,"Reco. Wrong","l");
 
 	leg->SetFillColor(0);
