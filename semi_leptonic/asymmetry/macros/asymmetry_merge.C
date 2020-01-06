@@ -113,6 +113,8 @@ void asymmetry_merge()
 	cosRecoL->Sumw2();
 	TH1F * cosGenL = new TH1F("cosGenL", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGenL->Sumw2();
+	TH1F * cosGen_wsingleTop_L = new TH1F("cosGen_wsingleTop_L", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	cosGen_wsingleTop_L->Sumw2();
 
 	TGaxis::SetMaxDigits(3);
 
@@ -122,12 +124,16 @@ void asymmetry_merge()
 	int forwardL = GenTreeL->Draw("qMCcostheta >> cosGenL","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
 	int backwardL = GenTreeL->Draw("qMCcostheta >> +cosGenL","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
 
+	int forwardL2 = GenTreeL->Draw("qMCcostheta >> cosGen_wsingleTop_L","qMCcostheta > 0 && qMCcostheta > -2");
+	int backwardL2 = GenTreeL->Draw("qMCcostheta >> +cosGen_wsingleTop_L","qMCcostheta < 0 && qMCcostheta > -2");
+
 	TCut fcuts = "qCostheta > 0" + cuts;
 	TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 	int recoforwardL = normaltreeL->Draw("qCostheta >> cosRecoL", fcuts);
 	int recobackwardL = normaltreeL->Draw("qCostheta >> +cosRecoL", bcuts);
 
 	cosGenL->Scale(wL);
+	cosGen_wsingleTop_L->Scale(wL);
 	cosRecoL->Scale(wL);
 
 
@@ -143,6 +149,8 @@ void asymmetry_merge()
 	cosRecoR->Sumw2();
 	TH1F * cosGenR = new TH1F("cosGenR", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
 	cosGenR->Sumw2();
+	TH1F * cosGen_wsingleTop_R = new TH1F("cosGen_wsingleTop_R", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	cosGen_wsingleTop_R->Sumw2();
 
 	TTree * normaltreeR = (TTree*) fileR->Get( "Stats" ) ;
 	TTree * GenTreeR = (TTree*) fileR->Get( "GenTree" ) ;
@@ -150,10 +158,14 @@ void asymmetry_merge()
 	int forwardR = GenTreeR->Draw("qMCcostheta >> cosGenR","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
 	int backwardR = GenTreeR->Draw("qMCcostheta >> +cosGenR","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
 
+	int forwardR2 = GenTreeR->Draw("qMCcostheta >> cosGen_wsingleTop_R","qMCcostheta > 0 && qMCcostheta > -2");
+	int backwardR2 = GenTreeR->Draw("qMCcostheta >> +cosGen_wsingleTop_R","qMCcostheta < 0 && qMCcostheta > -2");
+
 	int recoforwardR = normaltreeR->Draw("qCostheta >> cosRecoR", fcuts);
 	int recobackwardR = normaltreeR->Draw("qCostheta >> +cosRecoR", bcuts);
 
 	cosGenR->Scale(wR);
+	cosGen_wsingleTop_R->Scale(wR);
 	cosRecoR->Scale(wR);
 
 
@@ -167,15 +179,21 @@ void asymmetry_merge()
 	l_Gen->Add(cosGenL);
 	l_Gen->Add(cosGenR);
 
+	TList *l_Gen_wsingleTop = new TList;
+	l_Gen_wsingleTop->Add(cosGen_wsingleTop_L);
+	l_Gen_wsingleTop->Add(cosGen_wsingleTop_R);
 
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
 	TH1F * cosReco = new TH1F("cosReco", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
 	cosReco->Sumw2();
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
+	TH1F * cosGen_wsingleTop = new TH1F("cosGen_wsingleTop", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
+	cosGen_wsingleTop->Sumw2();
 
 	cosReco->Merge(l_Reco);
 	cosGen->Merge(l_Gen);
+	cosGen_wsingleTop->Merge(l_Gen_wsingleTop);
 
 	cosGen->SetStats(0);
 	TF1 * fgen = new TF1("fgen","pol2",-1,1);
@@ -186,30 +204,41 @@ void asymmetry_merge()
 
 	double intCosReco = cosReco->Integral(2,29);
 	double intCosGen  = cosGen->Integral(2,29);
+	double intCosGen_wsingleTop  = cosGen_wsingleTop->Integral(2,29);
 	cosReco->Scale(1/intCosReco);
 	cosGen->Scale(1/intCosGen);
+	cosGen_wsingleTop->Scale(1/intCosGen_wsingleTop);
 
 	cosReco->SetLineWidth(3);
 	cosGen->SetLineWidth(3);
 	cosGen->SetLineStyle(2);
 
+	cosGen_wsingleTop->SetLineWidth(3);
+	cosGen_wsingleTop->SetLineStyle(2);
+
 	cosGen->SetLineColor(kGreen+1);
+	cosGen_wsingleTop->SetLineColor(kBlue+1);
 	//cosReco->SetLineColor(kRed+1);
 
 	cosGen->SetFillColor(kGreen+1);
 	cosGen->SetFillStyle(3004);
 
+	cosGen_wsingleTop->SetFillColor(kBlue+1);
+	cosGen_wsingleTop->SetFillStyle(3004);
+
 	cosGen->Fit("fgen","Q0");
 	cosReco->Fit("freco", "0QR");
 
-	cosGen->SetMinimum(0);
-	cosGen->Draw("he");
+	cosGen_wsingleTop->SetMinimum(0);
+	cosGen_wsingleTop->Draw("he");
+	cosGen->Draw("hsame");
 	cosReco->Draw("same");
 
 
-	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
+	TLegend *leg = new TLegend(0.2,0.70,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
-	leg->AddEntry(cosGen,"Parton level","l");
+	leg->AddEntry(cosGen_wsingleTop,"Parton level","l");
+	leg->AddEntry(cosGen,"Parton level (single top rejected)","l");
 	leg->AddEntry(cosReco,"Reconstructed","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
