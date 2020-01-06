@@ -10,7 +10,7 @@
 #define MAXV 8
 
 using namespace std;
-void asymmetry_merge()
+void asymmetry_merge_b()
 {
 
 	// initialize variables
@@ -58,8 +58,7 @@ void asymmetry_merge()
 
 	// Total cut applied
 	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
-	TCut cuts = rcTW + hadM + pcut + methodAll;
-
+	TCut cuts = rcTW + hadM + pcut +  methodAll;
 	//TCut cuts = rcTW + hadM + pcut + gcut + (method1|| method2|| method3|| method4);
 
 
@@ -109,9 +108,9 @@ void asymmetry_merge()
 	TFile * fileL = TFile::Open(filenameL.c_str());
 
 	TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,cx,500);
-	TH1F * cosRecoL = new TH1F("cosRecoL", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	TH1F * cosRecoL = new TH1F("cosRecoL", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosRecoL->Sumw2();
-	TH1F * cosGenL = new TH1F("cosGenL", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	TH1F * cosGenL = new TH1F("cosGenL", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosGenL->Sumw2();
 
 	TGaxis::SetMaxDigits(3);
@@ -119,13 +118,13 @@ void asymmetry_merge()
 	TTree * normaltreeL = (TTree*) fileL->Get( "Stats" ) ;
 	TTree * GenTreeL = (TTree*) fileL->Get( "GenTree" ) ;
 
-	int forwardL = GenTreeL->Draw("qMCcostheta >> cosGenL","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
-	int backwardL = GenTreeL->Draw("qMCcostheta >> +cosGenL","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int forwardL = GenTreeL->Draw("qMCBcostheta >> cosGenL","qMCBcostheta > 0 && qMCBcostheta > -2 && singletopFlag == 0");
+	int backwardL = GenTreeL->Draw("qMCBcostheta >> +cosGenL","qMCBcostheta < 0 && qMCBcostheta > -2 && singletopFlag == 0");
 
-	TCut fcuts = "qCostheta > 0" + cuts;
-	TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
-	int recoforwardL = normaltreeL->Draw("qCostheta >> cosRecoL", fcuts);
-	int recobackwardL = normaltreeL->Draw("qCostheta >> +cosRecoL", bcuts);
+	TCut fcuts = "qBCostheta > 0" + cuts;
+	TCut bcuts = "qBCostheta < 0 && qBCostheta > -1.0 " + cuts;
+	int recoforwardL = normaltreeL->Draw("qBCostheta >> cosRecoL", fcuts);
+	int recobackwardL = normaltreeL->Draw("qBCostheta >> +cosRecoL", bcuts);
 
 	cosGenL->Scale(wL);
 	cosRecoL->Scale(wL);
@@ -139,19 +138,19 @@ void asymmetry_merge()
 	TFile * fileR = TFile::Open(filenameR.c_str());
 
 	//TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
-	TH1F * cosRecoR = new TH1F("cosRecoR", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	TH1F * cosRecoR = new TH1F("cosRecoR", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosRecoR->Sumw2();
-	TH1F * cosGenR = new TH1F("cosGenR", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	TH1F * cosGenR = new TH1F("cosGenR", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosGenR->Sumw2();
 
 	TTree * normaltreeR = (TTree*) fileR->Get( "Stats" ) ;
 	TTree * GenTreeR = (TTree*) fileR->Get( "GenTree" ) ;
 
-	int forwardR = GenTreeR->Draw("qMCcostheta >> cosGenR","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
-	int backwardR = GenTreeR->Draw("qMCcostheta >> +cosGenR","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int forwardR = GenTreeR->Draw("qMCBcostheta >> cosGenR","qMCBcostheta > 0 && qMCBcostheta > -2 && singletopFlag == 0");
+	int backwardR = GenTreeR->Draw("qMCBcostheta >> +cosGenR","qMCBcostheta < 0 && qMCBcostheta > -2 && singletopFlag == 0");
 
-	int recoforwardR = normaltreeR->Draw("qCostheta >> cosRecoR", fcuts);
-	int recobackwardR = normaltreeR->Draw("qCostheta >> +cosRecoR", bcuts);
+	int recoforwardR = normaltreeR->Draw("qBCostheta >> cosRecoR", fcuts);
+	int recobackwardR = normaltreeR->Draw("qBCostheta >> +cosRecoR", bcuts);
 
 	cosGenR->Scale(wR);
 	cosRecoR->Scale(wR);
@@ -169,9 +168,9 @@ void asymmetry_merge()
 
 
 	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,cx,500);
-	TH1F * cosReco = new TH1F("cosReco", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
+	TH1F * cosReco = new TH1F("cosReco", ";cos#theta_{b};Entries / 0.07", bin_e,-1.0,max_e);
 	cosReco->Sumw2();
-	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
+	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{b};Entries / 0.07", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
 
 	cosReco->Merge(l_Reco);
