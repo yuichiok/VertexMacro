@@ -13,7 +13,8 @@ void recoil_mass()
 	int token=0;
 
 	// set plot style
-	SetQQbarStyle();
+
+	//SetQQbarStyle();
 	gStyle->SetOptFit(0);
 	gStyle->SetOptStat(0);  
 	gStyle->SetOptTitle(1);
@@ -22,6 +23,7 @@ void recoil_mass()
 	gStyle->SetMarkerSize(0);
 	gStyle->SetTitleX(0.2); 
 	gStyle->SetTitleY(0.9); 
+
 
 	// File Selector
 
@@ -68,13 +70,16 @@ void recoil_mass()
 	TH1F * histRecoTopLepMass	= new TH1F("histRecoTopLepMass",";Reco Top_{Lep} Mass (GeV); Entries",200,100,300);
 	histRecoTopLepMass->Sumw2();
 
-	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC;RC",200,100,300,200,100,300);
-	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC;RC",200,100,300,200,100,300);
+	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,100,300,200,100,300);
+	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,100,300,200,100,300);
+
+	TGaxis::SetMaxDigits(3);
 
 	// Set variables
 
 	int MCLeptonPDG=0;
 	float MCTopmass=0, MCTopBarmass=0;
+	float qMCcostheta[2];
 
 	float 	Thrust=0,
 	hadMass=0,
@@ -92,6 +97,7 @@ void recoil_mass()
 	// Generator Info
 
 	Stats->SetBranchAddress("MCLeptonPDG", &MCLeptonPDG);
+	Stats->SetBranchAddress("qMCcostheta", qMCcostheta);
 	Stats->SetBranchAddress("MCTopmass", &MCTopmass);
 	Stats->SetBranchAddress("MCTopBarmass", &MCTopBarmass);
 
@@ -116,31 +122,41 @@ void recoil_mass()
 
 		Stats->GetEntry(iStatEntry);
 
-		// Generated Level
+		bool qMCCheck1 = false;
+		bool qMCCheck2 = false;
 
-		float MCTopHadMass = -1;
-		float MCTopLepMass = -1;
+		if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
+		if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
 
-		if(MCLeptonPDG < 0){
-			MCTopHadMass = MCTopmass;
-			MCTopLepMass = MCTopBarmass;
+		if(qMCCheck1 && qMCCheck2){
+
+			// Generated Level
+
+			float MCTopHadMass = -1;
+			float MCTopLepMass = -1;
+
+			if(MCLeptonPDG < 0){
+				MCTopHadMass = MCTopmass;
+				MCTopLepMass = MCTopBarmass;
+			}
+			if(MCLeptonPDG > 0){
+				MCTopHadMass = MCTopBarmass;
+				MCTopLepMass = MCTopmass;
+			}
+
+			if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
+			if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
+
+
+			// Reconstructed Level
+
+			histRecoTopHadMass->Fill(Top1mass);
+			histRecoTopLepMass->Fill(Top2mass);
+
+			histTopHadMass->Fill(MCTopHadMass,Top1mass);
+			histTopLepMass->Fill(MCTopLepMass,Top2mass);
+
 		}
-		if(MCLeptonPDG > 0){
-			MCTopHadMass = MCTopBarmass;
-			MCTopLepMass = MCTopmass;
-		}
-
-		if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
-		if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
-
-
-		// Reconstructed Level
-
-		histRecoTopHadMass->Fill(Top1mass);
-		histRecoTopLepMass->Fill(Top2mass);
-
-		histTopHadMass->Fill(MCTopHadMass,Top1mass);
-		histTopLepMass->Fill(MCTopLepMass,Top2mass);
 
 
 /*
@@ -189,34 +205,48 @@ void recoil_mass()
 
 	}// End of Event Loop
 
+	
+	  // set margin sizes
+	/*
+	gStyle->SetPadTopMargin(0.1);
+	gStyle->SetPadRightMargin(0.13);
+	gStyle->SetPadBottomMargin(0.15);
+	gStyle->SetPadLeftMargin(0.15);
+	*/
+
 
 	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,900,900);
 	c1->Divide(2,2);
 
 	c1->cd(1);
-	histMCTopHadMass->Draw();
+	histMCTopHadMass->Draw("he");
 
 	c1->cd(2);
-	histMCTopLepMass->Draw();
+	histMCTopLepMass->Draw("he");
 
 	c1->cd(3);
-	histRecoTopHadMass->Draw();
+	histRecoTopHadMass->Draw("he");
 
 	c1->cd(4);
-	histRecoTopLepMass->Draw();
+	histRecoTopLepMass->Draw("he");
+
 
 	TCanvas * c2	= new TCanvas("c2", "DataMC2",0,0,1000,500);
 	c2->Divide(2,1);
 
+	histTopHadMass->GetXaxis()->SetTitleOffset(1.7);
+	histTopHadMass->GetYaxis()->SetTitleOffset(1.7);
+
+	histTopLepMass->GetXaxis()->SetTitleOffset(1.7);
+	histTopLepMass->GetYaxis()->SetTitleOffset(1.7);
+
+
 	c2->cd(1);
-	histTopHadMass->Draw();
+	histTopHadMass->Draw("COLZ");
 
 	c2->cd(2);
-	histTopLepMass->Draw();
+	histTopLepMass->Draw("COLZ");
 	
-
-
-
 
 
 
