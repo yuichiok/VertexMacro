@@ -54,7 +54,7 @@ void MC_noSingle()
 
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record2.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -89,7 +89,7 @@ void MC_noSingle()
 	int nGenUsed, nAfterLeptonCuts, nAfterBtagCuts;
 	int nevt=0, nlcut=0, nbcut=0;
 
-	if(token==15||token==16){
+	if(token==4||token==5){
 		Summary->SetBranchAddress( "nEvents", &nGenUsed ) ;
 	}else{
 		Summary->SetBranchAddress( "nGenUsed", &nGenUsed ) ;
@@ -126,7 +126,7 @@ void MC_noSingle()
 	cosRecoOK->Sumw2();
 	TH1F * cosRecoNG = new TH1F("cosRecoNG", "E(Ntracks)", 30,-1.0,1.0);
 	cosRecoNG->Sumw2();
-	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", 30,-1.0,1.0);
+	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries / 0.07", 30,-1.0,1.0);
 	cosGen->Sumw2();
 
 	TH2F * cosMCRC = new TH2F("cosMCRC",";Reco cos#theta_{t};Gen cos#theta_{t}", 30, -1.0, 1.0, 30, -1.0, 1.0);
@@ -141,23 +141,33 @@ void MC_noSingle()
 	cosRecoNG->SetLineColor(kRed+1);
 
 	//cosRecoOK->SetFillColorAlpha(kBlue+1,0.35);
-	//cosRecoNG->SetFillColorAlpha(kRed+1,0.35);
+	cosRecoNG->SetFillColor(kRed+1);
 
 	//cosRecoOK->SetFillStyle(3004);
-	//cosRecoNG->SetFillStyle(3004);
+	cosRecoNG->SetFillStyle(3004);
 
 	cosGen->SetLineWidth(3);
 	cosGen->SetLineStyle(2);
 	cosGen->SetLineColor(kGreen+1);
-	//cosGen->SetFillColor(kGreen+1);
-	//cosGen->SetFillStyle(3004);
+	cosGen->SetFillColor(kGreen+1);
+	cosGen->SetFillStyle(3004);
 
 	// Gen Info
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
 
-	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
-	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int forward = 0;
+	int backward = 0;
+
+	if(token==4||token==5){
+		forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
+		backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+	}else{
+		forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
+		backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
+	}
+
+
 
 	//int forward = 0;
 	//int backward = 0;
@@ -384,7 +394,6 @@ void MC_noSingle()
 										}
 									}
 */
-
 									if(methodOK[7]) method7correct++;
 
 								}// method check 7
@@ -444,13 +453,13 @@ void MC_noSingle()
 										}
 									}
 */
-
 									if(sumCorrect) methodAllcorrect++;
 
 								}// method check 1234567
 
 								if(methodUsedFlag[1] || methodUsedFlag[2] || methodUsedFlag[3] || methodUsedFlag[4]){
 									aftermethod1234++;
+
 
 									if(sumHad<0){
 										fill_hist2(cosRecoAll, recoforward, recobackward, Top1costheta, 1);
@@ -473,7 +482,6 @@ void MC_noSingle()
 											fill_hist2(cosRecoNG, recof0, recob0, Top1costheta, -1);
 										}
 									}
-
 
 									//fill_hist(cosRecoOK, recoforward, recobackward, qCostheta);
 
@@ -564,9 +572,11 @@ void MC_noSingle()
 	cosRecoStack->Add(cosRecoNG);
 	cosRecoStack->Add(cosRecoOK);
 
-	cosRecoStack->Draw("");
+	cosGen->SetMinimum(0);
+	cosGen->Draw("he");
+	cosRecoNG->Draw("hsame");
+	//cosRecoStack->Draw("");
 	//cosGen->SetMinimum(0);
-	cosGen->Draw("samehe");
 	//fgen->Draw("same");
 	//cosGen->SetMinimum(0);
 	cosRecoAll->Draw("same");

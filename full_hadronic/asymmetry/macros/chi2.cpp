@@ -51,6 +51,8 @@ void chi2(){
 	string treename = "Stats" ;
 
 	rootfilename = rootfiledir + beforefilename ;
+	rootfilename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eRpL/QQbarProcessor_out/root_merge/fullHad.eR.pL_QQbar_temp.root";
+	
 	cout << "filename '" << rootfilename << "'." << endl ;
 	TFile * file1 = TFile::Open(rootfilename.c_str());
 	if( file1->IsZombie() ){

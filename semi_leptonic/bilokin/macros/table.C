@@ -16,6 +16,7 @@ void format(TH2 * table)
 void table()
 {
 
+/*
 	int token=0;
 	string recofilepath = "";
 	string recofilename_before = "";
@@ -60,7 +61,10 @@ void table()
 	string mcfile 					= recofilepath + mcfilename;
 
   string recofilename = recofilepath + recofilename_before;
+*/
 
+	string recofilename = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/TrashRecoProcessor_out/after_vtx_recovery/root_merge/eLpR_electron_TRP_after_D0.root";
+	string mcfile = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/truth_vertex_finder_out/root_merge/eLpR_electron_TVF_D0.root";
 
 	int _vertex = 0;
 	int _pdg[MAXN];

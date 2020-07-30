@@ -1,8 +1,9 @@
 void purity()
 {
-	string filepath = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/" ;
-	string file		 = "VertexRestore_NewIsoLep_020619.root";
-	string filename = filepath + file ;
+	//string filepath = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/" ;
+	//string file		 = "VertexRestore_NewIsoLep_020619.root";
+	//string filename = filepath + file ;
+	string filename = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/vertex_restorer_out/root_merge/eLpR_electron_VR_Z0corr2.root";
 
 	TFile * file2 = TFile::Open(filename.c_str());
 	gStyle->SetPalette(1);

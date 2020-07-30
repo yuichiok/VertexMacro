@@ -39,7 +39,7 @@ void asymmetry_wBG()
 	
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record2.txt" );
 	//std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/test.txt" );
 
 	while( fs.input(in) ){
@@ -114,8 +114,8 @@ void asymmetry_wBG()
 	cosBG->SetFillColor(kMagenta+1);
 	cosBG->SetFillStyle(3004);
 
-	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
-	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
+	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
 
 	// Selection lists
 	TCut thru = "Thrust < 0.9";
@@ -161,20 +161,30 @@ void asymmetry_wBG()
 	freco->SetLineStyle(3);
 
 	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
-	double intCosReco = cosReco->Integral(2,29);
-	double intCosGen  = cosGen->Integral(2,29);
+	//double intCosReco = cosReco->Integral(2,29);
+	//double intCosGen  = cosGen->Integral(2,29);
+	//double intCosBG  = cosBG->Integral(2,29);
+
+	double intCosReco = cosReco->GetEntries();
+	double intCosGen  = cosGen->GetEntries();
+	double intCosBG  = cosBG->GetEntries();
+
 	cosGen->Scale(intCosReco / intCosGen);
+	//cosGen->Scale(1 / intCosGen);
+	//cosReco->Scale(1 / intCosReco);
+	//cosBG->Scale(1 / intCosBG );
 	
-	
+	cout << "reco = " << intCosReco << ", gen = " << intCosGen << ", BG = " << intCosBG << endl;
+
 	cosGen->Fit("fgen","Q");
 	cosReco->Fit("freco", "QR");
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
 	fgen->Draw("same");
-	cosGen->SetMinimum(0);
+	//cosGen->SetMinimum(0);
 	cosReco->Draw("samee");
 
-	cosBG->SetMinimum(0);
+	//cosBG->SetMinimum(0);
 	cosBG->Draw("same");
 
 /*

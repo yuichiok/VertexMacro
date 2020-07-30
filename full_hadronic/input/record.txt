@@ -2,3 +2,5 @@ fullHadronic/large,/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarPro
 fullHadronic/small,/hsm/ilc/users/yokugawa/preset_N_run/s5/fullHad/eLpR/QQbarProcessor_out/root_merge/fullHad.eL.pR_QQbar.root
 fullHadronic/large temp,/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eLpR/QQbarProcessor_out/root_merge/fullHad.eL.pR_QQbar_temp.root
 fullHadronic/small temp,/hsm/ilc/users/yokugawa/preset_N_run/s5/fullHad/eLpR/QQbarProcessor_out/root_merge/fullHad.eL.pR_QQbar_temp.root
+fullHadronic/large/eRpL,/hsm/ilc/users/yokugawa/preset_N_run/l5/fullHad/eRpL/QQbarProcessor_out/root_merge/fullHad.eR.pL_QQbar_temp.root
+fullHadronic/small/eRpL,/hsm/ilc/users/yokugawa/preset_N_run/s5/fullHad/eRpL/QQbarProcessor_out/root_merge/fullHad.eR.pL_QQbar_temp.root

@@ -14,6 +14,7 @@ void purity_d0()
 	string filename = "";
 	int token;
 
+/*
 	cout << "0 = yyxylv/small" 	  << endl;
 	cout << "1 = yyxylv/large" 	  << endl;
 	cout << "2 = yyxyev/small" << endl;
@@ -32,6 +33,9 @@ void purity_d0()
 		case 3 : filename = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/VR_l5_yyxyev.root";
 						 break;
 	}
+*/
+
+	filename = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/vertex_restorer_out/root_merge/eLpR_electron_VR_D0.root";
 
 	//string file		 = "VertexRestore_NewIsoLep_020619.root";
 	//string filename = filepath + file ;

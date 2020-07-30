@@ -12,9 +12,12 @@ void recoil_mass()
 {
 	int token=0;
 
+	bool twoDmode = 1;
+
 	// set plot style
 
-	//SetQQbarStyle();
+	if(!twoDmode) SetQQbarStyle();
+
 	gStyle->SetOptFit(0);
 	gStyle->SetOptStat(0);  
 	gStyle->SetOptTitle(1);
@@ -70,14 +73,21 @@ void recoil_mass()
 	TH1F * histRecoTopLepMass	= new TH1F("histRecoTopLepMass",";Reco Top_{Lep} Mass (GeV); Entries",200,100,300);
 	histRecoTopLepMass->Sumw2();
 
-	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,100,300,200,100,300);
-	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,100,300,200,100,300);
+	TH1F * histRecoMCHadMassDiff	= new TH1F("histRecoMCHadMassDiff",";Reco-Gen Top_{Had} Mass (GeV); Entries",200,-100,100);
+	TH1F * histRecoMCLepMassDiff	= new TH1F("histRecoMCLepMassDiff",";Reco-Gen Top_{Lep} Mass (GeV); Entries",200,-100,100);
+
+
+	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,0,400,200,0,400);
+	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,0,400,200,0,400);
 
 	TGaxis::SetMaxDigits(3);
 
 	// Set variables
 
 	int MCLeptonPDG=0;
+	int singletopFlag=0;
+	int methodUsed=0;
+	int methodTaken[100];
 	float MCTopmass=0, MCTopBarmass=0;
 	float qMCcostheta[2];
 
@@ -100,6 +110,9 @@ void recoil_mass()
 	Stats->SetBranchAddress("qMCcostheta", qMCcostheta);
 	Stats->SetBranchAddress("MCTopmass", &MCTopmass);
 	Stats->SetBranchAddress("MCTopBarmass", &MCTopBarmass);
+	Stats->SetBranchAddress("singletopFlag", &singletopFlag);
+	Stats->SetBranchAddress("methodTaken", methodTaken);
+	Stats->SetBranchAddress("methodUsed", &methodUsed);
 
 	//　Reconstructed Info
 
@@ -122,44 +135,64 @@ void recoil_mass()
 
 		Stats->GetEntry(iStatEntry);
 
+
+
 		bool qMCCheck1 = false;
 		bool qMCCheck2 = false;
 
 		if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
 		if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
 
-		if(qMCCheck1 && qMCCheck2){
+		//if(qMCCheck1 && qMCCheck2){
 
-			// Generated Level
+			for (int i = 0; i < methodUsed; ++i)
+			{
 
-			float MCTopHadMass = -1;
-			float MCTopLepMass = -1;
+				if(methodTaken[i]==1){
 
-			if(MCLeptonPDG < 0){
-				MCTopHadMass = MCTopmass;
-				MCTopLepMass = MCTopBarmass;
+					// Generated Level
+
+					float MCTopHadMass = -1;
+					float MCTopLepMass = -1;
+
+					if(MCLeptonPDG < 0){
+						MCTopHadMass = MCTopmass;
+						MCTopLepMass = MCTopBarmass;
+					}
+					if(MCLeptonPDG > 0){
+						MCTopHadMass = MCTopBarmass;
+						MCTopLepMass = MCTopmass;
+					}
+
+					if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
+					if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
+
+
+					// Reconstructed Level
+
+					histRecoTopHadMass->Fill(Top1mass);
+					histRecoTopLepMass->Fill(Top2mass);
+
+					histTopHadMass->Fill(MCTopHadMass,Top1mass);
+					histTopLepMass->Fill(MCTopLepMass,Top2mass);
+
+					// Reco MC Difference
+
+					float HadDiff = Top1mass - MCTopHadMass;
+					float LepDiff = Top2mass - MCTopLepMass;
+
+					histRecoMCHadMassDiff->Fill(HadDiff);
+					histRecoMCLepMassDiff->Fill(LepDiff);
+
+				}
+
 			}
-			if(MCLeptonPDG > 0){
-				MCTopHadMass = MCTopBarmass;
-				MCTopLepMass = MCTopmass;
-			}
 
-			if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
-			if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
-
-
-			// Reconstructed Level
-
-			histRecoTopHadMass->Fill(Top1mass);
-			histRecoTopLepMass->Fill(Top2mass);
-
-			histTopHadMass->Fill(MCTopHadMass,Top1mass);
-			histTopLepMass->Fill(MCTopLepMass,Top2mass);
-
-		}
+		//}
 
 
 /*
+
 		if(Thrust<0.9){
 
 			if(hadMass > 180 && hadMass < 420){
@@ -170,29 +203,59 @@ void recoil_mass()
 
 						if(Top1bmomentum > 15 && Top2bmomentum > 15){
 
-							histRecoTopHadMass->Fill(Top1mass);
-							histRecoTopLepMass->Fill(Top2mass);
+							for (int i = 0; i < methodUsed; ++i)
+							{
+
+								if(methodTaken[i]==1){
+
+									bool qMCCheck1 = false;
+									bool qMCCheck2 = false;
+
+									if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
+									if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
+
+									//if(qMCCheck1 && qMCCheck2){
+
+										// Generated Level
+
+										float MCTopHadMass = -1;
+										float MCTopLepMass = -1;
+
+										if(MCLeptonPDG < 0){
+											MCTopHadMass = MCTopmass;
+											MCTopLepMass = MCTopBarmass;
+										}
+										if(MCLeptonPDG > 0){
+											MCTopHadMass = MCTopBarmass;
+											MCTopLepMass = MCTopmass;
+										}
+
+										if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
+										if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
 
 
-							// Generated
+										// Reconstructed Level
 
-							float MCTopHadMass = -1;
-							float MCTopLepMass = -1;
+										histRecoTopHadMass->Fill(Top1mass);
+										histRecoTopLepMass->Fill(Top2mass);
 
-							if(MCLeptonPDG < 0){
-								MCTopHadMass = MCTopmass;
-								MCTopLepMass = MCTopBarmass;
+										histTopHadMass->Fill(MCTopHadMass,Top1mass);
+										histTopLepMass->Fill(MCTopLepMass,Top2mass);
+
+										// Reco MC Difference
+
+										float HadDiff = Top1mass - MCTopHadMass;
+										float LepDiff = Top2mass - MCTopLepMass;
+
+										histRecoMCHadMassDiff->Fill(HadDiff);
+										histRecoMCLepMassDiff->Fill(LepDiff);
+
+									//}
+
+								}
+
 							}
-							if(MCLeptonPDG > 0){
-								MCTopHadMass = MCTopBarmass;
-								MCTopLepMass = MCTopmass;
-							}
 
-							if(MCTopHadMass != -1) histMCTopHadMass->Fill(MCTopHadMass);
-							if(MCTopLepMass != -1) histMCTopLepMass->Fill(MCTopLepMass);
-
-							histTopHadMass->Fill(MCTopHadMass,Top1mass);
-							histTopLepMass->Fill(MCTopLepMass,Top2mass);
 
 						}//pcut
 					}//gcut
@@ -206,16 +269,52 @@ void recoil_mass()
 	}// End of Event Loop
 
 	
-	  // set margin sizes
+	// set margin sizes
+	if (twoDmode){
+		gStyle->SetPadTopMargin(0.1);
+		gStyle->SetPadRightMargin(0.13);
+		gStyle->SetPadBottomMargin(0.15);
+		gStyle->SetPadLeftMargin(0.15);
+	}
+
+
+	// hist normalization
+
+	histMCTopHadMass->Scale( 1 / histMCTopHadMass->GetEntries() );
+	histMCTopLepMass->Scale( 1 / histMCTopLepMass->GetEntries() );
+	histRecoTopHadMass->Scale( 1 / histRecoTopHadMass->GetEntries() );
+	histRecoTopLepMass->Scale( 1 / histRecoTopLepMass->GetEntries() );
+
+
+	// hist setting
+
+	histMCTopHadMass->SetLineWidth(3);
+	histMCTopHadMass->SetLineStyle(1);
+	histMCTopHadMass->SetLineColor(kGray+1);
+
+	histRecoTopHadMass->SetLineWidth(3);
+	histRecoTopHadMass->SetLineStyle(1);
+
+	histMCTopLepMass->SetLineWidth(3);
+	histMCTopLepMass->SetLineStyle(1);
+	histMCTopLepMass->SetLineColor(kGray+1);
+
+	histRecoTopLepMass->SetLineWidth(3);
+	histRecoTopLepMass->SetLineStyle(1);
+
+	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,1000,500);
+	c1->Divide(2,1);
+
+	c1->cd(1);
+	histMCTopHadMass->Draw("he");
+	histRecoTopHadMass->Draw("hsame");
+
+	c1->cd(2);
+	histMCTopLepMass->Draw("he");
+	histRecoTopLepMass->Draw("hsame");
+
+
 	/*
-	gStyle->SetPadTopMargin(0.1);
-	gStyle->SetPadRightMargin(0.13);
-	gStyle->SetPadBottomMargin(0.15);
-	gStyle->SetPadLeftMargin(0.15);
-	*/
-
-
-	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,900,900);
 	c1->Divide(2,2);
 
 	c1->cd(1);
@@ -229,6 +328,7 @@ void recoil_mass()
 
 	c1->cd(4);
 	histRecoTopLepMass->Draw("he");
+	*/
 
 
 	TCanvas * c2	= new TCanvas("c2", "DataMC2",0,0,1000,500);
@@ -247,6 +347,15 @@ void recoil_mass()
 	c2->cd(2);
 	histTopLepMass->Draw("COLZ");
 	
+
+	TCanvas * c3	= new TCanvas("c3", "DataMC3",0,0,1000,500);
+	c3->Divide(2,1);
+
+	c3->cd(1);
+	histRecoMCHadMassDiff->Draw("he");
+
+	c3->cd(2);
+	histRecoMCLepMassDiff->Draw("he");
 
 
 

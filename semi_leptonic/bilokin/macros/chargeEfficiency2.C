@@ -71,9 +71,9 @@ void drawLegend()
 	legendMean2->AddEntry(eff1,"Before recovery","pl");
 	legendMean2->Draw();
 
-  delete eff1;
-	delete eff21;
-	delete legendMean2;
+  //delete eff1;
+	//delete eff21;
+	//delete legendMean2;
 }
 
 
@@ -100,7 +100,7 @@ void chargeEfficiency2()
 
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/TVF_TRP.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/TVF_TRP2.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -644,7 +644,7 @@ cout << "this is test" << endl;
 	gPad->SetRightMargin(0.03);
 	getEfficiency(momentumreco, momentumrecototal, same, color, ";|p_{B,had}|;Charge purity");
 	getEfficiency(momentumreco_after, momentumrecototal_after, 1, kBlue, ";|p_{B,had}|;Charge purity");
-	drawLegend();
+	//drawLegend();
 	QQBARLabel(0.8,0.2,"",1);
 	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-pb.pdf");
 	
@@ -653,7 +653,7 @@ cout << "this is test" << endl;
 	gPad->SetRightMargin(0.03);
 	getEfficiency(numberreco, numberrecototal, same, color, ";N_{rec};Charge purity");
 	getEfficiency(numberreco_after, numberrecototal_after, 1, kBlue, ";N_{rec};Charge purity");
-	drawLegend();
+	//drawLegend();
 	QQBARLabel(0.8,0.2,"",1);
 	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-nrec.pdf");
 
@@ -663,7 +663,7 @@ cout << "this is test" << endl;
 	//getEfficiency(numbergen, numbergentotal, same, color,  "Purity by N_{gen};N_{gen};p_{B}(N_{gen})");
 	getEfficiency(cosgen, cosgentotal, same, color, ";|cos#theta_{B}|;Charge purity");
 	getEfficiency(cosgen_after, cosgentotal_after, 1, kBlue, ";|cos#theta_{B}|;Charge purity");
-	drawLegend();
+	//drawLegend();
 	QQBARLabel(0.2,0.2,"",1);
 	//gPad->SaveAs("recoverytest/pdf/purity-nocuts-costheta.pdf");
 	

@@ -7,37 +7,7 @@ using namespace std;
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void btrack()
 {
-	int token=0;
-	string filename0 = "/home/ilc/yokugawa/run/root_merge/";
-	string filename1;
-
-	/*
-		 cout << "0 = New/Small" 	  << endl;
-		 cout << "1 = New/Large" 	  << endl;
-		 cout << "2 = New/Large/QQbar" << endl;
-		 cout << "3 = Old      " 	  << endl;
-		 cout << "4 = Old/yyxylv      "       << endl;
-		 cout << "Choose from 0-4: ";
-		 cin  >> token;
-		 cout << endl;
-
-		 switch(token){
-		 case 0 : filename1 = "new/small/leptonic_yyxyev_eLeR_new_small.root";
-		 break;
-		 case 1 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large.root";
-		 break;
-		 case 2 : filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
-		 break;
-		 case 3 : filename1 = "old/leptonic_yyxyev_eLeR_old_lcut.root" ;
-		 break;
-		 case 4 : filename1 = "old/leptonic_yyxylv_eLeR_iso_lep_lcut.root" ;
-		 break;
-		 }
-		 */
-
-	filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar_newTest.root";
-
-	string filename = filename0 + filename1;
+	string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/semiLep/eLpR/electron_muon/QQbarProcessor_out/IsoLepTagged.eLpR_electron_muon_QQbar_MethodAll_temp.root";
 	cout << "Processing : " << filename << " ..." << endl;
 
 	TFile * file = TFile::Open(filename.c_str());

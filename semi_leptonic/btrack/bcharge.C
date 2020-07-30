@@ -7,14 +7,16 @@ using namespace std;
 //void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 void bcharge()
 {
-		int token=0;
+/*
 		string filename0 = "/home/ilc/yokugawa/run/root_merge/";
 		//string filename0 = "rootfile/"; 
 		string filename1;
 
 		filename1 = "new/large/leptonic_yyxyev_eLeR_new_large_QQbar.root";
-
-		string filename = filename0 + filename1;
+*/
+	
+		string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/semiLep/eLpR/electron_muon/QQbarProcessor_out/IsoLepTagged.eLpR_electron_muon_QQbar_MethodAll_temp.root";
+	
 		cout << "Processing : " << filename << " ..." << endl;
 
 		TFile * file = TFile::Open(filename.c_str());
@@ -22,10 +24,11 @@ void bcharge()
 		int bin_e = 30;
 		int max_e = 1;
 
-		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
-		//TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
+		//TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+		TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
 		
-		TH1F * hist = new TH1F("hist", "test;ncharge;nevents", 3, -1.5, 1.5);
+		TH1F * GenChg = new TH1F("GenChg", ";B hadron charge;Events", 10, -5, 5);
+		TH1F * RecoChg = new TH1F("RecoChg", ";B hadron charge;Events", 10, -5, 5);
 
 		TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
 
@@ -47,14 +50,30 @@ void bcharge()
 		TCut method7 = "methodTaken == 7";
 
 		// Total cut applied
-		TCut cuts = rcTW + hadM + pcut + gcut + method5;
+		TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
 
 		//TCut fcuts = "qCostheta > 0" + cuts;
 		//TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 		
 		// Fill histograms from tree
-		normaltree->Draw("MCBHadCharge >> hist");
-		hist->Draw();
+		normaltree->Draw("MCBHadCharge >> GenChg", "singletopFlag == 0");
+		normaltree->Draw("Top1bcharge >> RecoChg", cuts);
+		normaltree->Draw("Top2bcharge >> +RecoChg", cuts);
+		
+		RecoChg->Scale(1 / RecoChg->GetEntries() );
+		GenChg->Scale(1 / GenChg->GetEntries() );
+
+		RecoChg->SetLineWidth(3);	
+		GenChg->SetLineWidth(3);	
+		GenChg->SetLineStyle(2);	
+		GenChg->SetLineColor(kGreen+1);
+		
+
+		TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
+
+		GenChg->SetMinimum(0);
+		GenChg->Draw("he");
+		RecoChg->Draw("same");
 
 
 }

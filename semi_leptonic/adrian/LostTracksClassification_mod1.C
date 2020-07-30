@@ -13,7 +13,9 @@ void makePretty(TH1F * cosAll, int color, int reconumber)
 	cosAll->SetLineWidth(3);
 
 }
-void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/TrashRecoProcessor_out/after_vtx_recovery/IsoLepTagged.eL.pR_electron_muon_TRP_after3.root", TString topology="ttbar")
+//void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/electron_muon/TrashRecoProcessor_out/after_vtx_recovery/IsoLepTagged.eL.pR_electron_muon_TRP_after3.root", TString topology="ttbar")
+//void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/semiLep/eLpR/electron_muon/TrashRecoProcessor_out/after_vtx_recovery/IsoLepTagged.eL.pR_electron_muon_TRP_after3.root", TString topology="ttbar")
+void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/preset_N_run/l5/semiLep/eLpR/electron_muon/TrashRecoProcessor_out/before_vtx_recovery/IsoLepTagged.eL.pR_electron_muon_TRP_before3.root", TString topology="ttbar")
 {
 
   SetQQbarStyle();
@@ -26,17 +28,18 @@ void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/pr
   gStyle->SetMarkerSize(0);
 
   gStyle->SetTitleX(0.19); 
-  gStyle->SetTitleY(0.85); 
+  gStyle->SetTitleY(0.93); 
 
   TString title;
   if(topology=="bbbar")  title="e_{L}^{-}e_{R}^{+}#rightarrowb#bar{b} @500 GeV, IDR-L";
-  else if (topology=="ttbar")  title="e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} (l#nu+jets) @500 GeV, IDR-L";
+  else if (topology=="ttbar")  title="e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} @500 GeV, IDR-L";
+  //else if (topology=="ttbar")  title="e_{L}^{-}e_{R}^{+}#rightarrow t#bar{t} (l#nu+jets) @500 GeV, IDR-L";
   
   
 	TFile * file = TFile::Open(filename.c_str());
 	int bin_e = 50;
 	int max_e = 1;
-	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,1000,800);
+	TCanvas * c1 = new TCanvas("c1", "Data-MC",0,0,500,500);
 
 	TTree *Stats = (TTree*)file->Get("Stats");
         int vtxnumber = Stats->GetEntries();
@@ -106,12 +109,13 @@ void LostTracksClassification_mod1(string filename = "/hsm/ilc/users/yokugawa/pr
 	cosAll->GetYaxis()->SetTitle("Entries (normalised to N_{rec})");
 	cosAll->GetYaxis()->SetTitleOffset(1.5);
 
-	cosAll->GetYaxis()->SetRangeUser(0,0.01);
+	cosAll->GetYaxis()->SetRangeUser(0,0.007);
 	cosAll->Draw("histo");
 	stack2->Draw("histosame");
 
 	//	stack2->GetYaxis()->SetTitleOffset(1.7);
-	TLegend *legendMean2 = new TLegend(0.2,0.5,0.63,0.75,NULL,"brNDC");
+	//TLegend *legendMean2 = new TLegend(0.2,0.5,0.63,0.75,NULL,"brNDC");
+	TLegend *legendMean2 = new TLegend(0.2,0.6,0.63,0.85,NULL,"brNDC");
         legendMean2->SetFillColor(kWhite);
         legendMean2->SetBorderSize(0);
         legendMean2->AddEntry(cosAll,"Other reasons","f");

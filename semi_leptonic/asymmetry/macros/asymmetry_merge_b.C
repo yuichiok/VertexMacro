@@ -46,6 +46,12 @@ void asymmetry_merge_b()
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
+	// full had
+	TCut pcut_fullHad = "Top1bmomentum > 30 && Top2bmomentum > 30";
+	TCut rcT  = "Top1mass < 270 && Top1mass > 120";
+	TCut rcW1  = "W1mass > 50 && W1mass < 250";
+	TCut rcW2  = "W2mass > 50 && W2mass < 250";
+
 	// Methods selection
 	TCut methodAll = "methodTaken > 0";
 	TCut method1 = "methodTaken == 1";
@@ -57,8 +63,11 @@ void asymmetry_merge_b()
 	TCut method7 = "methodTaken == 7";
 
 	// Total cut applied
-	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
-	TCut cuts = rcTW + hadM + pcut +  methodAll;
+	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	
+	//TCut cuts = rcT + rcW1 + rcW2 + pcut_fullHad + methodAll;
+	
+	//TCut cuts = rcTW + hadM + pcut_fullHad + methodAll;
 	//TCut cuts = rcTW + hadM + pcut + gcut + (method1|| method2|| method3|| method4);
 
 
@@ -112,7 +121,7 @@ void asymmetry_merge_b()
 	cosRecoL->Sumw2();
 	TH1F * cosGenL = new TH1F("cosGenL", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosGenL->Sumw2();
-	TH1F * cosGen_wsingleTop_L = new TH1F("cosGen_wsingleTop_L", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	TH1F * cosGen_wsingleTop_L = new TH1F("cosGen_wsingleTop_L", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosGen_wsingleTop_L->Sumw2();
 
 	TGaxis::SetMaxDigits(3);
@@ -187,7 +196,7 @@ void asymmetry_merge_b()
 	cosReco->Sumw2();
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{b};Entries / 0.07", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
-	TH1F * cosGen_wsingleTop = new TH1F("cosGen_wsingleTop", ";cos#theta_{t};Entries / 0.07", bin_e,-1.0,max_e);
+	TH1F * cosGen_wsingleTop = new TH1F("cosGen_wsingleTop", ";cos#theta_{b};Entries / 0.07", bin_e,-1.0,max_e);
 	cosGen_wsingleTop->Sumw2();
 
 	cosReco->Merge(l_Reco);

@@ -56,6 +56,9 @@ void asymmetry_b()
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{b};Entries", bin_e,-1.0,max_e);
 	cosGen->Sumw2();
 
+	TH1F * cosGen_wsingleTop = new TH1F("cosGen_wsingleTop", ";cos#theta_{t};Entries", bin_e,-1.0,max_e);
+	cosGen_wsingleTop->Sumw2();
+
 	TGaxis::SetMaxDigits(3);
 
 	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
@@ -63,14 +66,24 @@ void asymmetry_b()
 
 	cosReco->SetLineWidth(3);
 	cosGen->SetLineWidth(3);
+	cosGen_wsingleTop->SetLineWidth(3);
+
 	cosGen->SetLineStyle(2);
+	cosGen_wsingleTop->SetLineStyle(2);
+
 	cosGen->SetLineColor(kGreen+1);
 	cosGen->SetFillColor(kGreen+1);
 	cosGen->SetFillStyle(3004);
 
-	int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 ");
-	int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2");
+	cosGen_wsingleTop->SetLineColor(kBlue+1);
+	cosGen_wsingleTop->SetFillColor(kBlue+1);
+	cosGen_wsingleTop->SetFillStyle(3004);
 
+	int forward = GenTree->Draw("qMCBcostheta >> cosGen","qMCBcostheta > 0 && qMCBcostheta > -2 && singletopFlag == 0");
+	int backward = GenTree->Draw("qMCBcostheta >> +cosGen","qMCBcostheta < 0 && qMCBcostheta > -2 && singletopFlag == 0");
+
+	int forward2 = GenTree->Draw("qMCcostheta >> cosGen_wsingleTop","qMCBcostheta > 0 && qMCBcostheta > -2");
+	int backward2 = GenTree->Draw("qMCcostheta >> +cosGen_wsingleTop","qMCBcostheta < 0 && qMCBcostheta > -2");
 
 	// Selection lists
 	TCut thru = "Thrust < 0.9";

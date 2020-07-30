@@ -56,7 +56,7 @@ void efficiency_methods()
 
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record2.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -128,18 +128,39 @@ void efficiency_methods()
 	cosReco->Sumw2();
 	TH1F * cosGen = new TH1F("cosGen", ";cos#theta_{t};Entries", 30,-1.0,1.0);
 	cosGen->Sumw2();
+	TH1F * cosGen_wsingleTop = new TH1F("cosGen_wsingleTop", ";cos#theta_{t};Entries / 0.07", 30,-1.0,1.0);
+	cosGen_wsingleTop->Sumw2();
+
 
 	TGaxis::SetMaxDigits(3);
+/*
 	cosReco->SetLineWidth(3);
 	cosGen->SetLineWidth(3);
 	cosGen->SetLineStyle(2);
 	cosGen->SetLineColor(kGreen+1);
 	cosGen->SetFillColor(kGreen+1);
 	cosGen->SetFillStyle(3004);
+*/
+	cosReco->SetLineWidth(3);
+	cosGen->SetLineWidth(3);
+	cosGen_wsingleTop->SetLineWidth(3);
+
+	cosGen->SetLineStyle(2);
+	cosGen_wsingleTop->SetLineStyle(2);
+
+	cosGen->SetLineColor(kGreen+1);
+	cosGen->SetFillColor(kGreen+1);
+	cosGen->SetFillStyle(3004);
+
+	cosGen_wsingleTop->SetLineColor(kBlue+1);
+	cosGen_wsingleTop->SetFillColor(kBlue+1);
+	cosGen_wsingleTop->SetFillStyle(3004);
 
 	// Gen Info
 	//int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 ");
 	//int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2");
+	int forward2 = GenTree->Draw("qMCcostheta >> cosGen_wsingleTop","qMCcostheta > 0 && qMCcostheta > -2");
+	int backward2 = GenTree->Draw("qMCcostheta >> +cosGen_wsingleTop","qMCcostheta < 0 && qMCcostheta > -2");
 
 	int forward = GenTree->Draw("qMCcostheta >> cosGen","qMCcostheta > 0 && qMCcostheta > -2 && singletopFlag == 0");
 	int backward = GenTree->Draw("qMCcostheta >> +cosGen","qMCcostheta < 0 && qMCcostheta > -2 && singletopFlag == 0");
@@ -357,7 +378,7 @@ void efficiency_methods()
 								if(methodCheck1){
 									aftermethod1++;
 
-									//fill_hist(cosReco, recoforward, recobackward, qCostheta);
+									//fill_hist(cosReco, recoforward, recobackward, qCostheta,1);
 
 								}else{
 
@@ -405,28 +426,41 @@ void efficiency_methods()
 	TF1 * freco = new TF1("freco","pol2",-0.9,0.9);
 	fgen->SetLineColor(kGreen);
 	fgen->SetLineStyle(3);
-	freco->SetLineStyle(3);
-
-	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
+	freco->SetLineStyle(3);	//cosGen->Scale(cosReco->GetEntries()/ cosGen->GetEntries());
 	
 	double intCosReco = cosReco->Integral(2,29);
 	double intCosGen  = cosGen->Integral(2,29);
+	double intCosGen_wsingleTop  = cosGen_wsingleTop->Integral(2,29);
 	//double intCosReco = cosReco->Integral(10,21);
 	//double intCosGen  = cosGen->Integral(10,21);
-	cosGen->Scale(intCosReco / intCosGen);
 	
+	//cosGen->Scale(intCosReco / intCosGen);
+	cosReco->Scale(1/intCosReco);
+	cosGen->Scale(1/intCosGen);
+	cosGen_wsingleTop->Scale(1/intCosGen_wsingleTop);
 	
+
 	cosGen->Fit("fgen","Q");
+	cosReco->Fit("freco", "QR");
+	cosGen_wsingleTop->SetMinimum(0);
+	cosGen_wsingleTop->Draw("he");
+	cosGen->Draw("hsame");
+	fgen->Draw("same");
+	cosGen->SetMinimum(0);
+	cosReco->Draw("samee");
+/*
 	cosReco->Fit("freco", "QR");
 	cosGen->SetMinimum(0);
 	cosGen->Draw("he");
 	fgen->Draw("same");
 	cosGen->SetMinimum(0);
 	cosReco->Draw("samee");
+*/
 
-	TLegend *leg = new TLegend(0.2,0.75,0.6,0.85); //set here your x_0,y_0, x_1,y_1 options
+	TLegend *leg = new TLegend(0.20,0.70,0.70,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
-	leg->AddEntry(cosGen,"Parton level","l");
+	leg->AddEntry(cosGen_wsingleTop,"Parton level","l");
+	leg->AddEntry(cosGen,"Parton level (after single top removal)","l");
 	leg->AddEntry(cosReco,"Reconstructed","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);

@@ -48,14 +48,17 @@ void d0z0() {
 	string VR_l5 = "";
 	string VR_s5 = "";
 
-	switch(token){
+	/*switch(token){
 		case 0 : VR_l5 = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/VR_l5_yyxylv.root";
 						 VR_s5 = "/home/ilc/yokugawa/run_preset_small/root_merge/VertexRestore_out/VR_s5_yyxylv.root";
 						 break;
 		case 1 : VR_l5 = "/home/ilc/yokugawa/run_preset/root_merge/VertexRestore_out/VR_l5_yyxyev.root";
 						 VR_s5 = "/home/ilc/yokugawa/run_preset_small/root_merge/VertexRestore_out/VR_s5_yyxyev.root";
 						 break;
-	}
+	}*/
+
+	VR_l5 = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/vertex_restorer_out/root_merge/eLpR_electron_VR_Z0corr.root";
+	VR_s5 = "/group/ilc/users/yokugawa/TTbar/l5/eLpR/semiLep/electron/vertex_restorer_out/root_merge/eLpR_electron_VR_Z0corr2.root";
  
   TFile *f_Large = new TFile(VR_l5.c_str());
   TTree *Stats_Large = (TTree*)f_Large->Get("Stats");
@@ -149,8 +152,8 @@ void d0z0() {
 
   TLegend * leg = new TLegend(0.6,0.65,0.75,0.75);
   leg->SetHeader("t#bar{t} @ 500GeV");
-  leg->AddEntry(missed_Z0_Large,"Large");
-  leg->AddEntry(missed_Z0_Small,"Small");
+  leg->AddEntry(missed_Z0_Large,"Before Corr.");
+  leg->AddEntry(missed_Z0_Small,"After Corr.");
   leg->SetFillColor(0);
   leg->SetLineColor(0);
   leg->SetShadowColor(0);

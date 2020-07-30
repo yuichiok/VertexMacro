@@ -9,7 +9,7 @@ void makePretty(TH1F * cosAll, int color, int reconumber)
 	cosAll->Scale(1./reconumber);
 	cosAll->SetLineColor(color);
 	//cosAll->SetFillColor(color-1);
-	cosAll->SetLineWidth(3);
+	cosAll->SetLineWidth(2);
 
 }
 void OneTrack2()
@@ -162,12 +162,15 @@ void OneTrack2()
 	makePretty(cosLowtr, kMagenta, reconumber);
 	makePretty(cosNoPFO, kGreen, reconumber);
 
+
 	THStack * stack2 = new THStack("stack2",";|cos#theta|; Entries (normalised to N_{rec})");
+
 	stack2->Add(cosNoTrack);
 	stack2->Add(cosNoVTX);
 	//	stack2->Add(cosNoFTD);
 	stack2->Add(cosNoPFO);
 	//stack2->Add(cosBtag);
+	cosLowtr->SetFillStyle(3005);
 	stack2->Add(cosLowtr);
 	//stack2->Add(cosAll, "nostack2");
 	//stack2->Add(cosGoodTracks);
@@ -176,12 +179,13 @@ void OneTrack2()
 	stack2->SetMaximum(cosAll->GetMaximum());
 	gPad->SetLeftMargin(0.18);
 	gPad->SetRightMargin(0.05);
-	stack2->Draw("histo");
-	cosAll->Draw("histosame");
+	cosAll->Draw("histo");
+	stack2->Draw("histosame");
 	stack2->GetYaxis()->SetTitleOffset(1.7);
 	TLegend *legendMean2 = new TLegend(0.2,0.6,0.63,0.85,NULL,"brNDC");
         legendMean2->SetFillColor(kWhite);
         legendMean2->SetBorderSize(0);
+				//legendMean2->SetHeader("e^{-}_{L}e^{+}_{R} #rightarrow t#bar{t}","L");
         legendMean2->AddEntry(cosAll,"Other reasons","f");
         legendMean2->AddEntry(cosLowtr,"Low offset significance","f");
         legendMean2->AddEntry(cosNoPFO,"Nonreconstructed PFO","f");
@@ -189,6 +193,16 @@ void OneTrack2()
 	//	legendMean2->AddEntry(cosNoFTD,"No hits in FTD","f");
         legendMean2->AddEntry(cosNoTrack,"No tracking information","f");
 	legendMean2->Draw();
+/*
+   TPaveText *pt = new TPaveText(0.2,0.8209302,0.6769138,0.9,"blNDC");
+   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillStyle(0);
+   AText = pt->AddText("e_{L}^{+}e_{R}^{-}#rightarrow b#bar{b} @ 500GeV, 46 fb^{-1}");
+   pt->Draw();
+*/
+	c2->Update();
+
 	cosAll->GetXaxis()->SetTitle("|cos#theta|");
 	gPad->Modified();
 	std::cout << "Novertex total: " << cosOne->Integral()+cosOtherLowDist->Integral()+cosOtherHigh->Integral()
@@ -198,6 +212,18 @@ void OneTrack2()
 		  << " \n";
 	//tree->Draw("costhetaMissed >> cosAll","","same");
 	
+
+
+
+
+
+
+
+
+
+
+
+
 	// Yuichi Test
 	TCanvas * c21= new TCanvas("c21", "Data-MC",0,0,500,500);
 	TH1F * h_MCpidAll = new TH1F("h_MCpidAll", "MCpid", bin_e,0,600);

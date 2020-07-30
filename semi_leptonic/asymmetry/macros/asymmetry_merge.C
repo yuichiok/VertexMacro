@@ -46,6 +46,12 @@ void asymmetry_merge()
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
+	// full had
+	TCut pcut_fullHad = "Top1bmomentum > 30 && Top2bmomentum > 30";
+	TCut rcT  = "Top1mass < 270 && Top1mass > 120";
+	TCut rcW1  = "W1mass > 50 && W1mass < 250";
+	TCut rcW2  = "W2mass > 50 && W2mass < 250";
+
 	// Methods selection
 	TCut methodAll = "methodTaken > 0";
 	TCut method1 = "methodTaken == 1";
@@ -57,8 +63,10 @@ void asymmetry_merge()
 	TCut method7 = "methodTaken == 7";
 
 	// Total cut applied
-	//TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
-	TCut cuts = rcTW + hadM + pcut + methodAll;
+	TCut cuts = rcTW + hadM + pcut + gcut + method7;
+	//TCut cuts = rcTW + hadM + pcut_fullHad + methodAll;
+
+	//TCut cuts = rcT + rcW1 + rcW2 + pcut_fullHad + methodAll;
 
 	//TCut cuts = rcTW + hadM + pcut + gcut + (method1|| method2|| method3|| method4);
 
@@ -202,6 +210,13 @@ void asymmetry_merge()
 	fgen->SetLineStyle(3);
 	freco->SetLineStyle(3);
 
+
+	int forward = cosGen->Integral(16,30);
+	int backward = cosGen->Integral(1,15);
+
+	int recoforward = cosReco->Integral(16,30);
+	int recobackward = cosReco->Integral(1,15);
+
 	double intCosReco = cosReco->Integral(2,29);
 	double intCosGen  = cosGen->Integral(2,29);
 	double intCosGen_wsingleTop  = cosGen_wsingleTop->Integral(2,29);
@@ -250,24 +265,16 @@ void asymmetry_merge()
 	c1->Update();
 
 
-	// write to root file
-	/*
-	TFile *MyFile = new TFile("asymmetry2.root","NEW");
-
-	cosGen->Write("cosGen");
-	cosReco->Write("cosReco");
-
-	MyFile->Write();
-	MyFile->Close();
-*/
-
 	// computation result
-
+/*
 	int forward = forwardL + forwardR;
 	int backward = backwardL + backwardR;
 
 	int recoforward = recoforwardL + recoforwardR;
 	int recobackward = recobackwardL + recobackwardR;
+*/
+
+
 
 	float afbgen = (float)(forward - backward) / (float) (forward + backward);
 	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
@@ -294,6 +301,8 @@ void asymmetry_merge()
 	cout << "--------------------------------------------------------------\n";
 	cout << "--------------------------------------------------------------\n";
 
+	cout << "recoFL = " << recoforwardL << ", recoBL = " << recobackwardL << endl;
+	cout << "recoFR = " << recoforwardR << ", recoBR = " << recobackwardR << endl;
 
 
 	
