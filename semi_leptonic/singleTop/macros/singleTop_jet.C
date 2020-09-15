@@ -2,11 +2,44 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+
 #include "../../style/Style.C"
 #include "../../style/Labels.C"
 #define MAXV 8
 
 using namespace std;
+
+// see math/mathcore/src/PdfFuncMathCore.cxx in ROOT 6.x
+double crystalball_function(double x, double alpha, double n, double sigma, double mean) {
+  // evaluate the crystal ball function
+  if (sigma < 0.)     return 0.;
+  double z = (x - mean)/sigma; 
+  if (alpha < 0) z = -z; 
+  double abs_alpha = std::abs(alpha);
+  // double C = n/abs_alpha * 1./(n-1.) * std::exp(-alpha*alpha/2.);
+  // double D = std::sqrt(M_PI/2.)*(1.+ROOT::Math::erf(abs_alpha/std::sqrt(2.)));
+  // double N = 1./(sigma*(C+D));
+  if (z  > - abs_alpha)
+    return std::exp(- 0.5 * z * z);
+  else {
+    //double A = std::pow(n/abs_alpha,n) * std::exp(-0.5*abs_alpha*abs_alpha);
+    double nDivAlpha = n/abs_alpha;
+    double AA =  std::exp(-0.5*abs_alpha*abs_alpha);
+    double B = nDivAlpha -abs_alpha;
+    double arg = nDivAlpha/(B-z);
+    return AA * std::pow(arg,n);
+  }
+}
+
+double crystalball_function(const double *x, const double *p) {
+  // if ((!x) || (!p)) return 0.; // just a precaution
+  // [Constant] * ROOT::Math::crystalball_function(x, [Alpha], [N], [Sigma], [Mean])
+  return (p[0] * crystalball_function(x[0], p[3], p[4], p[2], p[1]));
+}
+
+
+
 
 void singleTop_jet()
 {
@@ -59,14 +92,14 @@ void singleTop_jet()
 	// Histograms
 	
 	TCanvas * c1			= new TCanvas("c1", "jetE1",0,0,500,500);
-	TH1F * jetE1all			= new TH1F("jetE1all",";jetE_{B}; / Entries",200,0,200);
+	TH1F * jetE1all			= new TH1F("jetE1all",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE1all->Sumw2();
-	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; / Entries",200,0,200);
+	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE1->Sumw2();
 
-	TH1F * jetE2all			= new TH1F("jetE2all",";jetE_{B}; / Entries",200,0,200);
+	TH1F * jetE2all			= new TH1F("jetE2all",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE2all->Sumw2();
-	TH1F * jetE2			= new TH1F("jetE2",";jetE_{B}; / Entries",200,0,200);
+	TH1F * jetE2			= new TH1F("jetE2",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE2->Sumw2();
 
 
@@ -104,6 +137,35 @@ void singleTop_jet()
 	jetE2->SetLineWidth(3);
 	jetE2->SetLineStyle(1);
 
+
+	// Fit Functions
+
+// double xmin = 3., xmax = 8.; // whatever you need
+// TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+// crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+// crystalball->SetTitle("crystalball"); // not strictly necessary
+
+	float xmin = 40., xmax = 160.;
+	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
+
+	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+	crystalball->SetTitle("crystalball"); // not strictly necessary
+
+	float p0 = 9.0E-3;
+	float p1 = 100.;
+	float p2 = 100.;
+	float p3 = 1.0;
+	float p4 = 1.0;
+
+	crystalball->SetParameters(p0,p1,p2,p3,p4);
+
+	crystalball->SetLineColor(kRed);
+	fgaus->SetLineColor(kRed);
+
+
+	// Entry
+
 	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
 	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
 	//int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
@@ -130,8 +192,16 @@ void singleTop_jet()
 	jetE2->SetMinimum(0);
 
 
+	fgaus->SetParameters(jetE1all->GetMaximum(), jetE1all->GetMean(), jetE1all->GetRMS());
+
+
+	jetE1->Fit("crystalball","R");
+	//jetE1->Fit("fgaus","R");
 	jetE1->Draw("he");
 	jetE1all->Draw("hsame");
+	crystalball->Draw("same");
+	//fgaus->Draw("same");
+
 
 	TLegend *leg = new TLegend(0.2,0.75,0.5,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
@@ -148,8 +218,10 @@ void singleTop_jet()
 
 	TCanvas * c2			= new TCanvas("c2", "jetE2",0,0,500,500);
 
+	jetE2->Fit("crystalball","R");
 	jetE2->Draw("he");
 	jetE2all->Draw("hsame");
+	crystalball->Draw("same");
 
 	TLegend *leg2 = new TLegend(0.2,0.75,0.5,0.85); //set here your x_0,y_0, x_1,y_1 options
 	leg2->SetTextFont(42);
