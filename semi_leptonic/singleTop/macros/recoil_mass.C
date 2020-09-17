@@ -2,17 +2,48 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+
 #include "../../style/Style.C"
 #include "../../style/Labels.C"
 #define MAXV 8
 
 using namespace std;
 
+// see math/mathcore/src/PdfFuncMathCore.cxx in ROOT 6.x
+double crystalball_function(double x, double alpha, double n, double sigma, double mean) {
+  // evaluate the crystal ball function
+  if (sigma < 0.)     return 0.;
+  double z = (x - mean)/sigma; 
+  if (alpha < 0) z = -z; 
+  double abs_alpha = std::abs(alpha);
+  // double C = n/abs_alpha * 1./(n-1.) * std::exp(-alpha*alpha/2.);
+  // double D = std::sqrt(M_PI/2.)*(1.+ROOT::Math::erf(abs_alpha/std::sqrt(2.)));
+  // double N = 1./(sigma*(C+D));
+  if (z  > - abs_alpha)
+    return std::exp(- 0.5 * z * z);
+  else {
+    //double A = std::pow(n/abs_alpha,n) * std::exp(-0.5*abs_alpha*abs_alpha);
+    double nDivAlpha = n/abs_alpha;
+    double AA =  std::exp(-0.5*abs_alpha*abs_alpha);
+    double B = nDivAlpha -abs_alpha;
+    double arg = nDivAlpha/(B-z);
+    return AA * std::pow(arg,n);
+  }
+}
+
+double crystalball_function(const double *x, const double *p) {
+  // if ((!x) || (!p)) return 0.; // just a precaution
+  // [Constant] * ROOT::Math::crystalball_function(x, [Alpha], [N], [Sigma], [Mean])
+  return (p[0] * crystalball_function(x[0], p[3], p[4], p[2], p[1]));
+}
+
+
 void recoil_mass()
 {
 	int token=0;
 
-	bool twoDmode = 1;
+	bool twoDmode = 0;
 
 	// set plot style
 
@@ -302,7 +333,34 @@ void recoil_mass()
 	histRecoTopLepMass->SetLineWidth(3);
 	histRecoTopLepMass->SetLineStyle(1);
 
-	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,1000,500);
+
+
+	// Fit Functions
+
+	float xmin = 140., xmax = 200.;
+	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
+
+	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+	crystalball->SetTitle("crystalball"); // not strictly necessary
+
+	float p0 = 30.0E-3;
+	float p1 = 175.;
+	float p2 = 20.;
+	float p3 = 1.0;
+	float p4 = 1.0;
+
+	crystalball->SetParameters(p0,p1,p2,p3,p4);
+
+	crystalball->SetLineColor(kRed);
+	fgaus->SetLineColor(kRed);
+
+
+
+	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,600,600);
+
+	/*
+
 	c1->Divide(2,1);
 
 	c1->cd(1);
@@ -313,8 +371,8 @@ void recoil_mass()
 	histMCTopLepMass->Draw("he");
 	histRecoTopLepMass->Draw("hsame");
 
+	*/
 
-	/*
 	c1->Divide(2,2);
 
 	c1->cd(1);
@@ -324,11 +382,15 @@ void recoil_mass()
 	histMCTopLepMass->Draw("he");
 
 	c1->cd(3);
+	histRecoTopHadMass->Fit("crystalball","R");
 	histRecoTopHadMass->Draw("he");
+	crystalball->Draw("same");
 
 	c1->cd(4);
+	histRecoTopLepMass->Fit("crystalball","R");
 	histRecoTopLepMass->Draw("he");
-	*/
+	crystalball->Draw("same");
+
 
 
 	TCanvas * c2	= new TCanvas("c2", "DataMC2",0,0,1000,500);

@@ -167,10 +167,13 @@ void singleTop_jet()
 	// Entry
 
 	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON);
 	//int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
+	
 	int bjet2all	= Stats->Draw("jet_E[1] >> jetE2all",MCcos2);
-	int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + bmom2 + singleTopFlagON + method1);
+//	int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + bmom2 + singleTopFlagON + method1);
+	int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + bmom2 + singleTopFlagON);
 	//int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + MCcos09 + bmom2 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
 
 
