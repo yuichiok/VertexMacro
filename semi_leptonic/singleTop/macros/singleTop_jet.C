@@ -38,7 +38,6 @@ double crystalball_function(const double *x, const double *p) {
   return (p[0] * crystalball_function(x[0], p[3], p[4], p[2], p[1]));
 }
 
-
 double GaussExp_function(double x, double k, double sigma, double mean) {
 	if (sigma < 0.)     return 0.;
 	double z = (x - mean)/sigma;
@@ -73,6 +72,7 @@ void singleTop_jet()
 	gStyle->SetMarkerSize(0);
 	gStyle->SetTitleX(0.2); 
 	gStyle->SetTitleY(0.9); 
+
 
 	// File Selector
 
@@ -155,53 +155,6 @@ void singleTop_jet()
 	jetE2->SetLineWidth(3);
 	jetE2->SetLineStyle(1);
 
-
-	// Fit Functions
-
-	float xmin = 40., xmax = 160.;
-	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
-	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
-	TF1 *dgaus       = new TF1("dgaus","gaus(0)+gaus(3)",xmin, xmax);
-	TF1 *fcheb       = new TF1("fcheb","cheb3",xmin, xmax);
-	TF1 *fgaus_epx   = new TF1("fgaus_epx", GaussExp_function, xmin, xmax, 4);
-
-	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
-	crystalball->SetTitle("crystalball"); // not strictly necessary
-
-	fgaus_epx->SetParNames("Constant", "Mean", "Sigma", "k");
-
-	float p0 = 9.0E-3;
-	float p1 = 100.;
-	float p2 = 100.;
-	float p3 = 1.0;
-	float p4 = 1.0;
-
-	// Double Gaussian parameter
-	float constant = 8E-3;
-	float mean = 80.0;
-	float wid = 30.0;
-
-	float bgconstant = 5e-3;
-	float bgmean = 80.0;
-	float bgwid = 30.0;
-
-	// GaussExp paramter
-	float pconst = 9.5E-3;
-	float pmean  = 80.0;
-	float psigma = 40.0;
-	float pk     = 0.5;
-
-
-	crystalball->SetParameters(p0,p1,p2,p3,p4);
-	dgaus->SetParameters(constant, mean, wid, bgconstant, bgmean, bgwid);
-	fgaus_epx->SetParameters(pconst, pmean, psigma, pk);
-
-	crystalball->SetLineColor(kRed);
-	dgaus->SetLineColor(kRed);
-	fcheb->SetLineColor(kRed);
-	fgaus_epx->SetLineColor(kRed);
-
-
 	// Entry
 
 	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
@@ -233,15 +186,74 @@ void singleTop_jet()
 	jetE2->SetMinimum(0);
 
 
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%  Fit Functions %%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	float xmin = 30., xmax = 160.;
+	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
+	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
+	TF1 *dgaus       = new TF1("dgaus","gaus(0)+gaus(3)",xmin, xmax);
+	TF1 *fcheb       = new TF1("fcheb","cheb3",xmin, xmax);
+	TF1 *fgaus_epx   = new TF1("fgaus_epx", GaussExp_function, xmin, xmax, 4);
+	TF1 *fpol        = new TF1("fpol","pol6",xmin, xmax);
+
+	TF1 *flogNormal = new TF1("flogNormal","[0]*ROOT::Math::lognormal_pdf(x,log([1]),log([2]))",xmin,xmax);
+
+	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
+	crystalball->SetTitle("crystalball"); // not strictly necessary
+
+	fgaus_epx->SetParNames("Constant", "Mean", "Sigma", "k");
+
+	float p0 = 9.0E-3;
+	float p1 = 100.;
+	float p2 = 100.;
+	float p3 = 1.0;
+	float p4 = 1.0;
+
+	// Double Gaussian parameter
+	float constant = 8E-3;
+	float mean = 80.0;
+	float wid = 30.0;
+
+	float bgconstant = 5e-3;
+	float bgmean = 80.0;
+	float bgwid = 30.0;
+
+	// GaussExp paramter
+	float pconst = 9.5E-3;
+	float pmean  = 80.0;
+	float psigma = 40.0;
+	float pk     = 0.5;
+
+	// Function Colors
+	crystalball->SetLineColor(kRed);
+	dgaus->SetLineColor(kRed);
+	fcheb->SetLineColor(kRed);
+	fgaus_epx->SetLineColor(kRed);
+	flogNormal->SetLineColor(kRed);
+	fpol->SetLineColor(kRed);
+
+
+	// set parameters 
+	crystalball->SetParameters(p0,p1,p2,p3,p4);
+	dgaus->SetParameters(constant, mean, wid, bgconstant, bgmean, bgwid);
+	fgaus_epx->SetParameters(pconst, pmean, psigma, pk);
+
 	fgaus->SetParameters(jetE1all->GetMaximum(), jetE1all->GetMean(), jetE1all->GetRMS());
+	flogNormal->SetParameters(jetE1all->GetMaximum(), jetE1all->GetMean(), jetE1all->GetRMS());
+
+
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 	//jetE1->Fit("crystalball","R");
-	jetE1->Fit("fgaus_epx");
+	jetE1->Fit("crystalball","R");
 	jetE1->Draw("he");
+	crystalball->Draw("same");
 	jetE1all->Draw("hsame");
 	//crystalball->Draw("same");
-	fgaus_epx->Draw("same");
 
 
 	TLegend *leg = new TLegend(0.2,0.75,0.5,0.85); //set here your x_0,y_0, x_1,y_1 options
@@ -255,6 +267,7 @@ void singleTop_jet()
 
 	c1->Update();
 
+/*
 // jetE2
 
 	TCanvas * c2			= new TCanvas("c2", "jetE2",0,0,500,500);
@@ -274,14 +287,7 @@ void singleTop_jet()
 	leg2->Draw();
 
 	c2->Update();
-
-
-
-
-
-
-
-
+*/
 
 
 }
