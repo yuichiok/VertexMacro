@@ -174,12 +174,12 @@ void recoil_mass()
 		if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
 		if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
 
-		//if(qMCCheck1 && qMCCheck2){
+		if(qMCCheck1 && qMCCheck2){
 
 			for (int i = 0; i < methodUsed; ++i)
 			{
 
-				if(methodTaken[i]==1){
+//				if(methodTaken[i]==1){
 
 					// Generated Level
 
@@ -215,11 +215,11 @@ void recoil_mass()
 					histRecoMCHadMassDiff->Fill(HadDiff);
 					histRecoMCLepMassDiff->Fill(LepDiff);
 
-				}
+//				}
 
 			}
 
-		//}
+		}
 
 
 /*
@@ -340,6 +340,9 @@ void recoil_mass()
 	float xmin = 140., xmax = 200.;
 	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
 	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
+	TF1 *dgaus1		 = new TF1("dgaus1","gaus(0) + gaus(3)",xmin,xmax);
+	TF1 *dgaus2		 = new TF1("dgaus2","gaus(0) + gaus(3)",xmin,xmax);
+
 
 	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
 	crystalball->SetTitle("crystalball"); // not strictly necessary
@@ -350,14 +353,27 @@ void recoil_mass()
 	float p3 = 1.0;
 	float p4 = 1.0;
 
+	float constant = 20E-3;
+	float mean = 175.0;
+	float wid = 5.0;
+
+	float bgconstant = 6.5e-3;
+	float bgmean = 187.5;
+	float bgwid = 32.0;
+
 	crystalball->SetParameters(p0,p1,p2,p3,p4);
+	fgaus->SetParameters(constant, mean, wid);
+	dgaus1->SetParameters(constant, mean, wid, bgconstant, bgmean, bgwid);
+	dgaus2->SetParameters(constant, mean, wid, bgconstant, bgmean, bgwid);
 
 	crystalball->SetLineColor(kRed);
 	fgaus->SetLineColor(kRed);
+	dgaus1->SetLineColor(kRed);
+	dgaus2->SetLineColor(kRed);
 
 
 
-	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,600,600);
+	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,700,700);
 
 	/*
 
@@ -373,6 +389,12 @@ void recoil_mass()
 
 	*/
 
+	//histRecoTopHadMass->Fit("dgaus");
+	//histRecoTopHadMass->Draw("he");
+	//dgaus->Draw("same");
+
+
+
 	c1->Divide(2,2);
 
 	c1->cd(1);
@@ -382,17 +404,19 @@ void recoil_mass()
 	histMCTopLepMass->Draw("he");
 
 	c1->cd(3);
-	histRecoTopHadMass->Fit("crystalball","R");
+	histRecoTopHadMass->Fit("dgaus1");
 	histRecoTopHadMass->Draw("he");
-	crystalball->Draw("same");
+	dgaus1->Draw("same");
 
 	c1->cd(4);
-	histRecoTopLepMass->Fit("crystalball","R");
+	histRecoTopLepMass->Fit("dgaus2");
 	histRecoTopLepMass->Draw("he");
-	crystalball->Draw("same");
+	dgaus2->Draw("same");
+
+	c1->Update();
 
 
-
+/*
 	TCanvas * c2	= new TCanvas("c2", "DataMC2",0,0,1000,500);
 	c2->Divide(2,1);
 
@@ -418,7 +442,7 @@ void recoil_mass()
 
 	c3->cd(2);
 	histRecoMCLepMassDiff->Draw("he");
-
+*/
 
 
 
