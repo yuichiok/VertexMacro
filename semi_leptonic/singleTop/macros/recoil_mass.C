@@ -38,6 +38,12 @@ double crystalball_function(const double *x, const double *p) {
   return (p[0] * crystalball_function(x[0], p[3], p[4], p[2], p[1]));
 }
 
+// Gaussian background function
+Double_t background(Double_t *x, Double_t *p) {
+
+	double z = (x[0] - p[4]) / p[5];
+	return p[3] * std::exp( -0.5 * z * z );
+}
 
 void recoil_mass()
 {
@@ -174,7 +180,7 @@ void recoil_mass()
 		if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
 		if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
 
-		if(qMCCheck1 && qMCCheck2){
+//		if(qMCCheck1 && qMCCheck2){
 
 			for (int i = 0; i < methodUsed; ++i)
 			{
@@ -201,8 +207,10 @@ void recoil_mass()
 
 					// Reconstructed Level
 
-					histRecoTopHadMass->Fill(Top1mass);
-					histRecoTopLepMass->Fill(Top2mass);
+					if(singletopFlag==0){
+						histRecoTopHadMass->Fill(Top1mass);
+						histRecoTopLepMass->Fill(Top2mass);
+					}
 
 					histTopHadMass->Fill(MCTopHadMass,Top1mass);
 					histTopLepMass->Fill(MCTopLepMass,Top2mass);
@@ -215,11 +223,11 @@ void recoil_mass()
 					histRecoMCHadMassDiff->Fill(HadDiff);
 					histRecoMCLepMassDiff->Fill(LepDiff);
 
-//				}
+//				} // method = 1
 
-			}
+			} // for loop
 
-		}
+//		} // cos 0.9
 
 
 /*
@@ -343,6 +351,11 @@ void recoil_mass()
 	TF1 *dgaus1		 = new TF1("dgaus1","gaus(0) + gaus(3)",xmin,xmax);
 	TF1 *dgaus2		 = new TF1("dgaus2","gaus(0) + gaus(3)",xmin,xmax);
 
+	TF1 *fbg		 = new TF1("fbg",background,100,300,6);
+	TF1 *fbg2		 = new TF1("fbg2",background,100,300,6);
+	double par[6];
+	double par2[6];
+
 
 	crystalball->SetParNames("Constant", "Mean", "Sigma", "Alpha", "N");
 	crystalball->SetTitle("crystalball"); // not strictly necessary
@@ -370,6 +383,8 @@ void recoil_mass()
 	fgaus->SetLineColor(kRed);
 	dgaus1->SetLineColor(kRed);
 	dgaus2->SetLineColor(kRed);
+	fbg->SetLineColor(kGray);
+	fbg2->SetLineColor(kGray);
 
 
 
@@ -405,13 +420,21 @@ void recoil_mass()
 
 	c1->cd(3);
 	histRecoTopHadMass->Fit("dgaus1");
+	dgaus1->GetParameters(par);
+	fbg->SetParameters(par);
 	histRecoTopHadMass->Draw("he");
 	dgaus1->Draw("same");
+//	fbg->Draw("same");
+
 
 	c1->cd(4);
 	histRecoTopLepMass->Fit("dgaus2");
+	dgaus2->GetParameters(par);
+	fbg2->SetParameters(par);
 	histRecoTopLepMass->Draw("he");
 	dgaus2->Draw("same");
+//	fbg2->Draw("same");
+
 
 	c1->Update();
 
