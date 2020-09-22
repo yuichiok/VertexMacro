@@ -185,7 +185,7 @@ void recoil_mass()
 			for (int i = 0; i < methodUsed; ++i)
 			{
 
-//				if(methodTaken[i]==1){
+				if(methodTaken[i]==1){
 
 					// Generated Level
 
@@ -207,10 +207,10 @@ void recoil_mass()
 
 					// Reconstructed Level
 
-					if(singletopFlag==0){
+//					if(singletopFlag==0){
 						histRecoTopHadMass->Fill(Top1mass);
 						histRecoTopLepMass->Fill(Top2mass);
-					}
+//					}
 
 					histTopHadMass->Fill(MCTopHadMass,Top1mass);
 					histTopLepMass->Fill(MCTopLepMass,Top2mass);
@@ -223,7 +223,7 @@ void recoil_mass()
 					histRecoMCHadMassDiff->Fill(HadDiff);
 					histRecoMCLepMassDiff->Fill(LepDiff);
 
-//				} // method = 1
+				} // method = 1
 
 			} // for loop
 
@@ -326,6 +326,12 @@ void recoil_mass()
 
 
 	// hist setting
+
+	histMCTopHadMass->GetYaxis()->SetRangeUser(0,0.28);
+	histMCTopLepMass->GetYaxis()->SetRangeUser(0,0.28);
+	histRecoTopHadMass->GetYaxis()->SetRangeUser(0,35E-3);
+	histRecoTopLepMass->GetYaxis()->SetRangeUser(0,25E-3);
+
 
 	histMCTopHadMass->SetLineWidth(3);
 	histMCTopHadMass->SetLineStyle(1);
