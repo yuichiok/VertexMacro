@@ -49,7 +49,7 @@ void recoil_mass()
 {
 	int token=0;
 
-	bool twoDmode = 0;
+	bool twoDmode = 1;
 
 	// set plot style
 
@@ -114,8 +114,9 @@ void recoil_mass()
 	TH1F * histRecoMCLepMassDiff	= new TH1F("histRecoMCLepMassDiff",";Reco-Gen Top_{Lep} Mass (GeV); Entries",200,-100,100);
 
 
-	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,0,400,200,0,400);
-	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,0,400,200,0,400);
+	float recMmin=160.0, recMmax=200.0;
+	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,recMmin,recMmax,200,recMmin,recMmax);
+	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,recMmin,recMmax,200,recMmin,recMmax);
 
 	TGaxis::SetMaxDigits(3);
 
@@ -185,7 +186,7 @@ void recoil_mass()
 			for (int i = 0; i < methodUsed; ++i)
 			{
 
-				if(methodTaken[i]==1){
+//				if(methodTaken[i]==1){
 
 					// Generated Level
 
@@ -223,7 +224,7 @@ void recoil_mass()
 					histRecoMCHadMassDiff->Fill(HadDiff);
 					histRecoMCLepMassDiff->Fill(LepDiff);
 
-				} // method = 1
+//				} // method = 1
 
 			} // for loop
 
@@ -393,28 +394,8 @@ void recoil_mass()
 	fbg2->SetLineColor(kGray);
 
 
-
+/*
 	TCanvas * c1	= new TCanvas("c1", "DataMC",0,0,700,700);
-
-	/*
-
-	c1->Divide(2,1);
-
-	c1->cd(1);
-	histMCTopHadMass->Draw("he");
-	histRecoTopHadMass->Draw("hsame");
-
-	c1->cd(2);
-	histMCTopLepMass->Draw("he");
-	histRecoTopLepMass->Draw("hsame");
-
-	*/
-
-	//histRecoTopHadMass->Fit("dgaus");
-	//histRecoTopHadMass->Draw("he");
-	//dgaus->Draw("same");
-
-
 
 	c1->Divide(2,2);
 
@@ -441,11 +422,9 @@ void recoil_mass()
 	dgaus2->Draw("same");
 //	fbg2->Draw("same");
 
-
 	c1->Update();
+*/
 
-
-/*
 	TCanvas * c2	= new TCanvas("c2", "DataMC2",0,0,1000,500);
 	c2->Divide(2,1);
 
@@ -462,7 +441,7 @@ void recoil_mass()
 	c2->cd(2);
 	histTopLepMass->Draw("COLZ");
 	
-
+/*
 	TCanvas * c3	= new TCanvas("c3", "DataMC3",0,0,1000,500);
 	c3->Divide(2,1);
 

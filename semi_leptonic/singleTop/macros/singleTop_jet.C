@@ -190,10 +190,11 @@ void singleTop_jet()
 //	%%%%%%%%%%%%%%%  Fit Functions %%%%%%%%%%%%%%%%%%%
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	float xmin = 30., xmax = 160.;
+	float xmin = 20., xmax = 180.;
 	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
 	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
 	TF1 *dgaus       = new TF1("dgaus","gaus(0)+gaus(3)",xmin, xmax);
+	TF1 *tgaus       = new TF1("tgaus","gaus(0)+gaus(3)+gaus(6)",xmin, xmax);
 	TF1 *fcheb       = new TF1("fcheb","cheb3",xmin, xmax);
 	TF1 *fgaus_epx   = new TF1("fgaus_epx", GaussExp_function, xmin, xmax, 4);
 	TF1 *fpol        = new TF1("fpol","pol6",xmin, xmax);
@@ -228,7 +229,8 @@ void singleTop_jet()
 
 	// Function Colors
 	crystalball->SetLineColor(kRed);
-	dgaus->SetLineColor(kRed);
+	dgaus->SetLineColor(kRed);	
+	tgaus->SetLineColor(kRed);
 	fcheb->SetLineColor(kRed);
 	fgaus_epx->SetLineColor(kRed);
 	flogNormal->SetLineColor(kRed);
@@ -236,27 +238,27 @@ void singleTop_jet()
 
 
 	// set parameters 
-	crystalball->SetParameters(p0,p1,p2,p3,p4);
-	dgaus->SetParameters(constant, mean, wid, bgconstant, bgmean, bgwid);
+	crystalball->SetParameters(jetE1->GetMaximum(), jetE1->GetMean(), jetE1->GetRMS(), p3, p4);
+	dgaus->SetParameters(jetE1->GetMaximum()*0.8, jetE1->GetMean(), jetE1->GetRMS(), jetE1->GetMaximum()*0.2, jetE1->GetMean(), jetE1->GetRMS());
+	tgaus->SetParameters(jetE1->GetMaximum()*0.6, jetE1->GetMean(), jetE1->GetRMS(), jetE1->GetMaximum()*0.2, jetE1->GetMean(), jetE1->GetRMS(), jetE1->GetMaximum()*0.1, jetE1->GetMean(), jetE1->GetRMS());
 	fgaus_epx->SetParameters(pconst, pmean, psigma, pk);
 
-	fgaus->SetParameters(jetE1all->GetMaximum(), jetE1all->GetMean(), jetE1all->GetRMS());
-	flogNormal->SetParameters(jetE1all->GetMaximum(), jetE1all->GetMean(), jetE1all->GetRMS());
+	fgaus->SetParameters(jetE1->GetMaximum(), jetE1->GetMean(), jetE1->GetRMS());
+	flogNormal->SetParameters(jetE1->GetMaximum(), jetE1->GetMean(), jetE1->GetRMS());
 
 
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+//	今んとこtgausが最高
 
-	//jetE1->Fit("crystalball","R");
-	jetE1->Fit("crystalball","R");
+	jetE1->Fit("flogNormal","R");
 	jetE1->Draw("he");
-	crystalball->Draw("same");
+	flogNormal->Draw("same");
 	jetE1all->Draw("hsame");
-	//crystalball->Draw("same");
 
 
-	TLegend *leg = new TLegend(0.2,0.75,0.5,0.85); //set here your x_0,y_0, x_1,y_1 options
+	TLegend *leg = new TLegend(0.7,0.85,0.9,0.95); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
 	leg->AddEntry(jetE1all,"All Parton Level","l");
 	leg->AddEntry(jetE1,"Single Top Tagged","l");
