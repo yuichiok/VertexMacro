@@ -19,9 +19,9 @@ void btrack()
 	TCanvas * c2 = new TCanvas("c2", "Data-MC",0,0,500,500);
 	TCanvas * c3 = new TCanvas("c3", "Data-MC",0,0,500,500);
 
-	TH2F * h_Top1bntracks     = new TH2F("h_Top1bntracks", "Top1 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
-	TH2F * h_Top2bntracks     = new TH2F("h_Top2bntracks", "Top2 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
-	TH1F * h_BHadtracks				= new TH1F("h_BHadtracks", "B Hadron ntracks;Reco b ntracks; NEvents", 20, 0, 20) ;
+	TH2F * h_Top1bntracks	= new TH2F("h_Top1bntracks", "Top1 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
+	TH2F * h_Top2bntracks	= new TH2F("h_Top2bntracks", "Top2 b-quark ntracks;Reco b ntracks;MC b ntracks", 20, 0, 20, 20, 0, 20) ;
+	TH1F * h_BHadtracks		= new TH1F("h_BHadtracks", "B Hadron ntracks;Reco b ntracks; NEvents", 20, 0, 20) ;
 
 	//TH1F * cosReco = new TH1F("cosReco", "E(Ntracks)", bin_e,-1.0,max_e);
 	//cosReco->Sumw2();
@@ -48,6 +48,7 @@ void btrack()
 
 	// Total cut applied
 	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+//	TCut cuts = rcTW + hadM + pcut + gcut + method1;
 
 	TCut diag = " (Top1bntracks - Top1Genbntracks) == 0 " ;
 
@@ -56,9 +57,9 @@ void btrack()
 
 	// Fill histograms from tree
 	normaltree->Draw("Top1bntracks:Top1Genbntracks >> h_Top1bntracks");
-	int Top1_accepted          = normaltree->Draw("Top1bntracks:Top1Genbntracks",  diag);
-	int Top1_rejected          = normaltree->Draw("Top1bntracks:Top1Genbntracks", !diag);
-	int Top1_total = Top1_accepted + Top1_rejected ;
+	int Top1_accepted	= normaltree->Draw("Top1bntracks:Top1Genbntracks",  diag);
+	int Top1_rejected	= normaltree->Draw("Top1bntracks:Top1Genbntracks", !diag);
+	int Top1_total		= Top1_accepted + Top1_rejected ;
 
 	normaltree->Draw("Top2bntracks:Top2Genbntracks >> h_Top2bntracks");
 	int Top2_accepted          = normaltree->Draw("Top2bntracks:Top2Genbntracks",  diag);
