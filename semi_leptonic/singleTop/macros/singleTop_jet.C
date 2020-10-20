@@ -62,8 +62,12 @@ void singleTop_jet()
 {
 	int token=0;
 
+	bool twoDmode = 0;
+
 	// set plot style
-	SetQQbarStyle();
+
+	if(!twoDmode) SetQQbarStyle();
+
 	gStyle->SetOptFit(0);
 	gStyle->SetOptStat(0);  
 	gStyle->SetOptTitle(1);
@@ -72,6 +76,14 @@ void singleTop_jet()
 	gStyle->SetMarkerSize(0);
 	gStyle->SetTitleX(0.2); 
 	gStyle->SetTitleY(0.9); 
+
+		// set margin sizes
+	if (twoDmode){
+		gStyle->SetPadTopMargin(0.1);
+		gStyle->SetPadRightMargin(0.13);
+		gStyle->SetPadBottomMargin(0.15);
+		gStyle->SetPadLeftMargin(0.15);
+	}
 
 
 	// File Selector
@@ -120,8 +132,19 @@ void singleTop_jet()
 	TH1F * jetE2			= new TH1F("jetE2",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE2->Sumw2();
 
+	TH2F * histBLepHadE	= new TH2F("histBLepHadE",";Jet energy leptonic (GeV);Jet energy hadronic (GeV)",30,0,300,30,0,300);
+
+
 
 	////////////// Cuts //////////////
+
+	TCut thru = "Thrust < 0.9";
+	TCut hadM = "hadMass > 180 && hadMass < 420";
+	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
+	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
+	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
+
+	TCut cuts = rcTW + hadM + pcut + gcut;
 
 	// Methods selection
 	TCut methodAll = "methodTaken > 0";
@@ -157,15 +180,23 @@ void singleTop_jet()
 
 	// Entry
 
+	int blephadE	= Stats->Draw("jet_E[1]:jet_E[0] >> histBLepHadE",MCcos2 + MCcos09 + bmom1 + bmom2 + method1);
+
+
 	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON);
+
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + !method1);
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos09 + singleTopFlagON);
+	
 	//int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
 	
 	int bjet2all	= Stats->Draw("jet_E[1] >> jetE2all",MCcos2);
 //	int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + bmom2 + singleTopFlagON + method1);
 	int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + bmom2 + singleTopFlagON);
 	//int bjet2 		= Stats->Draw("jet_E[1] >> jetE2", MCcos2 + MCcos09 + bmom2 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
+
+
 
 
 	cout << jetE1all->GetEntries() << "\n";
@@ -260,14 +291,20 @@ void singleTop_jet()
 
 	TLegend *leg = new TLegend(0.7,0.85,0.9,0.95); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
-	leg->AddEntry(jetE1all,"All Parton Level","l");
-	leg->AddEntry(jetE1,"Single Top Tagged","l");
+	leg->AddEntry(jetE1all,"All Reconstructed Events","l");
+	leg->AddEntry(jetE1,"Single Top Tagged Events","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
 	leg->Draw();
 
 	c1->Update();
+
+//	2D Energy hist
+
+	TCanvas * c2	= new TCanvas("c2", "jetE2",0,0,500,500);
+	histBLepHadE->Draw("COLZ");
+	c2->Update();
 
 /*
 // jetE2
