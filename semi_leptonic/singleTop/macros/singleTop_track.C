@@ -220,7 +220,9 @@ void singleTop_track()
 	int entryStat = Stats->GetEntries();
 	cout << "Total number of events: " << entryStat << endl;
 
-	bool method_mode = false;
+	int sel_evt = 0;
+
+	bool method_mode = true;
 
 	for(int iStatEntry=0; iStatEntry<entryStat; iStatEntry++){
 
@@ -250,6 +252,8 @@ void singleTop_track()
 			}
 		}
 
+		if(check && method_check) sel_evt++;
+
 		// Reconstructed Level
 
 		for (int ijet = 0; ijet < 2; ++ijet)
@@ -257,13 +261,11 @@ void singleTop_track()
 			jet_Eall->Fill( jet_E[ijet] );
 
 			if(method_mode){	
-				for (int i = 0; i < methodUsed; ++i){
-					if(check && methodTaken[i]==1){
-						hjet_E->Fill( jet_E[ijet] );
-					}
+				if(check && method_check){
+					hjet_E->Fill( jet_E[ijet] );
 				}
 			}else{
-				if (check) hjet_E->Fill( jet_E[ijet] );
+				if(check) hjet_E->Fill( jet_E[ijet] );
 			}
 
 
@@ -275,16 +277,10 @@ void singleTop_track()
 					jetTrack_pall->Fill( jet_track_p[ijet][ivtx][itr] );
 
 					if(method_mode){	
-						for (int i = 0; i < methodUsed; ++i){
-
-							if(check && methodTaken[i]==1){
-
-								jetTrack_E->Fill( jet_track_E[ijet][ivtx][itr] );
-								jetTrack_p->Fill( jet_track_p[ijet][ivtx][itr] );
-
-							}
-
-						} // end method used
+						if(check && method_check){
+							jetTrack_E->Fill( jet_track_E[ijet][ivtx][itr] );
+							jetTrack_p->Fill( jet_track_p[ijet][ivtx][itr] );
+						}
 					}else{
 						if(check){
 							jetTrack_E->Fill( jet_track_E[ijet][ivtx][itr] );
@@ -300,6 +296,9 @@ void singleTop_track()
 
 
 	}// End of Event Loop
+
+
+	cout << "Selected number of events: " << sel_evt << endl;
 
 
 

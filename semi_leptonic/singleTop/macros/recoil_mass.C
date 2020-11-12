@@ -114,9 +114,12 @@ void recoil_mass()
 	TH1F * histRecoMCLepMassDiff	= new TH1F("histRecoMCLepMassDiff",";Reco-Gen Top_{Lep} Mass (GeV); Entries",200,-100,100);
 
 
-	float recMmin=160.0, recMmax=200.0;
+	float recMmin=150.0, recMmax=250.0;
+//	float recMmin=100.0, recMmax=300.0;
 	TH2F * histTopHadMass	= new TH2F("histTopHadMass",";MC Top_{Had} Mass (GeV);Reco Top_{Had} Mass (GeV)",200,recMmin,recMmax,200,recMmin,recMmax);
 	TH2F * histTopLepMass	= new TH2F("histTopLepMass",";MC Top_{Lep} Mass (GeV);Reco Top_{Lep} Mass (GeV)",200,recMmin,recMmax,200,recMmin,recMmax);
+
+	TH2F * histTopLepHadMass	= new TH2F("histTopLepHadMass",";Gen Top_{Lep} Mass (GeV);Gen Top_{Had} Mass (GeV)",200,recMmin,recMmax,200,recMmin,recMmax);
 
 	TGaxis::SetMaxDigits(3);
 
@@ -183,8 +186,8 @@ void recoil_mass()
 
 //		if(qMCCheck1 && qMCCheck2){
 
-			for (int i = 0; i < methodUsed; ++i)
-			{
+//			for (int i = 0; i < methodUsed; ++i)
+//			{
 
 //				if(methodTaken[i]==1){
 
@@ -216,6 +219,16 @@ void recoil_mass()
 					histTopHadMass->Fill(MCTopHadMass,Top1mass);
 					histTopLepMass->Fill(MCTopLepMass,Top2mass);
 
+
+//					histTopLepHadMass->Fill(MCTopLepMass,MCTopHadMass);
+
+
+					if(singletopFlag==1){
+						histTopLepHadMass->Fill(MCTopLepMass,MCTopHadMass);
+//						histTopLepHadMass->Fill(Top2mass,Top1mass);
+					}
+
+
 					// Reco MC Difference
 
 					float HadDiff = Top1mass - MCTopHadMass;
@@ -226,7 +239,7 @@ void recoil_mass()
 
 //				} // method = 1
 
-			} // for loop
+//			} // for loop
 
 //		} // cos 0.9
 
@@ -451,6 +464,9 @@ void recoil_mass()
 	c3->cd(2);
 	histRecoMCLepMassDiff->Draw("he");
 */
+
+	TCanvas * c4	= new TCanvas("c4", "DataMC3",0,0,500,500);
+	histTopLepHadMass->Draw("COLZ");
 
 }
 
