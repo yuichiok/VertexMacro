@@ -124,7 +124,7 @@ void singleTop_jet()
 	TCanvas * c1			= new TCanvas("c1", "jetE1",0,0,500,500);
 	TH1F * jetE1all			= new TH1F("jetE1all",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE1all->Sumw2();
-	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; 1 / Entries",200,0,200);
+	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; 1 / Entries",100,0,200);
 	jetE1->Sumw2();
 
 	TH1F * jetE2all			= new TH1F("jetE2all",";jetE_{B}; 1 / Entries",200,0,200);
@@ -180,15 +180,40 @@ void singleTop_jet()
 
 	// Entry
 
-	int blephadE	= Stats->Draw("jet_E[1]:jet_E[0] >> histBLepHadE",MCcos2 + MCcos09 + bmom1 + bmom2 + method1);
+//	int blephadE	= Stats->Draw("jet_E[1]:jet_E[0] >> histBLepHadE",MCcos2 + MCcos09 + bmom1 + bmom2 + method1);
+	int blephadE	= Stats->Draw("jet_E[1]:jet_E[0] >> histBLepHadE",MCcos2);
 
 
 	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
+//	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2 + MCcos09);
 
+
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + bmom1 + singleTopFlagON + method1);
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + !method1);
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos09 + singleTopFlagON);
+
+
+// Selection
+
+//  SingleTop && Cos0.9 && Method1
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
+
+//  SingleTop && Cos0.9
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + singleTopFlagON); //(crystalball)
 	
+// SingleTop
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + singleTopFlagON); //(dgaus)
+
+// Cos0.9
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+
+// Method1
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + method1); //(tgaus)
+
+// All
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2);
+
+
+
 	//int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + bmom1 + singleTopFlagON + (method1 || method2 || method3 || method4 || method7) );
 	
 	int bjet2all	= Stats->Draw("jet_E[1] >> jetE2all",MCcos2);
@@ -221,7 +246,8 @@ void singleTop_jet()
 //	%%%%%%%%%%%%%%%  Fit Functions %%%%%%%%%%%%%%%%%%%
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	float xmin = 20., xmax = 180.;
+	float xmin = 30., xmax = 160.;
+	//float xmin = 0., xmax = 200.;
 	TF1 *crystalball = new TF1("crystalball", crystalball_function, xmin, xmax, 5);
 	TF1 *fgaus       = new TF1("fgaus","gaus",xmin, xmax);
 	TF1 *dgaus       = new TF1("dgaus","gaus(0)+gaus(3)",xmin, xmax);
@@ -284,10 +310,14 @@ void singleTop_jet()
 //	今んとこtgausが最高
 
 	jetE1->Fit("flogNormal","R");
+//	jetE1->Fit("crystalball","R");
+//	jetE1->Fit("tgaus","R");
 	jetE1->Draw("he");
+//	crystalball->Draw("same");
 	flogNormal->Draw("same");
 	jetE1all->Draw("hsame");
 
+	cout << "max = " << flogNormal->GetMaximumX() << "\n";
 
 	TLegend *leg = new TLegend(0.7,0.85,0.9,0.95); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
@@ -300,11 +330,15 @@ void singleTop_jet()
 
 	c1->Update();
 
+
+/*
 //	2D Energy hist
 
 	TCanvas * c2	= new TCanvas("c2", "jetE2",0,0,500,500);
 	histBLepHadE->Draw("COLZ");
 	c2->Update();
+*/
+
 
 /*
 // jetE2
