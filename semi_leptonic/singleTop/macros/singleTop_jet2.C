@@ -124,13 +124,13 @@ void singleTop_jet2()
 	TCanvas * c1			= new TCanvas("c1", "jetE1",0,0,500,500);
 	TH1F * jetE1all			= new TH1F("jetE1all",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE1all->Sumw2();
-	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; Entries",100,0,200);
+	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; Entries",50,0,200);
 	jetE1->Sumw2();
 
-	TH1F * jetE1_2			= new TH1F("jetE1_2",";jetE_{B}; Entries",100,0,200);
+	TH1F * jetE1_2			= new TH1F("jetE1_2",";jetE_{B}; Entries",50,0,200);
 	jetE1_2->Sumw2();
 
-	TH1F * jetE1_3			= new TH1F("jetE1_3",";jetE_{B}; Entries",100,0,200);
+	TH1F * jetE1_3			= new TH1F("jetE1_3",";jetE_{B}; Entries",50,0,200);
 	jetE1_3->Sumw2();
 
 	////////////// Cuts //////////////
@@ -186,22 +186,22 @@ void singleTop_jet2()
 // Selection
 
 //  SingleTop && Cos0.9 && Method1
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MCcos09 + method1); //(crystalball)
+	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
+	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + method1 + !singleTopFlagON); //(crystalball)
+
 
 //  SingleTop && Cos0.9
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + singleTopFlagON); //(crystalball)
-
-
-	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
-	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
-
 	
 // SingleTop
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + singleTopFlagON); //(dgaus)
 
 
 // Cos0.9
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
 
 
 // Method1
@@ -211,10 +211,24 @@ void singleTop_jet2()
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	cout << "All Events: " << jetE1all->GetEntries() << "\n";
-	cout << "Cos0.9 Events: " << jetE1->GetEntries() << "\n";
-	cout << "SingleTop && Cos0.9 Events: " << jetE1_2->GetEntries() << "\n";
-	cout << "!SingleTop && Cos0.9 Events: " << jetE1_3->GetEntries() << "\n";
+	cout << "Cos0.9 && method1 Events: " << jetE1->GetEntries() << "\n";
+	cout << "Cos0.9 && method1 && SingleTop Events: " << jetE1_2->GetEntries() << "\n";
+	cout << "Cos0.9 && method1 && !SingleTop Events: " << jetE1_3->GetEntries() << "\n";
 
 /*
 	jetE1all->Scale( 1 / jetE1all->GetEntries(), "width" );
@@ -332,12 +346,12 @@ void singleTop_jet2()
 	cout << "maxGreen = " << flogNormal3->GetMaximumX() << "\n";
 	cout << "maxBlue = " << flogNormal2->GetMaximumX() << "\n";
 
-	TLegend *leg = new TLegend(0.7,0.65,0.9,0.8); //set here your x_0,y_0, x_1,y_1 options
+	TLegend *leg = new TLegend(0.6,0.75,0.8,0.9); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
-	leg->SetTextSize(0.03);
-	leg->AddEntry(jetE1,"Cos#theta < -0.9","l");
-	leg->AddEntry(jetE1_3,"Cos#theta < -0.9 && !SingleTop","l");
-	leg->AddEntry(jetE1_2,"Cos#theta < -0.9 && SingleTop","l");
+	leg->SetTextSize(0.02);
+	leg->AddEntry(jetE1,"Cos#theta < -0.9 && method1","l");
+	leg->AddEntry(jetE1_3,"Cos#theta < -0.9 && method1 && !SingleTop","l");
+	leg->AddEntry(jetE1_2,"Cos#theta < -0.9 && method1 && SingleTop","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
