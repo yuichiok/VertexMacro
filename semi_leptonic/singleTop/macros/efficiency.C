@@ -2,17 +2,47 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+
+#include "../../style/Style.C"
+#include "../../style/Labels.C"
 #define MAXV 8
-//void asymmetry(string filename = "TTBarProcessorLeft.root", TCanvas * c1 = NULL)
 
 using namespace std;
+
 void efficiency()
 {
 	int token=0;
 
+	bool twoDmode = 0;
+
+	// set plot style
+
+	if(!twoDmode) SetQQbarStyle();
+
+	gStyle->SetOptFit(0);
+	gStyle->SetOptStat(0);  
+	gStyle->SetOptTitle(1);
+	gStyle->SetTitleBorderSize(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetMarkerSize(0);
+	gStyle->SetTitleX(0.2); 
+	gStyle->SetTitleY(0.9); 
+
+		// set margin sizes
+	if (twoDmode){
+		gStyle->SetPadTopMargin(0.1);
+		gStyle->SetPadRightMargin(0.13);
+		gStyle->SetPadBottomMargin(0.15);
+		gStyle->SetPadLeftMargin(0.15);
+	}
+
+
+	// File Selector
+
 	FileSelector fs;
 	std::vector<FileSelector> rootfiles;
-	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record.txt" );
+	std::ifstream in( "/home/ilc/yokugawa/macros/semi_leptonic/input/record2.txt" );
 
 	while( fs.input(in) ){
 		rootfiles.push_back(fs);
@@ -37,115 +67,190 @@ void efficiency()
 
 	TFile * file = TFile::Open(filename.c_str());
 
-	TTree * normaltree = (TTree*) file->Get( "Stats" ) ;
+	TTree * Stats = (TTree*) file->Get( "Stats" ) ;
 	TTree * GenTree = (TTree*) file->Get( "GenTree" ) ;
 	TTree * Summary = (TTree*) file->Get( "Summary" );
 
-	int forward  = GenTree->Draw("qMCcostheta","qMCcostheta > 0 && qMCcostheta > -2 ");
-	int backward = GenTree->Draw("qMCcostheta","qMCcostheta < 0 && qMCcostheta > -2");
-
-	///////////////
-	// BASE CUTS //
-	///////////////
-
-	//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && (Top1btag > 0.8 || Top2btag > 0.3)  && (Top1bmomentum > 15 && Top2bmomentum > 15) && methodTaken > 0";
-
-	// **** Full cuts ****
-	//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ((methodTaken == 1 && Top1btag > 0.8 && Top2btag > 0.8 && Top1bmomentum > 35 && Top2bmomentum > 35) || methodTaken > 1 )";
-
-	// **** Test ****
-	//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((methodTaken == 1 && Top1bmomentum > 35 && Top2bmomentum > 35) || methodTaken > 2 )";
-
-	//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4)";
-
-	//string cuts = "&& hadMass > 180 && hadMass < 420 && Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50 && ((Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2 ) && ( methodTaken >= 1 )";
 
 
-	// Begin efficiency calculation
 
-	int entrySum = Summary->GetEntries();
-	int nGenUsed, nAfterLeptonCuts, nAfterBtagCuts;
-	int nevt=0, nlcut=0, nbcut=0;
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%  Histogram  %%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	Summary->SetBranchAddress( "nGenUsed", &nGenUsed ) ;
-	Summary->SetBranchAddress( "nAfterLeptonCuts", &nAfterLeptonCuts ) ;
-	Summary->SetBranchAddress( "nAfterBtagCuts", &nAfterBtagCuts ) ;
+	
+	TCanvas * c1			= new TCanvas("c1", "cosTheta",0,0,500,500);
 
-	for(int i=0; i<entrySum; i++){
+	TH1F * hallCos				= new TH1F("hallCos",";cos#theta_{t}; Entries",20.,-1.0,1.0);
+	hallCos->Sumw2();
 
-		Summary->GetEntry(i);
+	TH1F * hpassCos			= new TH1F("hpassCos",";cos#theta_{t}; Entries",20.,-1.0,1.0);
+	hpassCos->Sumw2();
 
-		nevt  += nGenUsed;
-		nlcut += nAfterLeptonCuts;
-		nbcut += nAfterBtagCuts;
+	TH1F * hallBjetE				= new TH1F("hallBjetE",";bjet_{E} (GeV); Entries",50.,0.,200.0);
+	hallBjetE->Sumw2();
 
-	}
+	TH1F * hpassBjetE			= new TH1F("hpassBjetE",";bjet_{E} (GeV); Entries",50.,0.,200.0);
+	hpassBjetE->Sumw2();
 
-	cout << endl;
 
-	cout << "============================ Baseline Cuts ============================" << endl;
-	cout << "nEvents                      = " << nevt << " (100%)" << endl;
-	cout << "after lepton cuts            = " << nlcut << " (" << (float)(nlcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after btag cuts (0.8 & 0.3)  = " << nbcut << " (" << (float)(nbcut)/(float)(nevt) *100 << "%)" << endl;
 
+
+	////////////// Cuts //////////////
 
 	TCut thru = "Thrust < 0.9";
 	TCut hadM = "hadMass > 180 && hadMass < 420";
 	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
-
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
 
-	TCut method = "methodTaken > 0";
+	TCut cuts = rcTW + hadM + pcut + gcut;
 
-	TCut cuts = thru && hadM && rcTW && pcut && gcut && method;
+	// Methods selection
+	TCut methodAll = "methodTaken > 0";
+	TCut method1 = "methodTaken == 1";
+	TCut method2 = "methodTaken == 2";
+	TCut method3 = "methodTaken == 3";
+	TCut method4 = "methodTaken == 4";
+	TCut method5 = "methodTaken == 5";
+	TCut method6 = "methodTaken == 6";
+	TCut method7 = "methodTaken == 7";
 
-	int afterbcut    = normaltree->GetEntries();
-	int afterthrucut = normaltree->GetEntries( thru );
-	int afterhadMcut = normaltree->GetEntries( thru && hadM );
-	int afterrcTWcut = normaltree->GetEntries( thru && hadM && rcTW );
+	TCut MCcos2  = "qMCcostheta > -2";
+	TCut MCcos09 = "qMCcostheta < -0.9"; 
+	TCut bmom1	 = "Top1bmomentum > 0";
+	TCut bmom2	 = "Top2bmomentum > 0";
+	TCut singleTopFlagON = "singletopFlag == 1";
 
-	cout << "after thrust cut             = " << afterthrucut << " (" << (float)(afterthrucut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after hadronic mass cut      = " << afterhadMcut << " (" << (float)(afterhadMcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after reco T & W mass cut    = " << afterrcTWcut << " (" << (float)(afterrcTWcut)/(float)(nevt) *100 << "%)" << endl;
+	TGaxis::SetMaxDigits(3);
 
-	int afterpcut = normaltree->GetEntries( thru && hadM && rcTW && pcut );
-	int aftergcut = normaltree->GetEntries( thru && hadM && rcTW && gcut );
+	hallCos->SetLineWidth(3);
+	hallCos->SetLineStyle(1);
+	hallCos->SetLineColor(kGray+1);
 
-	cout << "============================ Non-baseline Cuts ============================" << endl;
-	cout << "after gcut                   = " << aftergcut << " (" << (float)(aftergcut)/(float)(nevt) *100 << "%)" << endl;
-	cout << "after pcut                   = " << afterpcut << " (" << (float)(afterpcut)/(float)(nevt) *100 << "%)" << endl;
+	hpassCos->SetLineWidth(3);
+	hpassCos->SetLineStyle(1);
+
+
+
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%  Selection  %%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+// Entry
+
+//	int bjet1all	= Stats->Draw("jet_E[0] >> jetE1all",MCcos2);
+
+// Selection
+
+//  SingleTop && Cos0.9 && Method1
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MCcos09 + method1); //(crystalball)
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + method1 + !singleTopFlagON); //(crystalball)
+
+
+//  SingleTop && Cos0.9
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09 + singleTopFlagON); //(crystalball)
+	
+// SingleTop
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + singleTopFlagON); //(dgaus)
+
+
+// Cos0.9
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
+
+
+// Method1
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + method1); //(tgaus)
+
+// All
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2);
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + method1); //(tgaus)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + singleTopFlagON); //(tgaus)
+
+
+
+	int allCos  = Stats->Draw("qCostheta >> hallCos",  MCcos2);
+	int passCos = Stats->Draw("qCostheta >> hpassCos", MCcos2 + method1);
+
+	int allBjetE  = Stats->Draw("jet_E[0] >> hallBjetE",  MCcos2);
+	int passBjetE = Stats->Draw("jet_E[0] >> hpassBjetE", MCcos2 + method1);
+
+
+
+	cout << "Cos THETA\n";
+	cout << "Events ALL: " << hallCos->GetEntries() << "\n";
+	cout << "Events PASS: " << hpassCos->GetEntries() << "\n";
+
 	cout << endl;
+	cout << "BjetE\n";
+	cout << "Events ALL: " << hallBjetE->GetEntries() << "\n";
+	cout << "Events PASS: " << hpassBjetE->GetEntries() << "\n";
 
-	TCut fcoscut = "qCostheta > 0";
-	TCut bcoscut = "qCostheta < 0 && qCostheta > -1.0";
 
-	TCut fcuts = fcoscut && cuts;
-	TCut bcuts = bcoscut && cuts;
 
-	int recoforward = normaltree->GetEntries(fcuts);
-	int recobackward = normaltree->GetEntries(bcuts);
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%  Normalization  %%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	float afbgen = (float)(forward - backward) / (float) (forward + backward);
-	float afbreco = (float)(recoforward - recobackward) / (float) (recoforward + recobackward);
+	double intALLCos = hallCos->Integral(2,19);
+	double intPASSCos  = hpassCos->Integral(2,19);
 
-	cout << "recoforward  = " << recoforward  << endl;
-	cout << "recobackward = " << recobackward << endl;
 
-	TCut noneCut = "qCostheta[1] == 2";
-	int recoNONE = normaltree->GetEntries(noneCut);
+//	hall->Scale( 1 / intALL, "width" );
+//	hpass->Scale( 1 / intPASS, "width" );
 
-	cout << "none = " << recoNONE << endl;
+	hallCos->SetMinimum(0);
+	hpassCos->SetMinimum(0);
 
-	cout << "--------------------------------------------------------------\n";
-	cout << "--------------------------------------------------------------\n";
-	std::cout << "Afb gen: " << afbgen << " N: " << forward + backward <<  "\n";
-	std::cout << "Afb reco: " << afbreco << " N: " << recoforward + recobackward << "(" << afbreco / afbgen *100 << "%)"  << "\n";
-	cout << "--------------------------------------------------------------\n";
-	float efficiency = (float)(recoforward + recobackward)/(forward + backward) * 2 * 100;
-	cout << "Final efficiency: " << efficiency << "%\n" ;
-	cout << "--------------------------------------------------------------\n";
-	cout << "--------------------------------------------------------------\n";
-	//file->Close();
+	hallBjetE->SetMinimum(0);
+	hpassBjetE->SetMinimum(0);
+
+
+
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%  Draw  %%%%%%%%%%%%%%%%%%%
+//	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	hallCos->Draw("he");
+	hpassCos->Draw("hsame");
+
+	c1->Update();
+
+	TCanvas * c2			= new TCanvas("c2", "cBjetE",0,0,500,500);
+
+	hallBjetE->Draw("he");
+	hpassBjetE->Draw("hsame");
+
+	c2->Update();
+
+
+	TCanvas * c3			= new TCanvas("c3", "CosEfficiency",0,0,500,500);
+
+	TEfficiency* pEffCos = 0;
+
+	if(TEfficiency::CheckConsistency(*hpassCos,*hallCos)){
+
+		pEffCos = new TEfficiency(*hpassCos,*hallCos);
+		pEffCos->Draw();
+
+	}
+
+	TCanvas * c4			= new TCanvas("c4", "bjetEEfficiency",0,0,500,500);
+
+	TEfficiency* pEffBjetE = 0;
+
+	if(TEfficiency::CheckConsistency(*hpassBjetE,*hallBjetE)){
+
+		pEffBjetE = new TEfficiency(*hpassBjetE,*hallBjetE);
+		pEffBjetE->Draw();
+
+	}
+
+
+
 }
 
