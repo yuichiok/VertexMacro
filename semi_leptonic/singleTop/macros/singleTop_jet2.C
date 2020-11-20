@@ -124,13 +124,13 @@ void singleTop_jet2()
 	TCanvas * c1			= new TCanvas("c1", "jetE1",0,0,500,500);
 	TH1F * jetE1all			= new TH1F("jetE1all",";jetE_{B}; 1 / Entries",200,0,200);
 	jetE1all->Sumw2();
-	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; Entries",50,0,200);
+	TH1F * jetE1			= new TH1F("jetE1",";jetE_{B}; Entries",100,0,200);
 	jetE1->Sumw2();
 
-	TH1F * jetE1_2			= new TH1F("jetE1_2",";jetE_{B}; Entries",50,0,200);
+	TH1F * jetE1_2			= new TH1F("jetE1_2",";jetE_{B}; Entries",100,0,200);
 	jetE1_2->Sumw2();
 
-	TH1F * jetE1_3			= new TH1F("jetE1_3",";jetE_{B}; Entries",50,0,200);
+	TH1F * jetE1_3			= new TH1F("jetE1_3",";jetE_{B}; Entries",100,0,200);
 	jetE1_3->Sumw2();
 
 	////////////// Cuts //////////////
@@ -186,9 +186,9 @@ void singleTop_jet2()
 // Selection
 
 //  SingleTop && Cos0.9 && Method1
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MCcos09 + method1); //(crystalball)
-	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
-	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + method1 + !singleTopFlagON); //(crystalball)
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MCcos09 + method1); //(crystalball)
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + method1 + !singleTopFlagON); //(crystalball)
 
 
 //  SingleTop && Cos0.9
@@ -199,16 +199,18 @@ void singleTop_jet2()
 
 
 // Cos0.9
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
-//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
-//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
+	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
 
 
 // Method1
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + method1); //(tgaus)
 
 // All
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2);
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2);
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + method1); //(tgaus)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + singleTopFlagON); //(tgaus)
 
 
 
@@ -335,9 +337,9 @@ void singleTop_jet2()
 */
 
 //	crystalball->Draw("same");
-	flogNormal1->Draw("same");
-	flogNormal2->Draw("same");
-	flogNormal3->Draw("same");
+//	flogNormal1->Draw("same");
+//	flogNormal2->Draw("same");
+//	flogNormal3->Draw("same");
 
 
 	//jetE1all->Draw("hsame");
