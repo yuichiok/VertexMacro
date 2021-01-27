@@ -155,6 +155,11 @@ void singleTop_jet2()
 
 	TCut MCcos2  = "qMCcostheta > -2";
 	TCut MCcos09 = "qMCcostheta < -0.9"; 
+
+	TCut MCcosAbove09 = "qMCcostheta > -0.9";
+	TCut MCcosBelow06 = "qMCcostheta < -0.6"; 
+	TCut MC0906 = MCcosAbove09 + MCcosBelow06;
+
 	TCut bmom1	 = "Top1bmomentum > 0";
 	TCut bmom2	 = "Top2bmomentum > 0";
 	TCut singleTopFlagON = "singletopFlag == 1";
