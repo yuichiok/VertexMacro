@@ -4048,7 +4048,7 @@ float observable::ChargeKcJet(int ijet){//, int eff=0.88) {
 
       
       // edit by Yuichi
-      float p = jet_track_p[ijet][ivtx][itrack];
+      float p = mom;
       float dedx = jet_track_dedx[ijet][ivtx][itrack];
 
       float a  = 0.0183421;
@@ -4059,24 +4059,24 @@ float observable::ChargeKcJet(int ijet){//, int eff=0.88) {
                 dedx < a*std::log(p) + b1 &&
                 dedx > a*std::log(p) + b2;
 
-      //if(mom>2 && fabs(costheta_tracks)<0.95 && jet_track_iskaoncheat[ijet][ivtx][itrack]==1 && gen_eff<eff) iskaon=true;
-
-      ///////
+      if(iskaon==true) charge+=jet_track_charge[ijet][ivtx][itrack];
 
 
-      TRandom1 *r2 = new TRandom1();
-      double gen_purity=r2->Rndm();
+      // if(mom>2 && fabs(costheta_tracks)<0.95 && jet_track_iskaoncheat[ijet][ivtx][itrack]==1 && gen_eff<eff) iskaon=true;
 
-      TRandom1 *r3 = new TRandom1();
-      double gen_05=r3->Rndm();
+      // TRandom1 *r2 = new TRandom1();
+      // double gen_purity=r2->Rndm();
+
+      // TRandom1 *r3 = new TRandom1();
+      // double gen_05=r3->Rndm();
       
-      if( iskaon==true) {
-        if(gen_purity<purity) charge+=jet_track_charge[ijet][ivtx][itrack];
-        else {
-         if(gen_05<0.5) charge-=jet_track_charge[ijet][ivtx][itrack];
-         else charge+=jet_track_charge[ijet][ivtx][itrack];
-        }
-      }
+      // if( iskaon==true) {
+      //   if(gen_purity<purity) charge+=jet_track_charge[ijet][ivtx][itrack];
+      //   else {
+      //    if(gen_05<0.5) charge-=jet_track_charge[ijet][ivtx][itrack];
+      //    else charge+=jet_track_charge[ijet][ivtx][itrack];
+      //   }
+      // }
 
    }
 

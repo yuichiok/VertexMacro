@@ -13,7 +13,8 @@ int analysis(){
   float btag2=0.8;
 
 //  TString file = "/home/airqui/nextcloud_cernbox/QQbar/processor_output_2020/bbbar"+id+"_radret_250GeV_mc2020_"+pol+"_ValenciaVertexBeam_R1.17_short.root";
-  TString file = "/group/ilc/users/yokugawa/QQbar250/l5/eLpR/15161/000/QQbarProcessor_out/root_merge/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.MERGED.root";
+//  TString file = "/group/ilc/users/yokugawa/QQbar250/l5/eLpR/15161/000/QQbarProcessor_out/root_merge/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.MERGED.root";
+  TString file = "/group/ilc/users/yokugawa/QQbar250/l5/eLpR/15162/000/QQbarProcessor_out/root_merge/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.15162.MERGE50.root";
   
   cout<< " ######################################################################### "<<endl; 
   cout<< "  #### "<<pol<<" POLARISATION "<<endl;
