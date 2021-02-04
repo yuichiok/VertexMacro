@@ -159,9 +159,9 @@ void observable::CoutEfficiencies() {
 
  
 
-void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, TString polarization="eL"){
+void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, std::vector<TH1F*> kaon_info, TString polarization="eL"){
 
-  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
+  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i_test.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
   MyFile->cd();
   
   //partonlevel
@@ -272,6 +272,8 @@ void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> r
   
   
   for(unsigned i=0; i<resolution.size(); i++) resolution[i]->Write();
+
+  for (unsigned i = 0; i < kaon_info.size(); ++i) kaon_info[i]->Write();
   
   MyFile->Close();
   
@@ -433,7 +435,47 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
   TH1F* h_cc_KcBc_rejected = new TH1F("h_cc_KcBc_rejected","h_cc_KcBc_rejected",nbins,-1.0,1.0);
   TH1F* h_cc_BcKc_same1_rejected = new TH1F("h_cc_BcKc_same1_rejected","h_cc_BcKc_same1_rejected",nbins,-1.0,1.0);
   TH1F* h_cc_BcKc_same2_rejected = new TH1F("h_cc_BcKc_same2_rejected","h_cc_BcKc_same2_rejected",nbins,-1.0,1.0);
-  
+
+  TH1F* cosKaon_truth = new TH1F("cosKaon_truth","cosKaon_truth",nbins,0.,1.0);
+  TH1F* cosKaon_reco  = new TH1F("cosKaon_reco","cosKaon_reco",nbins,0.,1.0);
+  TH1F* p_Kaon_truth = new TH1F("p_Kaon_truth","p_Kaon_truth",nbins,0.,100.0);
+  TH1F* p_Kaon_reco  = new TH1F("p_Kaon_reco","p_Kaon_reco",nbins,0.,100.0);
+  cosKaon_truth->Sumw2();
+  cosKaon_reco->Sumw2();
+  p_Kaon_truth->Sumw2();
+  p_Kaon_reco->Sumw2();
+
+
+////
+  Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.33,1.667,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
+        //13.33,16.667,20,30,40,50,60,70,80,90,100};
+  Int_t nbinnum_p=sizeof(bins_p)/sizeof(Float_t) - 1;
+
+  Float_t binsy[200];
+  binsy[0]=0.1;
+  for(int i=1;i<200;i++) binsy[i]=binsy[i-1]+0.1/100.;
+  Int_t nbinnumy=199;
+
+  TH2F* kaon_dEdx_truth = new TH2F("kaon_dEdx_truth","kaon_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* proton_dEdx_truth = new TH2F("proton_dEdx_truth","proton_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* pion_dEdx_truth = new TH2F("pion_dEdx_truth","pion_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* electron_dEdx_truth = new TH2F("electron_dEdx_truth","electron_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* muon_dEdx_truth = new TH2F("muon_dEdx_truth","muon_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
+
+  TH2F* kaon_dEdx_cos_truth = new TH2F("kaon_dEdx_cos_truth","kaon_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
+  TH2F* proton_dEdx_cos_truth = new TH2F("proton_dEdx_cos_truth","proton_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
+  TH2F* pion_dEdx_cos_truth = new TH2F("pion_dEdx_cos_truth","pion_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
+  TH2F* electron_dEdx_cos_truth = new TH2F("electron_dEdx_cos_truth","electron_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
+  TH2F* muon_dEdx_cos_truth = new TH2F("muon_dEdx_cos_truth","muon_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
+
+////
+
+  TH1F* cosKaon_eff = new TH1F("cosKaon_eff","cosKaon_eff",nbins,0.,1.0);
+  TH1F* p_Kaon_eff  = new TH1F("p_Kaon_eff","p_Kaon_eff",nbins,0.,100.0);
+  cosKaon_eff->Sumw2();
+  p_Kaon_eff->Sumw2();
+
+
     
   Long64_t nentries;
   if(n_entries>0) nentries= n_entries;
@@ -532,10 +574,65 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
     costheta_BcKc_same1=costheta_tracks;
     costheta_BcKc_same2=costheta_tracks;
     
+
     for(int ijet=0; ijet<2; ijet++) {
       Bc[ijet]=ChargeBcJet(ijet);
       Kc[ijet]=ChargeKcJet(ijet);
-    }
+
+      for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
+        for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
+
+          std::vector<float> track_p_vec;
+          track_p_vec.push_back(jet_track_px[ijet][ivtx][itrack]);
+          track_p_vec.push_back(jet_track_py[ijet][ivtx][itrack]);
+          track_p_vec.push_back(jet_track_pz[ijet][ivtx][itrack]);
+          float abs_cos_track = fabs(GetCostheta(track_p_vec));
+
+          float track_p    = sqrt(pow(jet_track_px[ijet][ivtx][itrack],2)+pow(jet_track_py[ijet][ivtx][itrack],2)+pow(jet_track_pz[ijet][ivtx][itrack],2));
+          float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
+          bool iskaon_reco = iskaon_dEdx(track_p,track_dedx);
+
+          if(iskaon_reco==true){
+            cosKaon_reco->Fill(abs_cos_track);
+            p_Kaon_reco->Fill(track_p);
+            
+            cosKaon_eff->Fill(abs_cos_track);
+            p_Kaon_eff->Fill(track_p);
+          }
+
+          if(jet_track_pdg[ijet][ivtx][itrack]==321){
+            cosKaon_truth->Fill(abs_cos_track);
+            p_Kaon_truth->Fill(track_p);
+            kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+            kaon_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+          }
+
+          if(jet_track_pdg[ijet][ivtx][itrack]==211){
+            pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+            pion_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+          }
+
+          if(jet_track_pdg[ijet][ivtx][itrack]==2212){
+            proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+            proton_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+          }
+
+          if(jet_track_pdg[ijet][ivtx][itrack]==11){
+            electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+            electron_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+          }
+
+          if(jet_track_pdg[ijet][ivtx][itrack]==13){
+            muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+            muon_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+          }
+
+
+        } // end track
+
+      } // end vtx
+
+    } // end jet
 
 
     float cos_truth=-2;
@@ -551,19 +648,19 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
       
       if(mc_matching==1 && mc_quark_charge[0]<0 ) {
         cos_reco_truth =costheta_BcBc;
-	cos_trackreco_truth=costheta_tracks;
+        cos_trackreco_truth=costheta_tracks;
       }
       if(mc_matching==1 && mc_quark_charge[0]>0 ) {
         cos_reco_truth =-costheta_BcBc;
-	cos_trackreco_truth=-costheta_tracks;
+        cos_trackreco_truth=-costheta_tracks;
       }
       if(mc_matching==2 && mc_quark_charge[1]<0 ){
         cos_reco_truth =costheta_BcBc;
-	cos_trackreco_truth=costheta_tracks;
+        cos_trackreco_truth=costheta_tracks;
       }
       if(mc_matching==2 && mc_quark_charge[1]>0 ){
         cos_reco_truth =-costheta_BcBc;
-      	cos_trackreco_truth=-costheta_tracks;
+        cos_trackreco_truth=-costheta_tracks;
       }
     }
     cos_reco_truth= cos_trackreco_truth;
@@ -579,163 +676,163 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
       // calculate asymmetry for the different categories
       //Information to calculate p, for BcBc category
       if(taken ==false) {    
-	if(Bc[0]*Bc[1]>0) {
-	  h_bbbar_BcBc_rejected->Fill( costheta_BcBc);
-	  h_bbbar_BcBc_rejected->Fill( -costheta_BcBc);
-	}
-	if(Bc[0]*Bc[1]<0) {
-	  if(Bc[0] < 0) h_bbbar_BcBc_reco->Fill(costheta_BcBc);
-	  else h_bbbar_BcBc_reco->Fill( -costheta_BcBc);
-	  
-	  h_cos_charge_BcBc->Fill(costheta_BcBc);
-	  h_cos_charge_BcBc->Fill(-costheta_BcBc);
-	  
-	  float cos_reco=  (Bc[0] < 0) ? costheta_BcBc: -costheta_BcBc;
-	  bbbar_BcBc_reco++;
-	  
-	  if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut)	{
-	    h_resolution_BcBc->Fill(cos_truth,cos_reco_truth);
-	    h_resolution_jettrack_BcBc->Fill(cos_truth,cos_trackreco_truth);
-	    
-	    asymm_BcBc[0]->Fill(cos_reco);
-	    asymm_BcBc[1]->Fill(cos_reco_truth);
-	  }
-	  
-	  if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
-	    asymm_BcBc[3]->Fill(cos_reco);
-	  }
-	  if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
-	    asymm_BcBc[5]->Fill(cos_reco);
-	  }
-	  if(Kv_p>Kvcut) {
-	    asymm_BcBc[5]->Fill(cos_reco);
-	  }
-	  
+       if(Bc[0]*Bc[1]>0) {
+         h_bbbar_BcBc_rejected->Fill( costheta_BcBc);
+         h_bbbar_BcBc_rejected->Fill( -costheta_BcBc);
+       }
+       if(Bc[0]*Bc[1]<0) {
+         if(Bc[0] < 0) h_bbbar_BcBc_reco->Fill(costheta_BcBc);
+         else h_bbbar_BcBc_reco->Fill( -costheta_BcBc);
+
+         h_cos_charge_BcBc->Fill(costheta_BcBc);
+         h_cos_charge_BcBc->Fill(-costheta_BcBc);
+
+         float cos_reco=  (Bc[0] < 0) ? costheta_BcBc: -costheta_BcBc;
+         bbbar_BcBc_reco++;
+
+         if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut)	{
+           h_resolution_BcBc->Fill(cos_truth,cos_reco_truth);
+           h_resolution_jettrack_BcBc->Fill(cos_truth,cos_trackreco_truth);
+
+           asymm_BcBc[0]->Fill(cos_reco);
+           asymm_BcBc[1]->Fill(cos_reco_truth);
+         }
+
+         if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
+           asymm_BcBc[3]->Fill(cos_reco);
+         }
+         if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
+           asymm_BcBc[5]->Fill(cos_reco);
+         }
+         if(Kv_p>Kvcut) {
+           asymm_BcBc[5]->Fill(cos_reco);
+         }
+
 	  //taken = true;
-	  
-	}
-      }
-  
+
+       }
+     }
+
       /// SINGLE CHARGE MEASUREMENT
-      taken=false;
-      
+     taken=false;
+
       // -------------------------------------------------------------------------
       // Bc
-      if(taken == false) {      
-	if( Bc[0]!=0 || Bc[1]!=0) {
-	  
-	  float cos_reco =-2;
-	  if(Bc[0]!=0 && Bc[0] < 0) cos_reco=costheta_BcKc;
-	  if(Bc[0]!=0 && Bc[0] > 0) cos_reco=-costheta_BcKc;
-	  if(Bc[0]==0 && Bc[1] > 0) cos_reco=costheta_BcKc;
-	  if(Bc[0]==0 && Bc[1] < 0) cos_reco=-costheta_BcKc;
-	  
-	  h_bbbar_BcKc_reco->Fill( costheta_BcKc);
-	  
-	  h_cos_charge_BcKc->Fill(costheta_BcKc);
-	  h_cos_charge_BcKc->Fill(-costheta_BcKc);
-	  bbbar_BcKc_reco++;
-	  
-	  if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut) {
-	    h_resolution_BcKc->Fill(cos_truth,cos_reco_truth);
-	    h_resolution_jettrack_BcKc->Fill(cos_truth,cos_trackreco_truth);
-	    
-	    asymm_BcKc[0]->Fill(cos_reco);
-	    asymm_BcKc[1]->Fill(cos_reco_truth);
-	  }
-	  
-	  if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
-	    asymm_BcKc[3]->Fill(cos_reco);
-	  }
-	  if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
-	    asymm_BcKc[4]->Fill(cos_reco);
-	  }
-	  if(Kv_p>Kvcut) {
-	    asymm_BcKc[5]->Fill(cos_reco);
-	  }
-	  
-	  taken = true;
-	}
-      }
+     if(taken == false) {      
+       if( Bc[0]!=0 || Bc[1]!=0) {
 
-      
+         float cos_reco =-2;
+         if(Bc[0]!=0 && Bc[0] < 0) cos_reco=costheta_BcKc;
+         if(Bc[0]!=0 && Bc[0] > 0) cos_reco=-costheta_BcKc;
+         if(Bc[0]==0 && Bc[1] > 0) cos_reco=costheta_BcKc;
+         if(Bc[0]==0 && Bc[1] < 0) cos_reco=-costheta_BcKc;
+
+         h_bbbar_BcKc_reco->Fill( costheta_BcKc);
+
+         h_cos_charge_BcKc->Fill(costheta_BcKc);
+         h_cos_charge_BcKc->Fill(-costheta_BcKc);
+         bbbar_BcKc_reco++;
+
+         if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut) {
+           h_resolution_BcKc->Fill(cos_truth,cos_reco_truth);
+           h_resolution_jettrack_BcKc->Fill(cos_truth,cos_trackreco_truth);
+
+           asymm_BcKc[0]->Fill(cos_reco);
+           asymm_BcKc[1]->Fill(cos_reco_truth);
+         }
+
+         if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
+           asymm_BcKc[3]->Fill(cos_reco);
+         }
+         if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
+           asymm_BcKc[4]->Fill(cos_reco);
+         }
+         if(Kv_p>Kvcut) {
+           asymm_BcKc[5]->Fill(cos_reco);
+         }
+
+         taken = true;
+       }
+     }
+
+
       // -------------------------------------------------------------------------
       //Information to calculate p, for KcKc category      
       //  if(taken == false ) {
-	if(Kc[0]*Kc[1]>0) {
-	  h_bbbar_KcKc_rejected->Fill( costheta_KcKc);
-	  h_bbbar_KcKc_rejected->Fill( -costheta_KcKc);
-	}
-	
-	if(Kc[0]*Kc[1]<0) {
-	  if(Kc[0] < 0) h_bbbar_KcKc_reco->Fill(costheta_KcKc);
-	  else h_bbbar_KcKc_reco->Fill( -costheta_KcKc);
-	  h_cos_charge_KcKc->Fill(costheta_KcKc);
-	  h_cos_charge_KcKc->Fill(-costheta_KcKc);
-	  
-	  float cos_reco=  (Kc[0] < 0) ? costheta_KcKc: -costheta_KcKc;
-	  bbbar_KcKc_reco++;
-	  
-	  if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut)	{
-	    h_resolution_KcKc->Fill(cos_truth,cos_reco_truth);
-	    h_resolution_jettrack_KcKc->Fill(cos_truth,cos_trackreco_truth);
-	    
-	    asymm_KcKc[0]->Fill(cos_reco);
-	    asymm_KcKc[1]->Fill(cos_reco_truth);
-	  }
-	  
-	  if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
-	    asymm_KcKc[3]->Fill(cos_reco);
-	  }
-	  if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
-	    asymm_KcKc[4]->Fill(cos_reco);
-	  }
-	  if(Kv_p>Kvcut) {
-	    asymm_KcKc[5]->Fill(cos_reco);
-	  }		
+     if(Kc[0]*Kc[1]>0) {
+       h_bbbar_KcKc_rejected->Fill( costheta_KcKc);
+       h_bbbar_KcKc_rejected->Fill( -costheta_KcKc);
+     }
+
+     if(Kc[0]*Kc[1]<0) {
+       if(Kc[0] < 0) h_bbbar_KcKc_reco->Fill(costheta_KcKc);
+       else h_bbbar_KcKc_reco->Fill( -costheta_KcKc);
+       h_cos_charge_KcKc->Fill(costheta_KcKc);
+       h_cos_charge_KcKc->Fill(-costheta_KcKc);
+
+       float cos_reco=  (Kc[0] < 0) ? costheta_KcKc: -costheta_KcKc;
+       bbbar_KcKc_reco++;
+
+       if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut)	{
+         h_resolution_KcKc->Fill(cos_truth,cos_reco_truth);
+         h_resolution_jettrack_KcKc->Fill(cos_truth,cos_trackreco_truth);
+
+         asymm_KcKc[0]->Fill(cos_reco);
+         asymm_KcKc[1]->Fill(cos_reco_truth);
+       }
+
+       if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
+         asymm_KcKc[3]->Fill(cos_reco);
+       }
+       if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
+         asymm_KcKc[4]->Fill(cos_reco);
+       }
+       if(Kv_p>Kvcut) {
+         asymm_KcKc[5]->Fill(cos_reco);
+       }		
 	  //	taken = true;	  
-	}
+     }
 	//  }
-    
-      if(taken == false) {      
-	if( Kc[0]!=0 || Kc[1]!=0) {
-	  
-	  float cos_reco =-2;
-	  if(Kc[0]!=0 && Kc[0] < 0) cos_reco=costheta_KcBc;
-	  if(Kc[0]!=0 && Kc[0] > 0) cos_reco=-costheta_KcBc;
-	  if(Kc[0]==0 && Kc[1] > 0) cos_reco=costheta_KcBc;
-	  if(Kc[0]==0 && Kc[1] < 0) cos_reco=-costheta_KcBc;
-	  
-	  h_bbbar_KcBc_reco->Fill( costheta_KcBc);
-	  
-	  h_cos_charge_KcBc->Fill(costheta_KcBc);
-	  h_cos_charge_KcBc->Fill(-costheta_KcBc);
-	  bbbar_KcBc_reco++;
-	  
-	  if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut) {
-	    h_resolution_KcBc->Fill(cos_truth,cos_reco_truth);
-	    h_resolution_jettrack_KcBc->Fill(cos_truth,cos_trackreco_truth);
-	    
-	    asymm_KcBc[0]->Fill(cos_reco);
-	    asymm_KcBc[1]->Fill(cos_reco_truth);
-	  }
-	  
-	  if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
-	    asymm_KcBc[3]->Fill(cos_reco);
-	  }
-	  if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
-	    asymm_KcBc[4]->Fill(cos_reco);
-	  }
-	  if(Kv_p>Kvcut) {
-	    asymm_KcBc[5]->Fill(cos_reco);
-	  }
-	  
-	  taken = true;
-	}
-      }
-      
-      if(taken==true &&	fabs(mc_quark_pdg[0])==5 && Kv_p<Kvcut ) h_bbbar_recocuts->Fill(costheta_bbbar);
-    }
+
+     if(taken == false) {      
+       if( Kc[0]!=0 || Kc[1]!=0) {
+
+         float cos_reco =-2;
+         if(Kc[0]!=0 && Kc[0] < 0) cos_reco=costheta_KcBc;
+         if(Kc[0]!=0 && Kc[0] > 0) cos_reco=-costheta_KcBc;
+         if(Kc[0]==0 && Kc[1] > 0) cos_reco=costheta_KcBc;
+         if(Kc[0]==0 && Kc[1] < 0) cos_reco=-costheta_KcBc;
+
+         h_bbbar_KcBc_reco->Fill( costheta_KcBc);
+
+         h_cos_charge_KcBc->Fill(costheta_KcBc);
+         h_cos_charge_KcBc->Fill(-costheta_KcBc);
+         bbbar_KcBc_reco++;
+
+         if( fabs(mc_quark_pdg[0]==5) && Kv_p<Kvcut) {
+           h_resolution_KcBc->Fill(cos_truth,cos_reco_truth);
+           h_resolution_jettrack_KcBc->Fill(cos_truth,cos_trackreco_truth);
+
+           asymm_KcBc[0]->Fill(cos_reco);
+           asymm_KcBc[1]->Fill(cos_reco_truth);
+         }
+
+         if(fabs(mc_quark_pdg[0])<4 && Kv_p<Kvcut) {
+           asymm_KcBc[3]->Fill(cos_reco);
+         }
+         if(fabs(mc_quark_pdg[0])==4 && Kv_p<Kvcut) {
+           asymm_KcBc[4]->Fill(cos_reco);
+         }
+         if(Kv_p>Kvcut) {
+           asymm_KcBc[5]->Fill(cos_reco);
+         }
+
+         taken = true;
+       }
+     }
+
+     if(taken==true &&	fabs(mc_quark_pdg[0])==5 && Kv_p<Kvcut ) h_bbbar_recocuts->Fill(costheta_bbbar);
+   }
 
 
     if(cuts==12) {
@@ -1018,7 +1115,8 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
        }
      }
      if(taken==true &&	fabs(mc_quark_pdg[0])==5 && Kv_p<Kvcut ) h_bbbar_recocuts->Fill(costheta_bbbar);
-   }
+   
+   } // end cut2
     
   }//end loop
 
@@ -1159,8 +1257,41 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
   result2.push_back(h_resolution_jettrack_KcBc);
   result2.push_back(h_resolution_jettrack_BcKc_same1);
   result2.push_back(h_resolution_jettrack_BcKc_same2);
+
+
+
+  result2.push_back(kaon_dEdx_truth);
+  result2.push_back(proton_dEdx_truth);
+  result2.push_back(pion_dEdx_truth);
+  result2.push_back(electron_dEdx_truth);
+  result2.push_back(muon_dEdx_truth);
+
+  result2.push_back(kaon_dEdx_cos_truth);
+  result2.push_back(proton_dEdx_cos_truth);
+  result2.push_back(pion_dEdx_cos_truth);
+  result2.push_back(electron_dEdx_cos_truth);
+  result2.push_back(muon_dEdx_cos_truth);
+
+
+
+  // TH1F *cosKaon_eff = (TH1F*) cosKaon_reco->Clone();
+  // TH1F *p_Kaon_eff  = (TH1F*) p_Kaon_reco->Clone();
+  // cosKaon_eff->Sumw2();
+  // p_Kaon_eff->Sumw2();
+
+  cosKaon_eff->Divide(cosKaon_truth);
+  p_Kaon_eff->Divide(p_Kaon_truth);
+
+
+  std::vector<TH1F*> result3;
+  result3.push_back(cosKaon_truth);
+  result3.push_back(cosKaon_reco);
+  result3.push_back(p_Kaon_truth);
+  result3.push_back(p_Kaon_reco);
+  result3.push_back(cosKaon_eff);
+  result3.push_back(p_Kaon_eff);
   
-  SaveRootFile(result,result2,polarization);
+  SaveRootFile(result,result2,result3,polarization);
   
 
 }
@@ -4051,13 +4182,7 @@ float observable::ChargeKcJet(int ijet){//, int eff=0.88) {
       float p = mom;
       float dedx = jet_track_dedx[ijet][ivtx][itrack];
 
-      float a  = 0.0183421;
-      float b1 = 0.10207;
-      float b2 = 0.0862359;
-
-      iskaon =  dedx > 0 && 
-                dedx < a*std::log(p) + b1 &&
-                dedx > a*std::log(p) + b2;
+      iskaon = iskaon_dEdx(p, dedx);
 
       if(iskaon==true) charge+=jet_track_charge[ijet][ivtx][itrack];
 
@@ -4134,3 +4259,19 @@ std::vector<float> observable::ErrorLEP(double effb,double error_effb,double eff
   return value;
 }
 
+bool observable::iskaon_dEdx(float p, float dedx){
+
+  bool iskaon=false;
+
+  float a  = 0.0183421;
+  float b1 = 0.10207;
+  float b2 = 0.0862359;
+
+  iskaon =  dedx > 0 && 
+  dedx < a*std::log(p) + b1 &&
+  dedx > a*std::log(p) + b2;
+
+  return iskaon;
+
+
+}

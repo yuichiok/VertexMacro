@@ -299,7 +299,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual void     InitializeHistos(int n);
    //save and output
-   virtual void     SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, TString polarization);
+   virtual void     SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, std::vector<TH1F*> kaon_info, TString polarization);
    virtual void     SaveRootFile(std::vector<TH1F*> asymm_all, TString polarization);
    virtual void     HistoEfficiencies();
    virtual void     CoutEfficiencies();
@@ -314,6 +314,7 @@ public :
    virtual float    ChargeKcJet(int ijet);
    virtual bool    JetCtag(int ijet);
    virtual bool    JetBtag(int ijet);
+   virtual bool    iskaon_dEdx(float p, float dedx);
    
    virtual std::vector<float>    Error(double,double,double,double);
    virtual std::vector<float>    ErrorLEP(double,double,double,double);
