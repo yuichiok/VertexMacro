@@ -226,6 +226,7 @@ public :
    virtual void     Init(TTree *tree);
    
   virtual void     dEdx(int n);
+  virtual bool     iskaon_dEdx(float p, float dedx);  
   virtual bool     PreSelection(int, float);
    
    virtual Bool_t   Notify();

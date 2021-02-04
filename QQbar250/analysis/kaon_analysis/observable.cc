@@ -25,6 +25,9 @@ void observable::dEdx(int n_entries=-1) {
   TH2F* electron_dEdx_truth = new TH2F("electron_dEdx_truth","electron_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
   TH2F* muon_dEdx_truth = new TH2F("muon_dEdx_truth","muon_dEdx_truth",nbinnum_p,bins_p,nbinnumy,binsy);
 
+  TH2F* kaon_dEdx_reco = new TH2F("kaon_dEdx_reco","kaon_dEdx_reco",nbinnum_p,bins_p,nbinnumy,binsy);
+
+
   TH1F* n_kaon_jet = new TH1F("n_kaon_jet","n_kaon_jet",15,-0.5,14.5);
   TH1F* n_kaon_vtx = new TH1F("n_kaon_vtx","n_kaon_vtx",15,-0.5,14.5);
   TH1F* p_kaon = new TH1F("p_kaon","p_kaon",125,-0.5,124.5);
@@ -50,63 +53,97 @@ void observable::dEdx(int n_entries=-1) {
 
     //for the moment, we restrict the analysis to the bb events without radaitive return
     if(fabs(mc_quark_pdg[0])==5 && gamma_e<35) {
-    //  if(gamma_e<35 && fabs(mc_quark_pdg[0])==5) { 
-    //    if(bbmass<120) {
+      //  if(gamma_e<35 && fabs(mc_quark_pdg[0])==5) { 
+      //    if(bbmass<120) {
 
-      for(int ijet=0; ijet<2; ijet++){
-	int nkaonjet=0;
-	double nt=0;
-	/*	double mom_x=0, mom_y=0, mom_z=0;
-	double e=0;
-	double nt=0;
-	float momvertex;
-	for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
-	  for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
-	    nt++;
- 	    e+=jet_track_E[ijet][ivtx][itrack];
-	    mom_x+=jet_track_px[ijet][ivtx][itrack];
-	    mom_y+=jet_track_py[ijet][ivtx][itrack];
-	    mom_z+=jet_track_pz[ijet][ivtx][itrack];
-	  }
-	}
-	momvertex= sqrt(pow(mom_x,2) +  pow(mom_y,2) + pow(mom_z,2) );*/
+        for(int ijet=0; ijet<2; ijet++){
+         int nkaonjet=0;
+         double nt=0;
 
-	if(jet_btag[ijet]>0.8) {
-   
-   for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
-     int nkaonvtx=0;
-     for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
-       nt++;
-       if( fabs(jet_track_pdg[ijet][ivtx][itrack])==321 ){
-        nkaonjet++;
-        nkaonvtx++;
-        p_kaon->Fill(jet_track_p[ijet][ivtx][itrack]);
-      }
-      if( fabs(jet_track_pdg[ijet][ivtx][itrack])==211 ) p_pion->Fill(jet_track_p[ijet][ivtx][itrack]);
-      if( fabs(jet_track_pdg[ijet][ivtx][itrack])==2212 ) p_proton->Fill(jet_track_p[ijet][ivtx][itrack]);
-      if( fabs(jet_track_pdg[ijet][ivtx][itrack])==11 ) p_electron->Fill(jet_track_p[ijet][ivtx][itrack]);
-      if( fabs(jet_track_pdg[ijet][ivtx][itrack])==13 ) p_muon->Fill(jet_track_p[ijet][ivtx][itrack]);
-    }
-    n_kaon_vtx->Fill(nkaonvtx);
-  }
-  n_kaon_jet->Fill(nkaonjet);
-}
-	//      }
+         /*
+         double mom_x=0, mom_y=0, mom_z=0;
+         double e=0;
+         double nt=0;
+         float momvertex;
+         for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
+           for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
+             nt++;
+             e+=jet_track_E[ijet][ivtx][itrack];
+             mom_x+=jet_track_px[ijet][ivtx][itrack];
+             mom_y+=jet_track_py[ijet][ivtx][itrack];
+             mom_z+=jet_track_pz[ijet][ivtx][itrack];
+           }
+         }
+         momvertex= sqrt(pow(mom_x,2) +  pow(mom_y,2) + pow(mom_z,2) );
+         */
 
-	//for(int ijet=0; ijet<2; ijet++) {
-	for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
-	  for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
-	    if(jet_track_dedx[ijet][ivtx][itrack]>0) {
-	      if(jet_track_pdg[ijet][ivtx][itrack]==211) pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-	      if(jet_track_pdg[ijet][ivtx][itrack]==321) kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-	      if(jet_track_pdg[ijet][ivtx][itrack]==2212) proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-	      if(jet_track_pdg[ijet][ivtx][itrack]==11) electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-	      if(jet_track_pdg[ijet][ivtx][itrack]==13) muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-	    }
-	  }
-	}
-      }
-      
+         if(jet_btag[ijet]>0.8) {
+
+           for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
+
+            int nkaonvtx=0;
+
+            for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
+
+             nt++;
+
+             if( fabs(jet_track_pdg[ijet][ivtx][itrack])==321 ){
+
+              nkaonjet++;
+              nkaonvtx++;
+              p_kaon->Fill(jet_track_p[ijet][ivtx][itrack]);
+
+            }
+
+            if( fabs(jet_track_pdg[ijet][ivtx][itrack])==211 ) p_pion->Fill(jet_track_p[ijet][ivtx][itrack]);
+            if( fabs(jet_track_pdg[ijet][ivtx][itrack])==2212 ) p_proton->Fill(jet_track_p[ijet][ivtx][itrack]);
+            if( fabs(jet_track_pdg[ijet][ivtx][itrack])==11 ) p_electron->Fill(jet_track_p[ijet][ivtx][itrack]);
+            if( fabs(jet_track_pdg[ijet][ivtx][itrack])==13 ) p_muon->Fill(jet_track_p[ijet][ivtx][itrack]);
+            
+            } // end track
+
+            n_kaon_vtx->Fill(nkaonvtx);
+
+          } // end vtx
+
+          n_kaon_jet->Fill(nkaonjet);
+
+        } // end if jet 0.8
+
+  	//      }
+
+  	//for(int ijet=0; ijet<2; ijet++) {
+        for(int ivtx=0; ivtx<jet_nvtx[ijet]; ivtx++) {
+          for(int itrack=0; itrack<jet_vtx_ntrack[ijet][ivtx]; itrack++) {
+
+             if(jet_track_dedx[ijet][ivtx][itrack]>0) {
+
+                if(jet_track_pdg[ijet][ivtx][itrack]==211){
+                  pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                }
+
+                if(jet_track_pdg[ijet][ivtx][itrack]==321){
+                  kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                }
+
+                if(jet_track_pdg[ijet][ivtx][itrack]==2212){
+                  proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                }
+
+                if(jet_track_pdg[ijet][ivtx][itrack]==11){
+                  electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                }
+
+                if(jet_track_pdg[ijet][ivtx][itrack]==13){
+                  muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                }
+
+            } // end if dEdx track > 0
+
+          } // end itrack
+        } // end ivtx
+      } // end ijet
+
     }//bb
   }//for
 
@@ -271,55 +308,69 @@ void observable::dEdx(int n_entries=-1) {
     float max_eff=0;
     
     for(int j=0; j<50; j++) {
+
       for(int k=0; k<50; k++) {
-	double ea=(0.1+0.1*j)*f1->GetParError(0);
-	double ea2=-(0.1+0.1*k)*f1->GetParError(0);
-	
-	double int_pion=0;
-	double int_kaon=0;
-	double int_proton=0;
-	double int_kaon_total=0;
-	
-	for(int i=0; i<kaon_dEdx_truth->GetNbinsX(); i++) {
-	  TH1D * proj_kaon =kaon_dEdx_truth->ProjectionY("proj_kaon",i,i+1);
-	  int_kaon_total+=proj_kaon->GetEntries();
-	  if( kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1) > momentum_min ) {
-	    TH1D * proj_pion =pion_dEdx_truth->ProjectionY("proj_pion",i,i+1);
-	    TH1D * proj_proton =proton_dEdx_truth->ProjectionY("proj_proton",i,i+1);
-	    
-	    for(int j1=0; j1<proj_pion->GetNbinsX(); j1++) {
-	      double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      if(proj_pion->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_pion->GetXaxis()->GetBinCenter(j1)> yminus) int_pion+=proj_pion->GetBinContent(j1);
-	    }
-	    
-	    for(int j1=0; j1<proj_kaon->GetNbinsX(); j1++) {
-	      double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      if(proj_kaon->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_kaon->GetXaxis()->GetBinCenter(j1)> yminus) int_kaon+=proj_kaon->GetBinContent(j1);
-	    }
-	    
-	    for(int j1=0; j1<proj_proton->GetNbinsX(); j1++) {
-	      double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
-	      
-	      if(proj_proton->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_proton->GetXaxis()->GetBinCenter(j1)> yminus) int_proton+=proj_proton->GetBinContent(j1);
-	    }	
-	  }
-	}
-	
-	if((int_proton+int_pion+int_kaon)/int_kaon_total>eff ) {
-	  // cout<<j<<" "<<k<< "  ->  eff: "<< int_kaon/int_kaon_total<<" purity: "<<1.-(int_proton+int_pion)/int_kaon<<" (pion:"<<1.-(int_pion)/int_kaon<<") (proton:"<<1.-(int_proton)/int_kaon<<")"<<endl;
-	  if( int_kaon/(int_proton+int_pion+int_kaon)  > max_purity) {
-	    max_purity = int_kaon/(int_proton+int_pion+int_kaon);
-	    max_eff= (int_proton+int_pion+int_kaon)/int_kaon_total;
-	    a_up=a+ea;
-	    a_down=a+ea2;
+
+       double ea=(0.1+0.1*j)*f1->GetParError(0);
+       double ea2=-(0.1+0.1*k)*f1->GetParError(0);
+
+       double int_pion=0;
+       double int_kaon=0;
+       double int_proton=0;
+       double int_kaon_total=0;
+
+       for(int i=0; i<kaon_dEdx_truth->GetNbinsX(); i++) {
+
+         TH1D * proj_kaon =kaon_dEdx_truth->ProjectionY("proj_kaon",i,i+1);
+         int_kaon_total+=proj_kaon->GetEntries();
+
+         if( kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1) > momentum_min ) {
+
+           TH1D * proj_pion =pion_dEdx_truth->ProjectionY("proj_pion",i,i+1);
+           TH1D * proj_proton =proton_dEdx_truth->ProjectionY("proj_proton",i,i+1);
+
+           for(int j1=0; j1<proj_pion->GetNbinsX(); j1++) {
+
+             double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+             double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+
+             if(proj_pion->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_pion->GetXaxis()->GetBinCenter(j1)> yminus) int_pion+=proj_pion->GetBinContent(j1);
+
+           }
+
+           for(int j1=0; j1<proj_kaon->GetNbinsX(); j1++) {
+
+             double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+             double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+             if(proj_kaon->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_kaon->GetXaxis()->GetBinCenter(j1)> yminus) int_kaon+=proj_kaon->GetBinContent(j1);
+
+           }
+
+           for(int j1=0; j1<proj_proton->GetNbinsX(); j1++) {
+
+             double yplus = a+ea + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+             double yminus = a+ea2 + b* std::log(kaon_dEdx_truth->GetXaxis()->GetBinCenter(i+1));
+
+             if(proj_proton->GetXaxis()->GetBinCenter(j1)< yplus &&  proj_proton->GetXaxis()->GetBinCenter(j1)> yminus) int_proton+=proj_proton->GetBinContent(j1);
+
+           }	
+         }
+       }
+
+       if((int_proton+int_pion+int_kaon)/int_kaon_total>eff ) {
+       // cout<<j<<" "<<k<< "  ->  eff: "<< int_kaon/int_kaon_total<<" purity: "<<1.-(int_proton+int_pion)/int_kaon<<" (pion:"<<1.-(int_pion)/int_kaon<<") (proton:"<<1.-(int_proton)/int_kaon<<")"<<endl;
+         if( int_kaon/(int_proton+int_pion+int_kaon)  > max_purity) {
+           max_purity = int_kaon/(int_proton+int_pion+int_kaon);
+           max_eff= (int_proton+int_pion+int_kaon)/int_kaon_total;
+           a_up=a+ea;
+           a_down=a+ea2;
 	    //	cout<<" purity="<<max_purity<<" eff="<<(int_proton+int_pion+int_kaon)/int_kaon_total<<";    slope="<<b<<" upper="<<a+ea<<" lower="<<a+ea2<<endl;
-	  }
-	}
-      }
-    }
+         }
+       }
+
+     } // end k loop
+   } // end j loop
+
     cout<<"eff_input>"<<eff<<":     purity="<<max_purity<<" eff="<<max_eff<<";    slope="<<b<<" upper="<<a_up<<" lower="<<a_down<<endl;
     x[ieff]=eff;
     y[ieff]=max_purity;
@@ -376,7 +427,22 @@ void observable::dEdx(int n_entries=-1) {
   
 }
 
-  
+bool observable::iskaon_dEdx(float p, float dedx){
+
+  bool iskaon=false;
+
+  float a  = 0.0183421;
+  float b1 = 0.10207;
+  float b2 = 0.0862359;
+
+  iskaon =  dedx > 0 && 
+  dedx < a*std::log(p) + b1 &&
+  dedx > a*std::log(p) + b2;
+
+  return iskaon;
+
+
+}  
    
 
 
