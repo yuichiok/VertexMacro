@@ -159,9 +159,9 @@ void observable::CoutEfficiencies() {
 
  
 
-void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, std::vector<TH1F*> kaon_info, TString polarization="eL"){
+void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> resolution, std::vector<TH1F*> kaon_info, std::vector<TH2I*> int_info, TString polarization="eL"){
 
-  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i_test.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
+  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i_noCheat_adrian.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
   MyFile->cd();
   
   //partonlevel
@@ -274,6 +274,8 @@ void observable::SaveRootFile(std::vector<TH1F*> asymm_all, std::vector<TH2F*> r
   for(unsigned i=0; i<resolution.size(); i++) resolution[i]->Write();
 
   for (unsigned i = 0; i < kaon_info.size(); ++i) kaon_info[i]->Write();
+    
+  for (unsigned i = 0; i < int_info.size(); ++i) int_info[i]->Write();
   
   MyFile->Close();
   
@@ -468,13 +470,17 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
   TH2F* electron_dEdx_cos_truth = new TH2F("electron_dEdx_cos_truth","electron_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
   TH2F* muon_dEdx_cos_truth = new TH2F("muon_dEdx_cos_truth","muon_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
 
+  TH2I* pdg_selec = new TH2I("pdg_selec","pdg_selec",3,0,3,3,0,3);
+  pdg_selec->SetCanExtend(TH1::kAllAxes);
+  // const char *gen_sel[3] = {"#pi", "K", "p"};
+  // const char *reco_sel[3] = {"#pi", "K", "p"};
+
 ////
 
   TH1F* cosKaon_eff = new TH1F("cosKaon_eff","cosKaon_eff",nbins,0.,1.0);
   TH1F* p_Kaon_eff  = new TH1F("p_Kaon_eff","p_Kaon_eff",nbins,0.,100.0);
   cosKaon_eff->Sumw2();
   p_Kaon_eff->Sumw2();
-
 
     
   Long64_t nentries;
@@ -554,6 +560,7 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
 
     int Bc[2];
     Bc[0]=0; Bc[1]=0;
+
       
     float costheta_KcKc;
     float costheta_BcBc;
@@ -590,9 +597,18 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
 
           float track_p    = sqrt(pow(jet_track_px[ijet][ivtx][itrack],2)+pow(jet_track_py[ijet][ivtx][itrack],2)+pow(jet_track_pz[ijet][ivtx][itrack],2));
           float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
-          bool iskaon_reco = iskaon_dEdx(track_p,track_dedx);
+
+          bool iskaon_reco = checkParticle(track_p,track_dedx, 321);
+          bool ispion_reco = checkParticle(track_p,track_dedx, 211);
+          bool isproton_reco = checkParticle(track_p,track_dedx, 2212);
+
+          int particleGen  = -1;
+          int particleReco = -1;
 
           if(iskaon_reco==true){
+
+            particleReco = 1;
+
             cosKaon_reco->Fill(abs_cos_track);
             p_Kaon_reco->Fill(track_p);
             
@@ -600,7 +616,14 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
             p_Kaon_eff->Fill(track_p);
           }
 
+          if(ispion_reco==true) particleReco = 0;
+          if(isproton_reco==true) particleReco = 2;
+
+
           if(jet_track_pdg[ijet][ivtx][itrack]==321){
+
+            particleGen = 1;
+
             cosKaon_truth->Fill(abs_cos_track);
             p_Kaon_truth->Fill(track_p);
             kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
@@ -608,11 +631,17 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==211){
+
+            particleGen = 0;
+
             pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
             pion_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==2212){
+
+            particleGen = 2;
+
             proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
             proton_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
           }
@@ -626,6 +655,8 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
             muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
             muon_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
           }
+
+          if(particleGen!=-1 && particleReco!=-1) pdg_selec->Fill(particleReco,particleGen);
 
 
         } // end track
@@ -1274,6 +1305,7 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
 
 
 
+
   // TH1F *cosKaon_eff = (TH1F*) cosKaon_reco->Clone();
   // TH1F *p_Kaon_eff  = (TH1F*) p_Kaon_reco->Clone();
   // cosKaon_eff->Sumw2();
@@ -1291,7 +1323,13 @@ void observable::Analysis(int n_entries=-1, TString polarization="eL", int n=20,
   result3.push_back(cosKaon_eff);
   result3.push_back(p_Kaon_eff);
   
-  SaveRootFile(result,result2,result3,polarization);
+
+  std::vector<TH2I*> result4;
+  result4.push_back(pdg_selec);
+
+
+
+  SaveRootFile(result,result2,result3,result4,polarization);
   
 
 }
@@ -4182,7 +4220,7 @@ float observable::ChargeKcJet(int ijet){//, int eff=0.88) {
       float p = mom;
       float dedx = jet_track_dedx[ijet][ivtx][itrack];
 
-      iskaon = iskaon_dEdx(p, dedx);
+      iskaon = checkParticle(p, dedx, 321);
 
       if(iskaon==true) charge+=jet_track_charge[ijet][ivtx][itrack];
 
@@ -4259,19 +4297,33 @@ std::vector<float> observable::ErrorLEP(double effb,double error_effb,double eff
   return value;
 }
 
-bool observable::iskaon_dEdx(float p, float dedx){
+bool observable::checkParticle(float p, float dedx, int pdg){
 
-  bool iskaon=false;
 
-  float a  = 0.0183421;
-  float b1 = 0.10207;
-  float b2 = 0.0862359;
+  float a  = 0.0185204;
+  float b1 = 0.101048;
+  float b2 = 0.083887;
 
-  iskaon =  dedx > 0 && 
-  dedx < a*std::log(p) + b1 &&
-  dedx > a*std::log(p) + b2;
+  // pion
+  if(pdg == 211){
+    return  dedx > 0 && 
+            dedx > a*std::log(p) + b1;
+  }
 
-  return iskaon;
+  // kaon
+  if(pdg == 321){
+    return  dedx > 0 && 
+            dedx < a*std::log(p) + b1 &&
+            dedx > a*std::log(p) + b2;
+  }
+
+  // proton
+  if(pdg == 2212){
+    return  dedx > 0 && 
+            dedx < a*std::log(p) + b2;
+  }
+
+  return false;
 
 
 }
