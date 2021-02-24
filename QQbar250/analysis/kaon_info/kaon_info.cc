@@ -41,15 +41,25 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
   TH2F* electron_dEdx_cos_truth = new TH2F("electron_dEdx_cos_truth","electron_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
   TH2F* muon_dEdx_cos_truth     = new TH2F("muon_dEdx_cos_truth","muon_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
 
-  TH2F* kaon_dEdx_cos_corr      = new TH2F("kaon_dEdx_cos_corr",";|cos#theta|;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
-
   TH2F* kaon_dEdx_rad_truth     = new TH2F("kaon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
   TH2F* proton_dEdx_rad_truth   = new TH2F("proton_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
   TH2F* pion_dEdx_rad_truth     = new TH2F("pion_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
   TH2F* electron_dEdx_rad_truth = new TH2F("electron_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
   TH2F* muon_dEdx_rad_truth     = new TH2F("muon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
 
+  TH2F* kaon_dEdx_cos_corr      = new TH2F("kaon_dEdx_cos_corr",";|cos#theta|;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
+
+  TH2F* kaon_dEdx_corr     = new TH2F("kaon_dEdx_corr",";p [GeV];#frac{dE}{dx} [MeV]",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* proton_dEdx_corr   = new TH2F("proton_dEdx_corr",";p [GeV];#frac{dE}{dx} [MeV]",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* pion_dEdx_corr     = new TH2F("pion_dEdx_corr",";p [GeV];#frac{dE}{dx} [MeV]",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* electron_dEdx_corr = new TH2F("electron_dEdx_corr",";p [GeV];#frac{dE}{dx} [MeV]",nbinnum_p,bins_p,nbinnumy,binsy);
+  TH2F* muon_dEdx_corr     = new TH2F("muon_dEdx_corr",";p [GeV];#frac{dE}{dx} [MeV]",nbinnum_p,bins_p,nbinnumy,binsy);
+
   TH2F* kaon_dEdx_rad_corr      = new TH2F("kaon_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* proton_dEdx_rad_corr    = new TH2F("proton_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* pion_dEdx_rad_corr      = new TH2F("pion_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* electron_dEdx_rad_corr  = new TH2F("electron_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* muon_dEdx_rad_corr      = new TH2F("muon_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
 
   TH2I* pdg_selec = new TH2I("pdg_selec","pdg_selec",3,0,3,3,0,3);
   pdg_selec->SetCanExtend(TH1::kAllAxes);
@@ -148,9 +158,14 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
           float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
           float dedx_corr  = track_dedx * pow(abs_rad_track,pwr);
 
-          bool iskaon_reco = checkParticle(track_p,track_dedx, 321);
-          bool ispion_reco = checkParticle(track_p,track_dedx, 211);
-          bool isproton_reco = checkParticle(track_p,track_dedx, 2212);
+          // bool iskaon_reco = checkParticle(track_p,track_dedx, 321);
+          // bool ispion_reco = checkParticle(track_p,track_dedx, 211);
+          // bool isproton_reco = checkParticle(track_p,track_dedx, 2212);
+
+          // corrected!
+          bool iskaon_reco = checkParticle(track_p,dedx_corr, 321);
+          bool ispion_reco = checkParticle(track_p,dedx_corr, 211);
+          bool isproton_reco = checkParticle(track_p,dedx_corr, 2212);
 
           int particleGen  = -1;
           int particleReco = -1;
@@ -177,6 +192,7 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
             cosKaon_truth->Fill(abs_cos_track);
             p_Kaon_truth->Fill(track_p);
             kaon_dEdx_truth->Fill(track_p,track_dedx);
+            kaon_dEdx_corr->Fill(track_p,dedx_corr);
             
             kaon_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
             kaon_dEdx_cos_corr->Fill(abs_cos_track,dedx_corr);
@@ -190,8 +206,12 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
             particleGen = 0;
 
             pion_dEdx_truth->Fill(track_p,track_dedx);
+            pion_dEdx_corr->Fill(track_p,dedx_corr);            
+
             pion_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
             pion_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
+
+            pion_dEdx_rad_corr->Fill(abs_rad_track,dedx_corr);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==2212){
@@ -199,20 +219,32 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
             particleGen = 2;
 
             proton_dEdx_truth->Fill(track_p,track_dedx);
+            proton_dEdx_corr->Fill(track_p,dedx_corr);
+
             proton_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
             proton_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
+
+            proton_dEdx_rad_corr->Fill(abs_rad_track,dedx_corr);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==11){
             electron_dEdx_truth->Fill(track_p,track_dedx);
+            electron_dEdx_corr->Fill(track_p,dedx_corr);
+
             electron_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
             electron_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
+
+            electron_dEdx_rad_corr->Fill(abs_rad_track,dedx_corr);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==13){
             muon_dEdx_truth->Fill(track_p,track_dedx);
+            muon_dEdx_corr->Fill(track_p,dedx_corr);
+
             muon_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
             muon_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
+
+            muon_dEdx_rad_corr->Fill(abs_rad_track,dedx_corr);
           }
 
           if(particleGen!=-1 && particleReco!=-1) pdg_selec->Fill(particleReco,particleGen);
@@ -228,8 +260,25 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
 
   } // end event
 
+  std::cout << "////// kaon //////" << std::endl;
 
   TH2MeanGraph(kaon_dEdx_rad_corr);
+  
+  std::cout << "////// pion //////" << std::endl;
+
+  TH2MeanGraph(pion_dEdx_rad_corr);
+
+  std::cout << "////// proton //////" << std::endl;
+
+  TH2MeanGraph(proton_dEdx_rad_corr);
+
+  std::cout << "////// electron //////" << std::endl;
+
+  TH2MeanGraph(electron_dEdx_rad_corr);
+
+  std::cout << "////// muon //////" << std::endl;
+
+  TH2MeanGraph(muon_dEdx_rad_corr);
 
 
 
@@ -239,6 +288,12 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
   result.push_back(pion_dEdx_truth);
   result.push_back(electron_dEdx_truth);
   result.push_back(muon_dEdx_truth);
+
+  result.push_back(kaon_dEdx_corr);
+  result.push_back(proton_dEdx_corr);
+  result.push_back(pion_dEdx_corr);
+  result.push_back(electron_dEdx_corr);
+  result.push_back(muon_dEdx_corr);
 
   result.push_back(kaon_dEdx_cos_truth);
   result.push_back(proton_dEdx_cos_truth);
@@ -253,7 +308,12 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
   result.push_back(muon_dEdx_rad_truth);
 
   result.push_back(kaon_dEdx_cos_corr);
+
   result.push_back(kaon_dEdx_rad_corr);
+  result.push_back(pion_dEdx_rad_corr);
+  result.push_back(proton_dEdx_rad_corr);
+  result.push_back(electron_dEdx_rad_corr);
+  result.push_back(muon_dEdx_rad_corr);
 
 
   cosKaon_eff->Divide(cosKaon_truth);
@@ -270,7 +330,7 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=
   std::vector<TH2I*> result3;
   result3.push_back(pdg_selec);
 
-  //DeleteHistograms(result,result2,result3);
+  // DeleteHistograms(result,result2,result3);
   SaveRootFile(result,result2,result3,polarization);
 
 
@@ -318,7 +378,7 @@ void kaon_info::DeleteHistograms(std::vector<TH2F*> th2f, std::vector<TH1F*> th1
 
 void kaon_info::SaveRootFile(std::vector<TH2F*> th2f, std::vector<TH1F*> th1f, std::vector<TH2I*> th2i, TString polarization="eL"){
 
-  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i_noCheat_adrian.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
+  TFile *MyFile = new TFile(TString::Format("%s_250GeV_%s_btag1_%0.1f_btag2_%0.1f_nbins%i_noCheat_adrian_corrected.root",process.Data(),polarization.Data(),btag1,btag2,nbins),"RECREATE");
   MyFile->cd();
 
   for(unsigned i=0; i<th2f.size(); i++) th2f[i]->Write();
@@ -487,9 +547,14 @@ bool kaon_info::PreSelection(int type=0,float Kvcut=25) {
 
 bool kaon_info::checkParticle(float p, float dedx, int pdg){
 
-  float a  = 0.0185204;
-  float b1 = 0.101048;
-  float b2 = 0.083887;
+  // float a  = 0.0185204;
+  // float b1 = 0.101048;
+  // float b2 = 0.083887;
+
+  // corrected!
+  float a  = 0.0186611;
+  float b1 = 0.100612;
+  float b2 = 0.08539;
 
   // pion
   if(pdg == 211){
