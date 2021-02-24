@@ -1,10 +1,11 @@
 #define kaon_info_cxx
 #include "kaon_info.h"
+#include <math.h>
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 
-void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, int cuts=4, float Kvcut=35)
+void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", float pwr=0.1, float Kvcut=35)
 {
 
   preselection = 0;
@@ -40,11 +41,15 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
   TH2F* electron_dEdx_cos_truth = new TH2F("electron_dEdx_cos_truth","electron_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
   TH2F* muon_dEdx_cos_truth     = new TH2F("muon_dEdx_cos_truth","muon_dEdx_cos_truth",nbins,0.,1.0,200,0.1,0.3);
 
-  TH2F* kaon_dEdx_rad_truth     = new TH2F("kaon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
-  TH2F* proton_dEdx_rad_truth   = new TH2F("proton_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
-  TH2F* pion_dEdx_rad_truth     = new TH2F("pion_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
-  TH2F* electron_dEdx_rad_truth = new TH2F("electron_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
-  TH2F* muon_dEdx_rad_truth     = new TH2F("muon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
+  TH2F* kaon_dEdx_cos_corr      = new TH2F("kaon_dEdx_cos_corr",";|cos#theta|;#frac{dE}{dx} [MeV]",nbins,0.,1.0,200,0.1,0.3);
+
+  TH2F* kaon_dEdx_rad_truth     = new TH2F("kaon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* proton_dEdx_rad_truth   = new TH2F("proton_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* pion_dEdx_rad_truth     = new TH2F("pion_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* electron_dEdx_rad_truth = new TH2F("electron_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+  TH2F* muon_dEdx_rad_truth     = new TH2F("muon_dEdx_rad_truth",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
+
+  TH2F* kaon_dEdx_rad_corr      = new TH2F("kaon_dEdx_rad_corr",";rad;#frac{dE}{dx} [MeV]",nbins,0.,M_PI/2.0,200,0.1,0.3);
 
   TH2I* pdg_selec = new TH2I("pdg_selec","pdg_selec",3,0,3,3,0,3);
   pdg_selec->SetCanExtend(TH1::kAllAxes);
@@ -135,11 +140,13 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
           track_p_vec.push_back(jet_track_px[ijet][ivtx][itrack]);
           track_p_vec.push_back(jet_track_py[ijet][ivtx][itrack]);
           track_p_vec.push_back(jet_track_pz[ijet][ivtx][itrack]);
-          float abs_theta     = fabs(GetTheta(track_p_vec));
+          // float abs_rad_track = fabs(GetTheta(track_p_vec));
           float abs_cos_track = fabs(GetCostheta(track_p_vec));
+          float abs_rad_track = acos(abs_cos_track);
 
-          float track_p    = sqrt(pow(jet_track_px[ijet][ivtx][itrack],2)+pow(jet_track_py[ijet][ivtx][itrack],2)+pow(jet_track_pz[ijet][ivtx][itrack],2));
+          float track_p    = jet_track_p[ijet][ivtx][itrack];
           float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
+          float dedx_corr  = track_dedx * pow(abs_rad_track,pwr);
 
           bool iskaon_reco = checkParticle(track_p,track_dedx, 321);
           bool ispion_reco = checkParticle(track_p,track_dedx, 211);
@@ -169,34 +176,43 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
 
             cosKaon_truth->Fill(abs_cos_track);
             p_Kaon_truth->Fill(track_p);
-            kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-            kaon_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+            kaon_dEdx_truth->Fill(track_p,track_dedx);
+            
+            kaon_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
+            kaon_dEdx_cos_corr->Fill(abs_cos_track,dedx_corr);
+
+            kaon_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
+            kaon_dEdx_rad_corr->Fill(abs_rad_track,dedx_corr);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==211){
 
             particleGen = 0;
 
-            pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-            pion_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+            pion_dEdx_truth->Fill(track_p,track_dedx);
+            pion_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
+            pion_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==2212){
 
             particleGen = 2;
 
-            proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-            proton_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+            proton_dEdx_truth->Fill(track_p,track_dedx);
+            proton_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
+            proton_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==11){
-            electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-            electron_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+            electron_dEdx_truth->Fill(track_p,track_dedx);
+            electron_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
+            electron_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
           }
 
           if(jet_track_pdg[ijet][ivtx][itrack]==13){
-            muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-            muon_dEdx_cos_truth->Fill(abs_cos_track,jet_track_dedx[ijet][ivtx][itrack]);
+            muon_dEdx_truth->Fill(track_p,track_dedx);
+            muon_dEdx_cos_truth->Fill(abs_cos_track,track_dedx);
+            muon_dEdx_rad_truth->Fill(abs_rad_track,track_dedx);
           }
 
           if(particleGen!=-1 && particleReco!=-1) pdg_selec->Fill(particleReco,particleGen);
@@ -208,9 +224,14 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
     } // end jet
 
     // check run
-    if(jentry > 1000) break;
+    // if(preselection == 50000) break;
 
   } // end event
+
+
+  TH2MeanGraph(kaon_dEdx_rad_corr);
+
+
 
   std::vector<TH2F*> result;
   result.push_back(kaon_dEdx_truth);
@@ -224,6 +245,16 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
   result.push_back(pion_dEdx_cos_truth);
   result.push_back(electron_dEdx_cos_truth);
   result.push_back(muon_dEdx_cos_truth);
+
+  result.push_back(kaon_dEdx_rad_truth);
+  result.push_back(proton_dEdx_rad_truth);
+  result.push_back(pion_dEdx_rad_truth);
+  result.push_back(electron_dEdx_rad_truth);
+  result.push_back(muon_dEdx_rad_truth);
+
+  result.push_back(kaon_dEdx_cos_corr);
+  result.push_back(kaon_dEdx_rad_corr);
+
 
   cosKaon_eff->Divide(cosKaon_truth);
   p_Kaon_eff->Divide(p_Kaon_truth);
@@ -239,8 +270,49 @@ void kaon_info::Analysis(int n_entries=-1, TString polarization="eL", int n=20, 
   std::vector<TH2I*> result3;
   result3.push_back(pdg_selec);
 
+  //DeleteHistograms(result,result2,result3);
   SaveRootFile(result,result2,result3,polarization);
 
+
+}
+
+void kaon_info::TH2MeanGraph(TH2F* hist){
+
+  float x_kaon[200], y_kaon[200], ey_kaon[200], ey_kaon2[200];
+  float ex[200];
+  int nXbins = hist->GetNbinsX();
+
+  for(int i = 0; i < nXbins; i++){
+
+      TH1D * proj_kaon = hist->ProjectionY("proj_kaon",i,i+1);
+       
+      x_kaon[i]   = hist->GetXaxis()->GetBinCenter(i+1);
+      y_kaon[i]   = proj_kaon->GetMean();
+      // ey_kaon[i]  = proj_kaon->GetRMS();
+      ey_kaon2[i] = proj_kaon->GetMean()/sqrt(proj_kaon->GetEntries());
+      ex[i]       = hist->GetXaxis()->GetBinWidth(i+1)/2.;
+
+  }
+
+  TGraphErrors *kaonproj= new TGraphErrors(nXbins,x_kaon,y_kaon,ex,ey_kaon2);
+
+  TF1 *f1= new TF1("f1","[0]+[1]*TMath::Power(x+[2],[3])",0.199,M_PI/2.0);
+  f1->SetParameters(0.072,0.072,0.002,0.139);
+  kaonproj->Fit(f1,"REM");
+
+  // TCanvas* c1 = new TCanvas("c1","canvas",500,500);
+  // kaonproj->Draw("ALP");
+  // f1->Draw("same");
+
+}
+
+void kaon_info::DeleteHistograms(std::vector<TH2F*> th2f, std::vector<TH1F*> th1f, std::vector<TH2I*> th2i){
+
+  for(unsigned i=0; i<th2f.size(); i++) delete th2f[i];
+
+  for (unsigned i = 0; i < th1f.size(); ++i) delete th1f[i];
+    
+  for (unsigned i = 0; i < th2i.size(); ++i) delete th2i[i];
 
 }
 

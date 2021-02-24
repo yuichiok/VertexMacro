@@ -294,11 +294,13 @@ public :
    // kaon_info(TTree *tree=0);
    virtual ~kaon_info();
 
-   virtual void     Analysis(int n, TString polarization, int nbin,int cuts, float Kcut);  
+   virtual void     Analysis(int n, TString polarization, float pwr, float Kcut);  
+   virtual void     TH2MeanGraph(TH2F* hist);
    virtual bool     PreSelection(int type,float Kcut);
    virtual bool     checkParticle(float p, float dedx, int pdg);
    virtual bool     JetBtag(int ijet);
    virtual void     SaveRootFile(std::vector<TH2F*> th2f, std::vector<TH1F*> th1f, std::vector<TH2I*> th2i, TString polarization);
+   virtual void     DeleteHistograms(std::vector<TH2F*> th2f, std::vector<TH1F*> th1f, std::vector<TH2I*> th2i);
 
 
    virtual Int_t    Cut(Long64_t entry);
