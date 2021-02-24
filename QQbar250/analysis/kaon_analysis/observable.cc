@@ -118,24 +118,41 @@ void observable::dEdx(int n_entries=-1) {
 
              if(jet_track_dedx[ijet][ivtx][itrack]>0) {
 
+                std::vector<float> track_p_vec;
+                track_p_vec.push_back(jet_track_px[ijet][ivtx][itrack]);
+                track_p_vec.push_back(jet_track_py[ijet][ivtx][itrack]);
+                track_p_vec.push_back(jet_track_pz[ijet][ivtx][itrack]);
+                // float abs_rad_track = fabs(GetTheta(track_p_vec));
+                float abs_cos_track = fabs(GetCostheta(track_p_vec));
+                float abs_rad_track = acos(abs_cos_track);
+
+                float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
+                float dedx_corr  = track_dedx * pow(abs_rad_track,0.05);
+
+
                 if(jet_track_pdg[ijet][ivtx][itrack]==211){
-                  pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  // pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
                 }
 
                 if(jet_track_pdg[ijet][ivtx][itrack]==321){
-                  kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  // kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
                 }
 
                 if(jet_track_pdg[ijet][ivtx][itrack]==2212){
-                  proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  // proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
                 }
 
                 if(jet_track_pdg[ijet][ivtx][itrack]==11){
-                  electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  // electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
                 }
 
                 if(jet_track_pdg[ijet][ivtx][itrack]==13){
-                  muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  // muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                  muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
                 }
 
             } // end if dEdx track > 0
@@ -382,7 +399,7 @@ void observable::dEdx(int n_entries=-1) {
   
   TGraph *eff_purity = new TGraph(11,x,y);
   
-  TFile *MyFile = new TFile(TString::Format("output_250_all_%s.root",process.Data()),"RECREATE");
+  TFile *MyFile = new TFile(TString::Format("output_250_all_%s_corr.root",process.Data()),"RECREATE");
   MyFile->cd();
   pion_dEdx_truth->SetName("pion");
   kaon_dEdx_truth->SetName("kaon");
