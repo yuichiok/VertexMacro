@@ -36,7 +36,8 @@ void acceptance_factor_plot(bool DBD=false) {
   // --- large model
  
 //  TString filename = TString::Format("%s/bbbar_l5_valencia2.0_cuts3_500GeV_%s_btag1_0.9_btag2_0.2_nbins%i.root",folder.Data(),pol.Data(),nbins);
-  TString filename = "/home/ilc/yokugawa/QQbarAnalysis/analysis/bbbar_Kgamma35_15161_cuts11_250GeV_eL_btag1_0.8_btag2_0.8_nbins40.root";
+//  TString filename = "/home/ilc/yokugawa/QQbarAnalysis/analysis/bbbar_Kgamma35_15161_cuts11_250GeV_eL_btag1_0.8_btag2_0.8_nbins40.root";
+  TString filename = "/home/ilc/yokugawa/macros/QQbar250/analysis/default/bbbar_Kgamma35_15161_cuts12_250GeV_eL_btag1_0.8_btag2_0.8_nbins40_noCheat_adrian.root";
 
   TFile *f = new TFile(filename);
   TH1F *h_parton = (TH1F*)f->Get("parton");
