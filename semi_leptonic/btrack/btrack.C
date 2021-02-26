@@ -35,6 +35,7 @@ void btrack()
 	TCut rcTW = "Top1mass < 270 && W1mass < 250 && Top1mass > 120 && W1mass > 50";
 	TCut pcut = "Top1bmomentum > 15 && Top2bmomentum > 15";
 	TCut gcut = "(Top1gamma + Top2gamma) > 2.4  && Top2gamma < 2";
+	TCut singleTopFlagON = "singletopFlag == 1";
 
 	// Methods selection
 	TCut methodAll = "methodTaken > 0";
@@ -56,17 +57,18 @@ void btrack()
 	//TCut bcuts = "qCostheta < 0 && qCostheta > -1.0 " + cuts;
 
 	// Fill histograms from tree
-	normaltree->Draw("Top1bntracks:Top1Genbntracks >> h_Top1bntracks");
+	normaltree->Draw("Top1Genbntracks:Top1bntracks >> h_Top1bntracks", cuts);
 	int Top1_accepted	= normaltree->Draw("Top1bntracks:Top1Genbntracks",  diag);
 	int Top1_rejected	= normaltree->Draw("Top1bntracks:Top1Genbntracks", !diag);
 	int Top1_total		= Top1_accepted + Top1_rejected ;
 
-	normaltree->Draw("Top2bntracks:Top2Genbntracks >> h_Top2bntracks");
+	normaltree->Draw("Top2Genbntracks:Top2bntracks >> h_Top2bntracks", cuts);
 	int Top2_accepted          = normaltree->Draw("Top2bntracks:Top2Genbntracks",  diag);
 	int Top2_rejected          = normaltree->Draw("Top2bntracks:Top2Genbntracks", !diag);
 	int Top2_total 			   = Top2_accepted + Top2_rejected ;
 
-	normaltree->Draw("MCBHadNtracks >> h_BHadtracks",cuts);
+	//normaltree->Draw("MCBHadNtracks >> h_BHadtracks",cuts);
+	normaltree->Draw("Top1bntracks >> h_BHadtracks",cuts);
 
 	// output
 	cout << "====================" << endl;

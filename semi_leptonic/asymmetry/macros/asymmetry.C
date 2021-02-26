@@ -128,7 +128,7 @@ void asymmetry()
 	TCut method7 = "methodTaken == 7";
 
 	// Total cut applied
-	TCut cuts = rcTW + hadM + pcut + gcut + methodAll;
+	TCut cuts = rcTW + hadM + pcut + gcut + method1;
 	//TCut cuts = rcTW + hadM + pcut + gcut + (method1|| method2|| method3|| method4);
 
 	TCut fcuts = "qCostheta > 0" + cuts;
