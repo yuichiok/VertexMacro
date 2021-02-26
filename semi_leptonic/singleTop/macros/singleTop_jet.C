@@ -204,10 +204,10 @@ void singleTop_jet()
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + singleTopFlagON); //(dgaus)
 
 // Cos0.9
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
 
 // Method1
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + method1); //(tgaus)
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + method1); //(tgaus)
 
 // All
 //	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2);
@@ -230,10 +230,10 @@ void singleTop_jet()
 	cout << jetE2->GetEntries() << "\n";
 
 
-	jetE1all->Scale( 1 / jetE1all->GetEntries() );
-	jetE1->Scale( 1 / jetE1->GetEntries() );
-	jetE2all->Scale( 1 / jetE2all->GetEntries() );
-	jetE2->Scale( 1 / jetE2->GetEntries() );
+	jetE1all->Scale( 1 / jetE1all->GetEntries(), "width" );
+	jetE1->Scale( 1 / jetE1->GetEntries(), "width" );
+	jetE2all->Scale( 1 / jetE2all->GetEntries(), "width" );
+	jetE2->Scale( 1 / jetE2->GetEntries(), "width" );
 
 
 	jetE1all->SetMinimum(0);
@@ -309,20 +309,21 @@ void singleTop_jet()
 
 //	今んとこtgausが最高
 
-	jetE1->Fit("flogNormal","R");
+//	jetE1->Fit("flogNormal","R");
 //	jetE1->Fit("crystalball","R");
 //	jetE1->Fit("tgaus","R");
 	jetE1->Draw("he");
 //	crystalball->Draw("same");
-	flogNormal->Draw("same");
+//	flogNormal->Draw("same");
 	jetE1all->Draw("hsame");
 
 	cout << "max = " << flogNormal->GetMaximumX() << "\n";
 
-	TLegend *leg = new TLegend(0.7,0.85,0.9,0.95); //set here your x_0,y_0, x_1,y_1 options
+	TLegend *leg = new TLegend(0.7,0.85,0.95,0.95); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
+	leg->SetTextSize(0.03);
 	leg->AddEntry(jetE1all,"All Reconstructed Events","l");
-	leg->AddEntry(jetE1,"Single Top Tagged Events","l");
+	leg->AddEntry(jetE1,"Method1 Used Events","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
