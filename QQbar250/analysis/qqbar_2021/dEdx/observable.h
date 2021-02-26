@@ -20,8 +20,8 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TGraphErrors.h>
-#include "../../style/Style.C"
-#include "../../style/Labels.C"
+#include "/home/ilc/yokugawa/style/Style.C"
+#include "/home/ilc/yokugawa/style/Labels.C"
 #include "TSystemFile.h"
 #include "TLorentzVector.h"
 
