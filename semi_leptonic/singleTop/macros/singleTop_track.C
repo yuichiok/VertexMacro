@@ -232,8 +232,8 @@ void singleTop_track()
 		bool qMCCheck2 = false;
 		bool qMCCheck  = false;
 
-		if(qMCcostheta[0] > -2 && qMCcostheta[0] < -0.9) qMCCheck1=true;
-		if(qMCcostheta[1] > -2 && qMCcostheta[1] < -0.9) qMCCheck2=true;
+		if(qMCcostheta[0] > -2 && qMCcostheta[0] > -0.9 && qMCcostheta[0] < -0.6) qMCCheck1=true;
+		if(qMCcostheta[1] > -2 && qMCcostheta[1] > -0.9 && qMCcostheta[1] < -0.6) qMCCheck2=true;
 		if(qMCCheck1 && qMCCheck2) qMCCheck=true;
 
 		bool single_qMC_check = false;
@@ -252,7 +252,8 @@ void singleTop_track()
 			}
 		}
 
-		if(check && method_check) sel_evt++;
+//		if(check && method_check) sel_evt++;
+		if(check) sel_evt++;
 
 		// Reconstructed Level
 
@@ -261,7 +262,7 @@ void singleTop_track()
 			jet_Eall->Fill( jet_E[ijet] );
 
 			if(method_mode){	
-				if(check && method_check){
+				if(check && !method_check){
 					hjet_E->Fill( jet_E[ijet] );
 				}
 			}else{
@@ -277,7 +278,7 @@ void singleTop_track()
 					jetTrack_pall->Fill( jet_track_p[ijet][ivtx][itr] );
 
 					if(method_mode){	
-						if(check && method_check){
+						if(check && !method_check){
 							jetTrack_E->Fill( jet_track_E[ijet][ivtx][itr] );
 							jetTrack_p->Fill( jet_track_p[ijet][ivtx][itr] );
 						}
