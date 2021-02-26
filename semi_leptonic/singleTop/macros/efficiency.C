@@ -14,7 +14,7 @@ void efficiency()
 {
 	int token=0;
 
-	bool twoDmode = 0;
+	bool twoDmode = 1;
 
 	// set plot style
 
@@ -78,21 +78,62 @@ void efficiency()
 //	%%%%%%%%%%%%  Histogram  %%%%%%%%%%%%%%%%%
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	
+	float cosMIN = -0.9;
+	float cosMAX = -0.6;
+
 	TCanvas * c1			= new TCanvas("c1", "cosTheta",0,0,500,500);
 
-	TH1F * hallCos				= new TH1F("hallCos",";cos#theta_{t}; Entries",20.,-1.0,1.0);
+	TH1F * hallCos			= new TH1F("hallCos",";cos#theta_{t}; Entries",20.,cosMIN,cosMAX);
 	hallCos->Sumw2();
 
-	TH1F * hpassCos			= new TH1F("hpassCos",";cos#theta_{t}; Entries",20.,-1.0,1.0);
+	TH1F * hpassCos			= new TH1F("hpassCos",";cos#theta_{t}; Entries",20.,cosMIN,cosMAX);
 	hpassCos->Sumw2();
 
-	TH1F * hallBjetE				= new TH1F("hallBjetE",";bjet_{E} (GeV); Entries",50.,0.,200.0);
+	TH1F * hallBjetE		= new TH1F("hallBjetE",";bjet_{E} (GeV); Entries",50.,20.,200.0);
 	hallBjetE->Sumw2();
 
-	TH1F * hpassBjetE			= new TH1F("hpassBjetE",";bjet_{E} (GeV); Entries",50.,0.,200.0);
+	TH1F * hpassBjetE		= new TH1F("hpassBjetE",";bjet_{E} (GeV); Entries",50.,20.,200.0);
 	hpassBjetE->Sumw2();
 
+	TH1F * hallMCBCos		= new TH1F("hallMCBCos",";MC cos#theta_{b}; Entries",20.,-1.0,1.0);
+	hallMCBCos->Sumw2();
+
+	TH1F * hpassMCBCos		= new TH1F("hpassMCBCos",";MC cos#theta_{b}; Entries",20.,-1.0,1.0);
+	hpassMCBCos->Sumw2();
+
+	TH1F * hallMCTopCos		= new TH1F("hallMCTopCos",";MC cos#theta_{t}; Entries",20.,cosMIN,cosMAX);
+	hallMCTopCos->Sumw2();
+
+	TH1F * hpassMCTopCos		= new TH1F("hpassMCTopCos",";MC cos#theta_{t}; Entries",20.,cosMIN,cosMAX);
+	hpassMCTopCos->Sumw2();
+
+	TH2F * histMCTopCos_BjetE	= new TH2F("histMCTopCos_BjetE",";MC cos#theta_{t};b-jet Energy (GeV)",20,-1.0,1.0,50,0.,200);
+
+	TH2F * histMCBCos_BjetE	= new TH2F("histMCBCos_BjetE",";MC cos#theta_{b};b-jet Energy (GeV)",20,-1.0,1.0,50,0.,200);
+
+
+	TGaxis::SetMaxDigits(3);
+
+	hallCos->SetLineWidth(3);
+	hallCos->SetLineStyle(1);
+	hallCos->SetLineColor(kGray+1);
+
+	hpassCos->SetLineWidth(3);
+	hpassCos->SetLineStyle(1);
+
+	hallMCBCos->SetLineWidth(3);
+	hallMCBCos->SetLineStyle(1);
+	hallMCBCos->SetLineColor(kGray+1);
+
+	hpassMCBCos->SetLineWidth(3);
+	hpassMCBCos->SetLineStyle(1);
+
+	hallMCTopCos->SetLineWidth(3);
+	hallMCTopCos->SetLineStyle(1);
+	hallMCTopCos->SetLineColor(kGray+1);
+
+	hpassMCTopCos->SetLineWidth(3);
+	hpassMCTopCos->SetLineStyle(1);
 
 
 
@@ -117,20 +158,15 @@ void efficiency()
 	TCut method7 = "methodTaken == 7";
 
 	TCut MCcos2  = "qMCcostheta > -2";
-	TCut MCcos09 = "qMCcostheta < -0.9"; 
+	TCut MCcos09 = "qMCcostheta < -0.9";
+
+	TCut MCcosAbove09 = "qMCcostheta > -0.9";
+	TCut MCcosBelow06 = "qMCcostheta < -0.6"; 
+	TCut MC0906 = MCcosAbove09 + MCcosBelow06;
+
 	TCut bmom1	 = "Top1bmomentum > 0";
 	TCut bmom2	 = "Top2bmomentum > 0";
 	TCut singleTopFlagON = "singletopFlag == 1";
-
-	TGaxis::SetMaxDigits(3);
-
-	hallCos->SetLineWidth(3);
-	hallCos->SetLineStyle(1);
-	hallCos->SetLineColor(kGray+1);
-
-	hpassCos->SetLineWidth(3);
-	hpassCos->SetLineStyle(1);
-
 
 
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,22 +209,39 @@ void efficiency()
 
 
 
-	int allCos  = Stats->Draw("qCostheta >> hallCos",  MCcos2);
-	int passCos = Stats->Draw("qCostheta >> hpassCos", MCcos2 + method1);
+	int allCos  = Stats->Draw("qCostheta >> hallCos",  MCcos2 + MC0906);
+	int passCos = Stats->Draw("qCostheta >> hpassCos", MCcos2 + method1 + MC0906);
 
 	int allBjetE  = Stats->Draw("jet_E[0] >> hallBjetE",  MCcos2);
 	int passBjetE = Stats->Draw("jet_E[0] >> hpassBjetE", MCcos2 + method1);
 
+	int allMCBCos  = Stats->Draw("qMCBcostheta >> hallMCBCos",  MCcos2);
+	int passMCBCos = Stats->Draw("qMCBcostheta >> hpassMCBCos", MCcos2 + method1);
+
+	int allMCTopCos  = Stats->Draw("qMCcostheta >> hallMCTopCos",  MCcos2 + MC0906);
+	int passMCTopCos = Stats->Draw("qMCcostheta >> hpassMCTopCos", MCcos2 + method1 + MC0906);
+
+	int MCTopCos_BjetE = Stats->Draw("jet_E[0]:qMCcostheta >> histMCTopCos_BjetE", MCcos2 + method1);
+
+	int MCBCos_BjetE = Stats->Draw("jet_E[0]:qMCBcostheta >> histMCBCos_BjetE", MCcos2);
 
 
-	cout << "Cos THETA\n";
-	cout << "Events ALL: " << hallCos->GetEntries() << "\n";
-	cout << "Events PASS: " << hpassCos->GetEntries() << "\n";
+//	cout << "Number of Events\n";
+//	cout << "Events ALL: " << hallCos->GetEntries() << "\n";
+//	cout << "Events PASS: " << hpassCos->GetEntries() << "\n";
 
-	cout << endl;
-	cout << "BjetE\n";
+	cout << "GenTree Number = " << GenTree->GetEntries() << "\n";
+
+	cout << "Stats Number = " << Stats->GetEntries() << "\n";
+
+	cout << "Number of Events (qMCcostheta)\n";
+	cout << "Events ALL: " << hallMCTopCos->GetEntries() << "\n";
+
+	cout << "Number of Events (hallBjetE)\n";
 	cout << "Events ALL: " << hallBjetE->GetEntries() << "\n";
-	cout << "Events PASS: " << hpassBjetE->GetEntries() << "\n";
+
+	cout << "Number of Events (hallMCBCos)\n";
+	cout << "Events ALL: " << hallMCBCos->GetEntries() << "\n";
 
 
 
@@ -196,7 +249,7 @@ void efficiency()
 //	%%%%%%%%%%  Normalization  %%%%%%%%%%%%%%%
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	double intALLCos = hallCos->Integral(2,19);
+	double intALLCos   = hallCos->Integral(2,19);
 	double intPASSCos  = hpassCos->Integral(2,19);
 
 
@@ -209,6 +262,11 @@ void efficiency()
 	hallBjetE->SetMinimum(0);
 	hpassBjetE->SetMinimum(0);
 
+	hallMCBCos->SetMinimum(0);
+	hpassMCBCos->SetMinimum(0);
+
+	hallMCTopCos->SetMinimum(0);
+	hpassMCTopCos->SetMinimum(0);
 
 
 //	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,7 +293,8 @@ void efficiency()
 	if(TEfficiency::CheckConsistency(*hpassCos,*hallCos)){
 
 		pEffCos = new TEfficiency(*hpassCos,*hallCos);
-		pEffCos->Draw();
+		pEffCos->Draw("ap");
+		pEffCos->SetTitle(";cos#theta_{t};Fraction");
 
 	}
 
@@ -246,9 +305,63 @@ void efficiency()
 	if(TEfficiency::CheckConsistency(*hpassBjetE,*hallBjetE)){
 
 		pEffBjetE = new TEfficiency(*hpassBjetE,*hallBjetE);
-		pEffBjetE->Draw();
+		pEffBjetE->Draw("ap");
+		pEffBjetE->SetTitle(";bjet_{E} (GeV);Fraction");
 
 	}
+
+
+	TCanvas * c5			= new TCanvas("c5", "cMCBCos",0,0,500,500);
+
+	hallMCBCos->Draw("he");
+	hpassMCBCos->Draw("hsame");
+
+	c5->Update();
+
+
+	TCanvas * c6			= new TCanvas("c6", "MCBCosEfficiency",0,0,500,500);
+
+	TEfficiency* pEffMCBCos = 0;
+
+	if(TEfficiency::CheckConsistency(*hpassMCBCos,*hallMCBCos)){
+
+		pEffMCBCos = new TEfficiency(*hpassMCBCos,*hallMCBCos);
+		pEffMCBCos->Draw("ap");
+		pEffMCBCos->SetTitle(";MC cos#theta_{b};Fraction");
+
+	}
+
+	TCanvas * c7			= new TCanvas("c7", "cMCCos",0,0,500,500);
+
+	hallMCTopCos->Draw("he");
+	hpassMCTopCos->Draw("hsame");
+
+	c7->Update();
+
+
+	TCanvas * c8			= new TCanvas("c8", "MCCosEfficiency",0,0,500,500);
+
+	TEfficiency* pEffMCTopCos = 0;
+
+	if(TEfficiency::CheckConsistency(*hpassMCTopCos,*hallMCTopCos)){
+
+		pEffMCTopCos = new TEfficiency(*hpassMCTopCos,*hallMCTopCos);
+		pEffMCTopCos->Draw("ap");
+		pEffMCTopCos->SetTitle(";MC cos#theta_{t};Fraction");
+
+	}
+
+	TCanvas * c9			= new TCanvas("c9", "cMCTopCos_BjetE",0,0,500,500);
+
+	histMCTopCos_BjetE->Draw("COLZ");
+	c9->Update();
+
+	TCanvas * c10			= new TCanvas("c10", "cMCBCos_BjetE",0,0,500,500);
+
+	histMCBCos_BjetE->Draw("COLZ");
+	c10->Update();
+
+
 
 
 
