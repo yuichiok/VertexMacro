@@ -393,11 +393,12 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
   }
   
   TGraph *eff_purity = new TGraph(11,x,y);
+  TString dirname="rootfiles/";
   TString fname="all_tracks";
   if(secondary==true) fname = "secondary_tracks";
   if(ignoreoverlay==true) fname += "_ignoreoverlay";
   if(angular_correction==true) fname += "_angularcorrection";
-  fname = TString::Format("output_250_%s_%s.root",fname.Data(),process.Data());
+  fname = TString::Format("%soutput_250_%s_%s.root",dirname.Data(),fname.Data(),process.Data());
   
   TFile *MyFile = new TFile(fname,"RECREATE");
   MyFile->cd();
