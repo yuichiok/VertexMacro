@@ -191,9 +191,9 @@ void singleTop_jet2()
 // Selection
 
 //  SingleTop && Cos0.9 && Method1
-//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MCcos09 + method1); //(crystalball)
-//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + method1 + singleTopFlagON); //(crystalball)
-//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + method1 + !singleTopFlagON); //(crystalball)
+	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1",   MCcos2 + MC0906 + method1); //(crystalball)
+	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MC0906 + method1 + singleTopFlagON); //(crystalball)
+	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MC0906 + method1 + !singleTopFlagON); //(crystalball)
 
 
 //  SingleTop && Cos0.9
@@ -204,9 +204,9 @@ void singleTop_jet2()
 
 
 // Cos0.9
-	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MCcos09); //(flognormal)
-	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MCcos09 + singleTopFlagON); //(flognormal)
-	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MCcos09 + !singleTopFlagON); //(flognormal)
+//	int bjet1 		= Stats->Draw("jet_E[0] >> jetE1", MCcos2 + MC0906); //(flognormal)
+//	int bjet1_2		= Stats->Draw("jet_E[0] >> jetE1_2", MCcos2 + MC0906 + singleTopFlagON); //(flognormal)
+//	int bjet1_3		= Stats->Draw("jet_E[0] >> jetE1_3", MCcos2 + MC0906 + !singleTopFlagON); //(flognormal)
 
 
 // Method1
@@ -353,16 +353,33 @@ void singleTop_jet2()
 	cout << "maxGreen = " << flogNormal3->GetMaximumX() << "\n";
 	cout << "maxBlue = " << flogNormal2->GetMaximumX() << "\n";
 
+	
+#if 1
 	TLegend *leg = new TLegend(0.6,0.75,0.8,0.9); //set here your x_0,y_0, x_1,y_1 options
 	leg->SetTextFont(42);
 	leg->SetTextSize(0.02);
-	leg->AddEntry(jetE1,"Cos#theta < -0.9 && method1","l");
-	leg->AddEntry(jetE1_3,"Cos#theta < -0.9 && method1 && !SingleTop","l");
-	leg->AddEntry(jetE1_2,"Cos#theta < -0.9 && method1 && SingleTop","l");
+	leg->AddEntry(jetE1,"-0.9 < Cos#theta < -0.6 && method1","l");
+	leg->AddEntry(jetE1_3,"-0.9 < Cos#theta < -0.6 && method1 && !SingleTop","l");
+	leg->AddEntry(jetE1_2,"-0.9 < Cos#theta < -0.6 && method1 && SingleTop","l");
 	leg->SetFillColor(0);
 	leg->SetLineColor(0);
 	leg->SetShadowColor(0);
 	leg->Draw();
+#endif
+
+#if 0
+	TLegend *leg = new TLegend(0.6,0.75,0.8,0.9); //set here your x_0,y_0, x_1,y_1 options
+	leg->SetTextFont(42);
+	leg->SetTextSize(0.02);
+	leg->AddEntry(jetE1,"-0.9 < Cos#theta < -0.6","l");
+	leg->AddEntry(jetE1_3,"-0.9 < Cos#theta < -0.6 && !SingleTop","l");
+	leg->AddEntry(jetE1_2,"-0.9 < Cos#theta < -0.6 && SingleTop","l");
+	leg->SetFillColor(0);
+	leg->SetLineColor(0);
+	leg->SetShadowColor(0);
+	leg->Draw();
+#endif
+
 
 	c1->Update();
 
