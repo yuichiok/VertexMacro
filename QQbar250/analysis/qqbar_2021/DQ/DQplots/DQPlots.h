@@ -21,8 +21,9 @@
 #include "TStyle.h"
 #include "TMath.h"
 #include "TSystemFile.h"
-#include "../../../style/Style.C"
-#include "../../../style/Labels.C"
+#include "/home/ilc/yokugawa/style/Style.C"
+#include "/home/ilc/yokugawa/style/Labels.C"
+
 
 
 
