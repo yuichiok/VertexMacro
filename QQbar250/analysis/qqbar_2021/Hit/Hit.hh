@@ -8,6 +8,7 @@
 #ifndef Hit_hh
 #define Hit_hh
 
+#include "VecOP.hh"
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -250,9 +251,11 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   virtual bool     PreSelection(int type, float egamma);
+
+   virtual void     AnalyzeHit(int , float , TString);
 
    float getModule(vector< float > & v)   {
       float module = 0.0;
