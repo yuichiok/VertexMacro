@@ -27,7 +27,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		for(int i=0; i<pfo_n; i++) {
 
 			VecOP pfoVec(pfo_px[i],pfo_py[i],pfo_pz[i]);
-			pfoVec.PrintPX();
 		
 			// std::cout << "pfo" << i << std::endl;
 			//std::vector< float > angles = CalculateAngles(pfo_px[i],pfo_py[i],pfo_pz[i]);

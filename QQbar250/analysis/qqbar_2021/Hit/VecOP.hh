@@ -11,29 +11,17 @@ public:
 	VecOP(float x, float y, float z);
 	virtual ~VecOP () {};
 
-	std::vector<float> p;
-
-	float getModule(vector< float > & v);
-	std::vector< float > getDirection(vector<float> & vectorPoint);
+	float getModule(std::vector< float > & v);
+	std::vector< float > getDirection(std::vector<float> & vectorPoint);
 	std::vector< float > getAngles(std::vector< float > & direction);
 	std::vector< float > CalculateAnglesMom();
 	std::vector< float > CalculateAngles();
+	float GetCostheta();
+	float GetCosphi();
 
+private:
+	std::vector<float> p;
 
 };
 
 #endif
-
-// #ifdef VecOP_cxx
-
-// VecOP::VecOP(float x, float y, float z){
-
-// 	p.push_back(x);
-// 	p.push_back(y);
-// 	p.push_back(z);
-
-// }
-
-// VecOP::~VecOP(){}
-
-// #endif // #ifdef VecOP_cxx
