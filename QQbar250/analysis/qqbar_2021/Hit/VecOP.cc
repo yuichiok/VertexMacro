@@ -60,6 +60,11 @@ std::vector< float > VecOP::CalculateAngles() {
   return angles;
 }
 
+float VecOP::GetMomentum(){
+  return getModule(p);
+}
+
+
 float VecOP::GetCostheta(){
   float costheta1 =  -2.0;
   std::vector< float > d1= getDirection(p);

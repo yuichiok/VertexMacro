@@ -7,21 +7,22 @@
 void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 {
 
+	// DO NOT CHANGE THE ORDER OF HISTOGRAMS!!!
+
+
 	// Reco Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
 
 	// TH1F
-	// h1_mc_stable[0] = new TH1F(name_mc_stable+"nKaons_evt",";nKaons; Events",20,0,20);
-
 	h1_mc_stable.push_back( new TH1F(name_mc_stable+"nKaons_evt",";nKaons; Events",20,0,20) );
+	h1_mc_stable.push_back( new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0) );
 
 	// TH2F
-	// h2_mc_stable[0] = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-	// h2_mc_stable[1] = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-
 	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+
+
 
 
 	// Reco Histograms
@@ -29,15 +30,16 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
-	// h1_pfo[0] = new TH1F(name_pfo+"nKaons_evt",";nKaons; Events",20,0,20);
-	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_evt",";nKaons; Events",20,0,20) );
+	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20) );
+	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20) );
+	h1_pfo.push_back( new TH1F(name_pfo+"Kaons_cos",";|cos#theta|; Events",100,0,1.0) );
+	h1_pfo.push_back( new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400) );
+
 
 	// TH2F
-	// h2_pfo[0] = new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-	// h2_pfo[1] = new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",400,0,400,200,0,200) );
 
 
 
@@ -61,7 +63,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		if(PreSelection(0,Kvcut)==false) continue;
 
 		///////////////////////////////
-		///////   MC ANALYSiS   ///////
+		///////   MC ANALYSIS   ///////
 		///////////////////////////////
 
 		int nMCkaons = 0;
@@ -76,7 +78,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			if(fabs(mc_stable_pdg[imc])==321){
 				
 				nMCkaons++;
-
+				h1_mc_stable.at(1)->Fill(abscos);
 			
 			} // kaon?
 
@@ -88,32 +90,121 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		////////////////////////////////
-		///////   PFO ANALYSiS   ///////
+		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
 		int nPFOkaons = 0;
+		int nJETkaons1 = 0;
+		int nJETkaons2 = 0;
+
+		float maxP1 = 0;
+		float maxP2 = 0;
+		int LeadiPFO1 = -1;
+		int LeadiPFO2 = -1;
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
+			float mom    = pfoVec.GetMomentum();
 
 			h2_pfo.at(0)->Fill(abscos, pfo_tpc_hits[ipfo]);
 
+
+			// PFO kaon?
 			if(fabs(pfo_pdgcheat[ipfo])==321){
 			
 				nPFOkaons++;
+
+				h1_pfo.at(2)->Fill(abscos);
+
 				h2_pfo.at(1)->Fill(abscos, pfo_tpc_hits[ipfo]);
 			
-			} // kaon?
+			} // end PFO kaon?
+
+			
+			// Jet1 Analysis
+			if(pfo_match[ipfo]==0){
+
+
+				if(mom > maxP1){
+					maxP1 = mom;
+					LeadiPFO1 = ipfo;
+				}
+
+
+
+				// kaon in jet1?
+				if(fabs(pfo_pdgcheat[ipfo])==321){
+				
+					nJETkaons1++;
+				
+				} // end kaon in jet1?
+
+
+			} // end jet1
+
+
+
+			// Jet2 Analysis
+			if(pfo_match[ipfo]==1){
+
+				if(mom > maxP2){
+					maxP2 = mom;
+					LeadiPFO2 = ipfo;
+				}
+
+				// kaon in jet2?
+				if(fabs(pfo_pdgcheat[ipfo])==321){
+				
+					nJETkaons2++;
+				
+				} // end kaon in jet2?
+
+
+			} // end jet1
+
+
+
 		
 
 		} // end of pfo
 
 		h1_pfo.at(0)->Fill(nPFOkaons);
 
+		h1_pfo.at(1)->Fill(nJETkaons1);
+		h1_pfo.at(1)->Fill(nJETkaons2);
+
+		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO1]);
+		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO2]);
+
+
+		h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO1],maxP1);
+		h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO2],maxP2);
+
+
+		////////////////////////////////
+		///////   Jet ANALYSIS   ///////
+		////////////////////////////////
+
+		// int nJETkaons = 0;
+
+		// for(int ijet=0; ijet<2; ijet++){
+
+		// 	VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
+		// 	float abscos = abs( jetVec.GetCostheta() );
+
+
+
+		// }
+
+
+
+
+
+
 		// trial
-		// if(jentry==100) break;
+		// if(jentry==1000) break;
 
 	} // end of event loop
 

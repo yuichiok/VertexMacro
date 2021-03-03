@@ -16,6 +16,7 @@ public:
 	std::vector< float > getAngles(std::vector< float > & direction);
 	std::vector< float > CalculateAnglesMom();
 	std::vector< float > CalculateAngles();
+	float GetMomentum();
 	float GetCostheta();
 	float GetCosphi();
 
