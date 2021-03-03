@@ -7,8 +7,39 @@
 void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 {
 
-	TH2F* h_HitCos_all  = new TH2F("h_HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-	TH2F* h_HitCos_k 	= new TH2F("h_HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	// Reco Histograms
+
+	TString name_mc_stable = "h_mc_stable_";
+
+	// TH1F
+	// h1_mc_stable[0] = new TH1F(name_mc_stable+"nKaons_evt",";nKaons; Events",20,0,20);
+
+	h1_mc_stable.push_back( new TH1F(name_mc_stable+"nKaons_evt",";nKaons; Events",20,0,20) );
+
+	// TH2F
+	// h2_mc_stable[0] = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	// h2_mc_stable[1] = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+
+	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+
+
+	// Reco Histograms
+
+	TString name_pfo = "h_pfo_";
+
+	// TH1F
+	// h1_pfo[0] = new TH1F(name_pfo+"nKaons_evt",";nKaons; Events",20,0,20);
+	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_evt",";nKaons; Events",20,0,20) );
+
+	// TH2F
+	// h2_pfo[0] = new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	// h2_pfo[1] = new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+
+	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+
+
 
 	TFile *MyFile = new TFile(TString::Format("DQ_250GeV_%s.root",output.Data()),"RECREATE");
 	MyFile->cd();
@@ -25,30 +56,74 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
 		// if (Cut(ientry) < 0) continue;
 
-		if ( jentry > 10000 && jentry % 10000 ==0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 
 		if(PreSelection(0,Kvcut)==false) continue;
 
-		for(int i=0; i<pfo_n; i++) {
+		///////////////////////////////
+		///////   MC ANALYSiS   ///////
+		///////////////////////////////
 
-			VecOP pfoVec(pfo_px[i],pfo_py[i],pfo_pz[i]);
+		int nMCkaons = 0;
+
+		for (int imc = 0; imc < mc_stable_n; imc++)
+		{
+			VecOP mcVec(mc_stable_px[imc],mc_stable_py[imc],mc_stable_pz[imc]);
+			float abscos = abs( mcVec.GetCostheta() );
+
+
+
+			if(fabs(mc_stable_pdg[imc])==321){
+				
+				nMCkaons++;
+
+			
+			} // kaon?
+
+
+		} // end of mc_stable
+
+		h1_mc_stable.at(0)->Fill(nMCkaons);
+
+
+
+		////////////////////////////////
+		///////   PFO ANALYSiS   ///////
+		////////////////////////////////
+
+		int nPFOkaons = 0;
+
+		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
+
+			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 
-			h_HitCos_all->Fill(abscos, pfo_tpc_hits[i]);
-			if(fabs(pfo_pdgcheat[i])==321) h_HitCos_k->Fill(abscos, pfo_tpc_hits[i]);
-		
-			// std::cout << "pfo" << i << std::endl;
-			//std::vector< float > angles = CalculateAngles(pfo_px[i],pfo_py[i],pfo_pz[i]);
+			h2_pfo.at(0)->Fill(abscos, pfo_tpc_hits[ipfo]);
 
-		}
+			if(fabs(pfo_pdgcheat[ipfo])==321){
+			
+				nPFOkaons++;
+				h2_pfo.at(1)->Fill(abscos, pfo_tpc_hits[ipfo]);
+			
+			} // kaon?
+		
+
+		} // end of pfo
+
+		h1_pfo.at(0)->Fill(nPFOkaons);
 
 		// trial
-		// if(jentry==1000) break;
+		// if(jentry==100) break;
 
 	} // end of event loop
 
-	h_HitCos_all->Write();
-	h_HitCos_k->Write();
+
+	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
+	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
+
+	for(int h=0; h < h1_pfo.size(); h++) h1_pfo.at(h)->Write();
+	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
+
 
 }
 

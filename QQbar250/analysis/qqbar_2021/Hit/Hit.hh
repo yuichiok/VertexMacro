@@ -12,6 +12,8 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <vector>
+
 
 // Header file for the classes stored in the TTree if any.
 
@@ -272,6 +274,20 @@ public :
       Double_t a = v1.Angle(v2.Vect());  // get angle between v1 and v2
       return a;
    }
+
+private:
+
+   // TH1F* h1_mc_stable[10];
+   // TH1F* h1_pfo[10];
+
+   // TH2F* h2_mc_stable[10];
+   // TH2F* h2_pfo[10];
+
+   std::vector<TH1F*> h1_mc_stable;
+   std::vector<TH1F*> h1_pfo;
+
+   std::vector<TH2F*> h2_mc_stable;
+   std::vector<TH2F*> h2_pfo;
 
 };
 
