@@ -62,15 +62,15 @@ public :
    Float_t         mc_quark_ps_jet_py[2];
    Float_t         mc_quark_ps_jet_pz[2];
    Int_t           mc_stable_n;
-   Float_t         mc_stable_E[748];   //[mc_stable_n]
-   Float_t         mc_stable_px[748];   //[mc_stable_n]
-   Float_t         mc_stable_py[748];   //[mc_stable_n]
-   Float_t         mc_stable_pz[748];   //[mc_stable_n]
-   Float_t         mc_stable_m[748];   //[mc_stable_n]
-   Int_t           mc_stable_pdg[748];   //[mc_stable_n]
-   Float_t         mc_stable_charge[748];   //[mc_stable_n]
-   Int_t           mc_stable_isoverlay[748];   //[mc_stable_n]
-   Int_t           mc_stable_isisr[748];   //[mc_stable_n]
+   Float_t         mc_stable_E[746];   //[mc_stable_n]
+   Float_t         mc_stable_px[746];   //[mc_stable_n]
+   Float_t         mc_stable_py[746];   //[mc_stable_n]
+   Float_t         mc_stable_pz[746];   //[mc_stable_n]
+   Float_t         mc_stable_m[746];   //[mc_stable_n]
+   Int_t           mc_stable_pdg[746];   //[mc_stable_n]
+   Float_t         mc_stable_charge[746];   //[mc_stable_n]
+   Int_t           mc_stable_isoverlay[746];   //[mc_stable_n]
+   Int_t           mc_stable_isisr[746];   //[mc_stable_n]
    Float_t         mc_stable_y12;
    Float_t         mc_stable_y23;
    Float_t         mc_stable_d12;
@@ -118,6 +118,7 @@ public :
    Int_t           pfo_istrack[186];   //[pfo_n]
    Int_t           pfo_vtx[186];   //[pfo_n]
    Int_t           pfo_charge[186];   //[pfo_n]
+   Int_t           pfo_ntracks[186];   //[pfo_n]
    Int_t           pfo_tpc_hits[186];   //[pfo_n]
    Float_t         pfo_dedx[186];   //[pfo_n]
    Float_t         pfo_dedxerror[186];   //[pfo_n]
@@ -226,6 +227,7 @@ public :
    TBranch        *b_pfo_istrack;   //!
    TBranch        *b_pfo_vtx;   //!
    TBranch        *b_pfo_charge;   //!
+   TBranch        *b_pfo_ntracks;   //!
    TBranch        *b_pfo_tpc_hits;   //!
    TBranch        *b_pfo_dedx;   //!
    TBranch        *b_pfo_dedxerror;   //!
@@ -245,7 +247,7 @@ public :
    TBranch        *b_pfo_pid_likelihood;   //!
    TBranch        *b_pfo_piddedx;   //!
    TBranch        *b_pfo_piddedx_likelihood;   //!
-
+   
    Hit(TString tree_s);
    Hit(TList *f=0);
    virtual ~Hit();
@@ -446,6 +448,7 @@ void Hit::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_istrack", pfo_istrack, &b_pfo_istrack);
    fChain->SetBranchAddress("pfo_vtx", pfo_vtx, &b_pfo_vtx);
    fChain->SetBranchAddress("pfo_charge", pfo_charge, &b_pfo_charge);
+   fChain->SetBranchAddress("pfo_ntracks", pfo_ntracks, &b_pfo_ntracks);
    fChain->SetBranchAddress("pfo_tpc_hits", pfo_tpc_hits, &b_pfo_tpc_hits);
    fChain->SetBranchAddress("pfo_dedx", pfo_dedx, &b_pfo_dedx);
    fChain->SetBranchAddress("pfo_dedxerror", pfo_dedxerror, &b_pfo_dedxerror);
