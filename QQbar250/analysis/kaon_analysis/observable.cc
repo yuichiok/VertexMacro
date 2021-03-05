@@ -129,30 +129,33 @@ void observable::dEdx(int n_entries=-1) {
                 float track_dedx = jet_track_dedx[ijet][ivtx][itrack];
                 float dedx_corr  = track_dedx * pow(abs_rad_track,0.05);
 
+                if(abs_cos_track<0.8){
 
-                if(jet_track_pdg[ijet][ivtx][itrack]==211){
-                  // pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-                  pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
-                }
+                  if(jet_track_pdg[ijet][ivtx][itrack]==211){
+                    // pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                    pion_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  }
 
-                if(jet_track_pdg[ijet][ivtx][itrack]==321){
-                  // kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-                  kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
-                }
+                  if(jet_track_pdg[ijet][ivtx][itrack]==321){
+                    // kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                    kaon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  }
 
-                if(jet_track_pdg[ijet][ivtx][itrack]==2212){
-                  // proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-                  proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
-                }
+                  if(jet_track_pdg[ijet][ivtx][itrack]==2212){
+                    // proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                    proton_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  }
 
-                if(jet_track_pdg[ijet][ivtx][itrack]==11){
-                  // electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-                  electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
-                }
+                  if(jet_track_pdg[ijet][ivtx][itrack]==11){
+                    // electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                    electron_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  }
 
-                if(jet_track_pdg[ijet][ivtx][itrack]==13){
-                  // muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
-                  muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  if(jet_track_pdg[ijet][ivtx][itrack]==13){
+                    // muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],jet_track_dedx[ijet][ivtx][itrack]);
+                    muon_dEdx_truth->Fill(jet_track_p[ijet][ivtx][itrack],dedx_corr);
+                  }
+
                 }
 
             } // end if dEdx track > 0
