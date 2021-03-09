@@ -105,39 +105,50 @@ public :
    Int_t           jet_nvtx_j1;
    Int_t           pfo_n_j2;
    Int_t           jet_nvtx_j2;
-   Int_t           pfo_match[186];   //[pfo_n]
-   Int_t           pfo_pdgcheat[186];   //[pfo_n]
-   Float_t         pfo_E[186];   //[pfo_n]
-   Float_t         pfo_px[186];   //[pfo_n]
-   Float_t         pfo_py[186];   //[pfo_n]
-   Float_t         pfo_pz[186];   //[pfo_n]
-   Float_t         pfo_m[186];   //[pfo_n]
-   Int_t           pfo_type[186];   //[pfo_n]
-   Int_t           pfo_isoverlay[186];   //[pfo_n]
-   Int_t           pfo_isisr[186];   //[pfo_n]
-   Int_t           pfo_istrack[186];   //[pfo_n]
-   Int_t           pfo_vtx[186];   //[pfo_n]
-   Int_t           pfo_charge[186];   //[pfo_n]
-   Int_t           pfo_ntracks[186];   //[pfo_n]
-   Int_t           pfo_tpc_hits[186];   //[pfo_n]
-   Float_t         pfo_dedx[186];   //[pfo_n]
-   Float_t         pfo_dedxerror[186];   //[pfo_n]
-   Float_t         pfo_d0[186];   //[pfo_n]
-   Float_t         pfo_d0error[186];   //[pfo_n]
-   Float_t         pfo_z0[186];   //[pfo_n]
-   Float_t         pfo_z0error[186];   //[pfo_n]
-   Float_t         pfo_phi[186];   //[pfo_n]
-   Float_t         pfo_phierror[186];   //[pfo_n]
-   Float_t         pfo_omega[186];   //[pfo_n]
-   Float_t         pfo_omegaerror[186];   //[pfo_n]
-   Float_t         pfo_tanlambda[186];   //[pfo_n]
-   Float_t         pfo_tanlambdaerror[186];   //[pfo_n]
-   Float_t         pfo_chi2[186];   //[pfo_n]
-   Float_t         pfo_ndf[186];   //[pfo_n]
-   Int_t           pfo_pid[186];   //[pfo_n]
-   Float_t         pfo_pid_likelihood[186];   //[pfo_n]
-   Int_t           pfo_piddedx[186];   //[pfo_n]
-   Float_t         pfo_piddedx_likelihood[186];   //[pfo_n]
+   Int_t           pfo_match[188];   //[pfo_n]
+   Int_t           pfo_pdgcheat[188];   //[pfo_n]
+   Float_t         pfo_E[188];   //[pfo_n]
+   Float_t         pfo_px[188];   //[pfo_n]
+   Float_t         pfo_py[188];   //[pfo_n]
+   Float_t         pfo_pz[188];   //[pfo_n]
+   Float_t         pfo_m[188];   //[pfo_n]
+   Int_t           pfo_type[188];   //[pfo_n]
+   Int_t           pfo_isoverlay[188];   //[pfo_n]
+   Int_t           pfo_isisr[188];   //[pfo_n]
+   Int_t           pfo_vtx[188];   //[pfo_n]
+   Int_t           pfo_charge[188];   //[pfo_n]
+   Int_t           pfo_ntracks[188];   //[pfo_n]
+   Int_t           pfo_tpc_hits[188];   //[pfo_n]
+   Float_t         pfo_dedx[188];   //[pfo_n]
+   Float_t         pfo_dedxerror[188];   //[pfo_n]
+   Float_t         pfo_d0[188];   //[pfo_n]
+   Float_t         pfo_d0error[188];   //[pfo_n]
+   Float_t         pfo_z0[188];   //[pfo_n]
+   Float_t         pfo_z0error[188];   //[pfo_n]
+   Float_t         pfo_phi[188];   //[pfo_n]
+   Float_t         pfo_phierror[188];   //[pfo_n]
+   Float_t         pfo_omega[188];   //[pfo_n]
+   Float_t         pfo_omegaerror[188];   //[pfo_n]
+   Float_t         pfo_tanlambda[188];   //[pfo_n]
+   Float_t         pfo_tanlambdaerror[188];   //[pfo_n]
+   Float_t         pfo_chi2[188];   //[pfo_n]
+   Float_t         pfo_ndf[188];   //[pfo_n]
+   Int_t           pfo_pid[188];   //[pfo_n]
+   Float_t         pfo_pid_likelihood[188];   //[pfo_n]
+   Float_t         pfo_pid_eprob[188];   //[pfo_n]
+   Float_t         pfo_pid_muprob[188];   //[pfo_n]
+   Float_t         pfo_pid_piprob[188];   //[pfo_n]
+   Float_t         pfo_pid_kprob[188];   //[pfo_n]
+   Float_t         pfo_pid_pprob[188];   //[pfo_n]
+   Float_t         pfo_pid_hprob[188];   //[pfo_n]
+   Int_t           pfo_piddedx[188];   //[pfo_n]
+   Float_t         pfo_piddedx_likelihood[188];   //[pfo_n]
+   Float_t         pfo_piddedx_eprob[188];   //[pfo_n]
+   Float_t         pfo_piddedx_muprob[188];   //[pfo_n]
+   Float_t         pfo_piddedx_piprob[188];   //[pfo_n]
+   Float_t         pfo_piddedx_kprob[188];   //[pfo_n]
+   Float_t         pfo_piddedx_pprob[188];   //[pfo_n]
+   Float_t         pfo_piddedx_hprob[188];   //[pfo_n]
 
    // List of branches
    TBranch        *b_mc_quark_E;   //!
@@ -224,7 +235,6 @@ public :
    TBranch        *b_pfo_type;   //!
    TBranch        *b_pfo_isoverlay;   //!
    TBranch        *b_pfo_isisr;   //!
-   TBranch        *b_pfo_istrack;   //!
    TBranch        *b_pfo_vtx;   //!
    TBranch        *b_pfo_charge;   //!
    TBranch        *b_pfo_ntracks;   //!
@@ -245,8 +255,20 @@ public :
    TBranch        *b_pfo_ndf;   //!
    TBranch        *b_pfo_pid;   //!
    TBranch        *b_pfo_pid_likelihood;   //!
+   TBranch        *b_pfo_pid_eprob;   //!
+   TBranch        *b_pfo_pid_muprob;   //!
+   TBranch        *b_pfo_pid_piprob;   //!
+   TBranch        *b_pfo_pid_kprob;   //!
+   TBranch        *b_pfo_pid_pprob;   //!
+   TBranch        *b_pfo_pid_hprob;   //!
    TBranch        *b_pfo_piddedx;   //!
    TBranch        *b_pfo_piddedx_likelihood;   //!
+   TBranch        *b_pfo_piddedx_eprob;   //!
+   TBranch        *b_pfo_piddedx_muprob;   //!
+   TBranch        *b_pfo_piddedx_piprob;   //!
+   TBranch        *b_pfo_piddedx_kprob;   //!
+   TBranch        *b_pfo_piddedx_pprob;   //!
+   TBranch        *b_pfo_piddedx_hprob;   //!
    
    Hit(TString tree_s);
    Hit(TList *f=0);
@@ -445,7 +467,6 @@ void Hit::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_type", pfo_type, &b_pfo_type);
    fChain->SetBranchAddress("pfo_isoverlay", pfo_isoverlay, &b_pfo_isoverlay);
    fChain->SetBranchAddress("pfo_isisr", pfo_isisr, &b_pfo_isisr);
-   fChain->SetBranchAddress("pfo_istrack", pfo_istrack, &b_pfo_istrack);
    fChain->SetBranchAddress("pfo_vtx", pfo_vtx, &b_pfo_vtx);
    fChain->SetBranchAddress("pfo_charge", pfo_charge, &b_pfo_charge);
    fChain->SetBranchAddress("pfo_ntracks", pfo_ntracks, &b_pfo_ntracks);
@@ -466,8 +487,20 @@ void Hit::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_ndf", pfo_ndf, &b_pfo_ndf);
    fChain->SetBranchAddress("pfo_pid", pfo_pid, &b_pfo_pid);
    fChain->SetBranchAddress("pfo_pid_likelihood", pfo_pid_likelihood, &b_pfo_pid_likelihood);
+   fChain->SetBranchAddress("pfo_pid_eprob", pfo_pid_eprob, &b_pfo_pid_eprob);
+   fChain->SetBranchAddress("pfo_pid_muprob", pfo_pid_muprob, &b_pfo_pid_muprob);
+   fChain->SetBranchAddress("pfo_pid_piprob", pfo_pid_piprob, &b_pfo_pid_piprob);
+   fChain->SetBranchAddress("pfo_pid_kprob", pfo_pid_kprob, &b_pfo_pid_kprob);
+   fChain->SetBranchAddress("pfo_pid_pprob", pfo_pid_pprob, &b_pfo_pid_pprob);
+   fChain->SetBranchAddress("pfo_pid_hprob", pfo_pid_hprob, &b_pfo_pid_hprob);
    fChain->SetBranchAddress("pfo_piddedx", pfo_piddedx, &b_pfo_piddedx);
    fChain->SetBranchAddress("pfo_piddedx_likelihood", pfo_piddedx_likelihood, &b_pfo_piddedx_likelihood);
+   fChain->SetBranchAddress("pfo_piddedx_eprob", pfo_piddedx_eprob, &b_pfo_piddedx_eprob);
+   fChain->SetBranchAddress("pfo_piddedx_muprob", pfo_piddedx_muprob, &b_pfo_piddedx_muprob);
+   fChain->SetBranchAddress("pfo_piddedx_piprob", pfo_piddedx_piprob, &b_pfo_piddedx_piprob);
+   fChain->SetBranchAddress("pfo_piddedx_kprob", pfo_piddedx_kprob, &b_pfo_piddedx_kprob);
+   fChain->SetBranchAddress("pfo_piddedx_pprob", pfo_piddedx_pprob, &b_pfo_piddedx_pprob);
+   fChain->SetBranchAddress("pfo_piddedx_hprob", pfo_piddedx_hprob, &b_pfo_piddedx_hprob);
    Notify();
 }
 
