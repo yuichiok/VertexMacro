@@ -9,6 +9,7 @@ class VecOP {
 
 public:
 	VecOP(float x, float y, float z);
+	VecOP();
 	virtual ~VecOP () {};
 
 	float getModule(std::vector< float > & v);
@@ -19,6 +20,7 @@ public:
 	float GetMomentum();
 	float GetCostheta();
 	float GetCosphi();
+	float GetSinacol(TVector3 v1, TVector3 v2);
 
 private:
 	std::vector<float> p;

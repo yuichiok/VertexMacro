@@ -12,6 +12,8 @@ VecOP::VecOP(float x, float y, float z){
 
 }
 
+VecOP::VecOP() {};
+
 float VecOP::getModule(vector< float > & v)   {
   float module = 0.0;
   for (unsigned int i = 0; i < v.size(); i++) module += v[i]*v[i];
@@ -79,12 +81,12 @@ float VecOP::GetCosphi(){
   return cosphi;
 }
 
-// float VecOP::GetSinacol(TVector3 v1, TVector3 v2){
-//   float sinacol =  -2.0;
-//   TVector3 v= v1.Cross(v2);
-//   sinacol = (v.Mag()/(v1.Mag()*v2.Mag()));// * v2.Mag()/(v1+v2).Mag(); 
-//   return sinacol;
-// }
+float VecOP::GetSinacol(TVector3 v1, TVector3 v2){
+  float sinacol =  -2.0;
+  TVector3 v= v1.Cross(v2);
+  sinacol = (v.Mag()/(v1.Mag()*v2.Mag()));// * v2.Mag()/(v1+v2).Mag(); 
+  return sinacol;
+}
 
 // float VecOP::getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
