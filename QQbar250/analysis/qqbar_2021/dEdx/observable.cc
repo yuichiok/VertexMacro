@@ -9,10 +9,9 @@
 void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false, bool ignoreoverlay=true, bool angular_correction=true) {
 
   float momentum_min=0.95;
-  
-  // Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.33,1.667,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
-		    //13.33,16.667,20,30,40,50,60,70,80,90,100};
+  //  1.,1.33,1.667
   Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
+		    //13.33,16.667,20,30,40,50,60,70,80,90,100};
   Int_t nbinnum_p=sizeof(bins_p)/sizeof(Float_t) - 1;
 
   Float_t bins_cos[50]={};
@@ -55,7 +54,7 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
   Long64_t nentries;
   if(n_entries>0) nentries= n_entries;
   else nentries= fChain->GetEntriesFast();
-
+  std::cout<<nentries<<std::endl;
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = LoadTree(jentry);
@@ -92,7 +91,7 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
 	    if(angular_correction==true) {
 	      dedx=dedx*pow(TMath::ACos(fabs(costheta)),0.05);
 	    }
-	    if( pfo_istrack[ipfo]==1) {
+	    if( pfo_ntracks[ipfo]==1 && fabs(pfo_ntracks[ipfo])!=0) {
 	      
 	      if( fabs(pfo_pdgcheat[ipfo])==321 ){
 		nkaonjet++;
@@ -103,34 +102,33 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
 	      if( fabs(pfo_pdgcheat[ipfo])==2212 ) p_proton->Fill(momentum);
 	      if( fabs(pfo_pdgcheat[ipfo])==11 ) p_electron->Fill(momentum);
 	      if( fabs(pfo_pdgcheat[ipfo])==13 ) p_muon->Fill(momentum);
-	    }
-	    	    
+	      
 	    //for(int ijet=0; ijet<2; ijet++) {
-	    if(dedx>0) {
-	      if(fabs(pfo_pdgcheat[ipfo])==211) pion_dEdx_truth->Fill(momentum,dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==321) kaon_dEdx_truth->Fill(momentum,dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==2212) proton_dEdx_truth->Fill(momentum,dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==11) electron_dEdx_truth->Fill(momentum,dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==13) muon_dEdx_truth->Fill(momentum,dedx);
-
-	      if(fabs(pfo_pdgcheat[ipfo])==211) pion_dEdx_cos->Fill(fabs(costheta),dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==321) kaon_dEdx_cos->Fill(fabs(costheta),dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==2212) proton_dEdx_cos->Fill(fabs(costheta),dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==11) electron_dEdx_cos->Fill(fabs(costheta),dedx);
-	      if(fabs(pfo_pdgcheat[ipfo])==13) muon_dEdx_cos->Fill(fabs(costheta),dedx);
-
-
-	      if(fabs(pfo_piddedx[ipfo])==211) pion_dEdx_pid->Fill(momentum,dedx);
-	      if(fabs(pfo_piddedx[ipfo])==321) kaon_dEdx_pid->Fill(momentum,dedx);
-	      if(fabs(pfo_piddedx[ipfo])==2212) proton_dEdx_pid->Fill(momentum,dedx);
-	      if(fabs(pfo_piddedx[ipfo])==11) electron_dEdx_pid->Fill(momentum,dedx);
-	      if(fabs(pfo_piddedx[ipfo])==13) muon_dEdx_pid->Fill(momentum,dedx);
+	      if(dedx>0) {
+		if(fabs(pfo_pdgcheat[ipfo])==211) pion_dEdx_truth->Fill(momentum,dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==321) kaon_dEdx_truth->Fill(momentum,dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==2212) proton_dEdx_truth->Fill(momentum,dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==11) electron_dEdx_truth->Fill(momentum,dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==13) muon_dEdx_truth->Fill(momentum,dedx);
+		
+		if(fabs(pfo_pdgcheat[ipfo])==211) pion_dEdx_cos->Fill(fabs(costheta),dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==321) kaon_dEdx_cos->Fill(fabs(costheta),dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==2212) proton_dEdx_cos->Fill(fabs(costheta),dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==11) electron_dEdx_cos->Fill(fabs(costheta),dedx);
+		if(fabs(pfo_pdgcheat[ipfo])==13) muon_dEdx_cos->Fill(fabs(costheta),dedx);
+		
+		
+		if(fabs(pfo_piddedx[ipfo])==211) pion_dEdx_pid->Fill(momentum,dedx);
+		if(fabs(pfo_piddedx[ipfo])==321) kaon_dEdx_pid->Fill(momentum,dedx);
+		if(fabs(pfo_piddedx[ipfo])==2212) proton_dEdx_pid->Fill(momentum,dedx);
+		if(fabs(pfo_piddedx[ipfo])==11) electron_dEdx_pid->Fill(momentum,dedx);
+		if(fabs(pfo_piddedx[ipfo])==13) muon_dEdx_pid->Fill(momentum,dedx);
+	      }
 	    }
 	  }
 	  n_kaon_vtx->Fill(nkaonvtx);
 	}//btag
       }//ijet
-      
     }//bb
   }//for
 
@@ -393,12 +391,11 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
   }
   
   TGraph *eff_purity = new TGraph(11,x,y);
-  TString dirname="rootfiles/";
   TString fname="all_tracks";
   if(secondary==true) fname = "secondary_tracks";
   if(ignoreoverlay==true) fname += "_ignoreoverlay";
   if(angular_correction==true) fname += "_angularcorrection";
-  fname = TString::Format("%soutput_250_%s_%s.root",dirname.Data(),fname.Data(),process.Data());
+  fname = TString::Format("output_250_%s_%s.root",fname.Data(),process.Data());
   
   TFile *MyFile = new TFile(fname,"RECREATE");
   MyFile->cd();
