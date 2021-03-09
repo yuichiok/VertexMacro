@@ -15,7 +15,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TString name_mc_stable = "h_mc_stable_";
 
 	// TH1F
-	h1_mc_stable.push_back( new TH1F(name_mc_stable+"nKaons_evt",";nKaons; Events",20,0,20) );
+	h1_mc_stable.push_back( new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20) );
 	h1_mc_stable.push_back( new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0) );
 
 	// TH2F
@@ -34,7 +34,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20) );
 	h1_pfo.push_back( new TH1F(name_pfo+"Kaons_cos",";|cos#theta|; Events",100,0,1.0) );
 	h1_pfo.push_back( new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400) );
-
+	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20) );
 
 	// TH2F
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
@@ -94,7 +94,9 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
-		int nPFOkaons = 0;
+		int nPFOkaons     = 0;
+		int nPFOkaons_sec = 0;
+
 		int nJETkaons1 = 0;
 		int nJETkaons2 = 0;
 
@@ -116,6 +118,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			h2_pfo.at(0)->Fill(abscos, pfo_tpc_hits[ipfo]);
 
 
+			if( pfo_vtx[ipfo]>0 && fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0) nPFOkaons_sec++;
+
 			// PFO kaon?
 			if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
 			
@@ -131,7 +135,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			// Jet1 Analysis
 			if(pfo_match[ipfo]==0){
 
-
 				if(mom > maxP1){
 					maxP1 = mom;
 					LeadiPFO1 = ipfo;
@@ -143,7 +146,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					nJETkaons1++;
 				
 				} // end kaon in jet1?
-
 
 			} // end jet1
 
@@ -171,6 +173,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		h1_pfo.at(0)->Fill(nPFOkaons);
+		h1_pfo.at(4)->Fill(nPFOkaons_sec);
 
 		h1_pfo.at(1)->Fill(nJETkaons1);
 		h1_pfo.at(1)->Fill(nJETkaons2);
