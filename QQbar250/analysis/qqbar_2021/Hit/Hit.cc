@@ -204,7 +204,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		// trial
-		// if(jentry==1000) break;
+		if(jentry==1000) break;
 
 	} // end of event loop
 
@@ -218,11 +218,51 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 }
 
+// bool Hit::PreSelection(int type=0,float Kvcut=25) {
+  
+//   if(jet_E[0]<0.5 || jet_E[1]<0.5) return false;
+//   if(type == 0 ) return true;
+
+//   return false;
+  
+// }
+
+
 bool Hit::PreSelection(int type=0,float Kvcut=25) {
   
   if(jet_E[0]<0.5 || jet_E[1]<0.5) return false;
+
   if(type == 0 ) return true;
 
-  return false;
+  //---------------------
+  //Radiative return cuts, photon not in the detector
   
+  double bbmass= sqrt(pow(jet_E[0]+jet_E[1],2)-pow(jet_px[0]+jet_px[1],2)-pow(jet_py[0]+jet_py[1],2)-pow(jet_pz[0]+jet_pz[1],2));
+
+  TVector3 v1(jet_px[0],jet_py[0],jet_pz[0]);
+  TVector3 v2(jet_px[1],jet_py[1],jet_pz[1]);
+  VecOP vop;
+  float acol=vop.GetSinacol(v1,v2);
+  
+  double jet0_p = sqrt(pow(jet_px[0],2)+pow(jet_py[0],2)+pow(jet_pz[0],2));
+  double jet1_p = sqrt(pow(jet_px[1],2)+pow(jet_py[1],2)+pow(jet_pz[1],2));
+
+  float costheta_j0;
+  VecOP p_j0(jet_px[0],jet_py[0],jet_pz[0]);
+  costheta_j0 = fabs(p_j0.GetCostheta());
+
+  float costheta_j1;
+  VecOP p_j1(jet_px[1],jet_py[1],jet_pz[1]);
+  costheta_j1 = fabs(p_j1.GetCostheta());
+    
+  float Kv=250.*acol/(acol+sqrt(1-costheta_j0*costheta_j0)+sqrt(1-costheta_j1*costheta_j1));
+  float K1=jet0_p*acol/sqrt(1-costheta_j1*costheta_j1);
+  float K2=jet1_p*acol/sqrt(1-costheta_j0*costheta_j0);
+
+  if(type == 1 )  if( Kv < Kvcut ) return true;
+  if(type == 2 )  if( Kv < Kvcut && bbmass>130 )  return true;
+
+  
+  
+  return false;
 }
