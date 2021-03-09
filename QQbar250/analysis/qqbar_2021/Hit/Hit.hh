@@ -280,7 +280,6 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual bool     PreSelection(int type, float egamma);
-   virtual void     Selection(int, int, TString, float);
 
    virtual void     AnalyzeHit(int , float , TString);
 

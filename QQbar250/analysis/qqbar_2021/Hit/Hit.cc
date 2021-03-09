@@ -62,20 +62,22 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		if(PreSelection(0,Kvcut)==false) continue;
 
+
 		///////////////////////////////
 		///////   MC ANALYSIS   ///////
 		///////////////////////////////
 
 		int nMCkaons = 0;
 
-		for (int imc = 0; imc < mc_stable_n; imc++)
+		for (int istable = 0; istable < mc_stable_n; istable++)
 		{
-			VecOP mcVec(mc_stable_px[imc],mc_stable_py[imc],mc_stable_pz[imc]);
+
+			if(sqrt(pow(mc_stable_px[istable],2)+pow(mc_stable_py[istable],2))<2) continue;
+
+			VecOP mcVec(mc_stable_px[istable],mc_stable_py[istable],mc_stable_pz[istable]);
 			float abscos = abs( mcVec.GetCostheta() );
 
-
-
-			if(fabs(mc_stable_pdg[imc])==321){
+			if(fabs(mc_stable_pdg[istable])==321 && mc_stable_isoverlay[istable]==0){
 				
 				nMCkaons++;
 				h1_mc_stable.at(1)->Fill(abscos);
@@ -86,7 +88,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		} // end of mc_stable
 
 		h1_mc_stable.at(0)->Fill(nMCkaons);
-
 
 
 		////////////////////////////////
@@ -104,6 +105,10 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
+			if(pfo_match[ipfo]<0) continue;
+			if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
+
+
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 			float mom    = pfoVec.GetMomentum();
@@ -112,7 +117,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 			// PFO kaon?
-			if(fabs(pfo_pdgcheat[ipfo])==321){
+			if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
 			
 				nPFOkaons++;
 
@@ -132,10 +137,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					LeadiPFO1 = ipfo;
 				}
 
-
-
 				// kaon in jet1?
-				if(fabs(pfo_pdgcheat[ipfo])==321){
+				if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
 				
 					nJETkaons1++;
 				
@@ -143,7 +146,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 			} // end jet1
-
 
 
 			// Jet2 Analysis
@@ -155,7 +157,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 				}
 
 				// kaon in jet2?
-				if(fabs(pfo_pdgcheat[ipfo])==321){
+				if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
 				
 					nJETkaons2++;
 				
@@ -163,12 +165,10 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 			} // end jet1
-
-
-
 		
 
 		} // end of pfo
+
 
 		h1_pfo.at(0)->Fill(nPFOkaons);
 
