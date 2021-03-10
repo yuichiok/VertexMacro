@@ -40,6 +40,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200) );
+	h2_pfo.push_back( new TH2F(name_pfo+"LeadKaon_p","; p_{K^{-}} [GeV]; p_{K^{+}} [GeV]",120,0,120,120,0,120) );
 
 
 
@@ -48,6 +49,15 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 	if (fChain == 0) return;
+
+
+
+	//////////////////////////////////
+	///////   EVENT ANALYSIS   ///////
+	//////////////////////////////////
+
+	int Kpm=0;
+	int Ksame=0;	
 
 	Long64_t nentries = fChain->GetEntriesFast();
 
@@ -100,8 +110,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		int nJETkaons1 = 0;
 		int nJETkaons2 = 0;
 
+		float maxP0 = 0;
 		float maxP1 = 0;
-		float maxP2 = 0;
 		int LeadiPFO0 = -1;
 		int LeadiPFO1 = -1;
 
@@ -135,8 +145,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			// Jet1 Analysis
 			if(pfo_match[ipfo]==0){
 
-				if(mom > maxP1){
-					maxP1 = mom;
+				if(mom > maxP0){
+					maxP0 = mom;
 					LeadiPFO0 = ipfo;
 				}
 
@@ -153,8 +163,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			// Jet2 Analysis
 			if(pfo_match[ipfo]==1){
 
-				if(mom > maxP2){
-					maxP2 = mom;
+				if(mom > maxP1){
+					maxP1 = mom;
 					LeadiPFO1 = ipfo;
 				}
 
@@ -181,16 +191,48 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO0]);
 		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO1]);
 
-		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO0],maxP1);
-		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO1],maxP2);
-
-		// h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO0],maxP1);
-		// h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO1],maxP2);
+		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO0],maxP0);
+		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO1],maxP1);
 
 
-		////////////////////////////////
-		///////   Jet ANALYSIS   ///////
-		////////////////////////////////
+		////////////////////////////////////////
+		//////   Leading PFOs ANALYSIS   ///////
+		////////////////////////////////////////
+
+		if( pfo_isoverlay[LeadiPFO0]==0 && pfo_isoverlay[LeadiPFO1]==0){
+
+			// are leading PFOs Kaons?
+			if( fabs(pfo_pdgcheat[LeadiPFO0]) == 321 && fabs(pfo_pdgcheat[LeadiPFO1]) == 321 ){
+
+				float multchg = pfo_charge[LeadiPFO0] * pfo_charge[LeadiPFO1];
+				bool signPM = (multchg < 0) ? true : false;
+
+				if(signPM){
+
+					Kpm++;
+
+					if(pfo_charge[LeadiPFO0] > 0){
+
+						h2_pfo.at(3)->Fill(maxP1,maxP0);
+
+					}else if(pfo_charge[LeadiPFO0] < 0){
+
+						h2_pfo.at(3)->Fill(maxP0,maxP1);
+
+					}
+
+
+				}else{
+
+					Ksame++;
+
+				} // end if sign check
+
+			} // end Leading Kaon check
+
+		} // end PFO isoverlay
+
+
 
 		// int nJETkaons = 0;
 
