@@ -39,7 +39,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	// TH2F
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
-	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",400,0,400,200,0,200) );
+	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200) );
 
 
 
@@ -102,8 +102,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		float maxP1 = 0;
 		float maxP2 = 0;
+		int LeadiPFO0 = -1;
 		int LeadiPFO1 = -1;
-		int LeadiPFO2 = -1;
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -137,7 +137,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 				if(mom > maxP1){
 					maxP1 = mom;
-					LeadiPFO1 = ipfo;
+					LeadiPFO0 = ipfo;
 				}
 
 				// kaon in jet1?
@@ -155,7 +155,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 				if(mom > maxP2){
 					maxP2 = mom;
-					LeadiPFO2 = ipfo;
+					LeadiPFO1 = ipfo;
 				}
 
 				// kaon in jet2?
@@ -178,12 +178,14 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		h1_pfo.at(1)->Fill(nJETkaons1);
 		h1_pfo.at(1)->Fill(nJETkaons2);
 
+		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO0]);
 		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO1]);
-		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO2]);
 
+		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO0],maxP1);
+		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO1],maxP2);
 
-		h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO1],maxP1);
-		h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO2],maxP2);
+		// h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO0],maxP1);
+		// h2_pfo.at(2)->Fill(pfo_pdgcheat[LeadiPFO1],maxP2);
 
 
 		////////////////////////////////
@@ -229,6 +231,33 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 //   return false;
   
 // }
+
+void Hit::SwitchEGPK(TH2F* h2 = 0, int pdgcheat = 0, float maxP = -2) {
+
+	switch ( pdgcheat ) {
+
+	case 11:
+		h2->Fill(0.,maxP);
+		break;
+
+	case 22:
+		h2->Fill(1.,maxP);
+		break;
+
+	case 211:
+		h2->Fill(2.,maxP);
+		break;
+
+	case 321:
+		h2->Fill(3.,maxP);
+		break;
+
+	default:
+		break;
+
+	} // end switch
+
+}
 
 
 bool Hit::PreSelection(int type=0,float Kvcut=25) {

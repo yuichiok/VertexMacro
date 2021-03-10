@@ -280,15 +280,9 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual bool     PreSelection(int type, float egamma);
+   virtual void     SwitchEGPK(TH2F* h2, int pdgcheat, float maxP);
 
    virtual void     AnalyzeHit(int , float , TString);
-
-   float GetSinacol(TVector3 v1, TVector3 v2){
-      float sinacol =  -2.0;
-      TVector3 v= v1.Cross(v2);
-      sinacol = (v.Mag()/(v1.Mag()*v2.Mag()));// * v2.Mag()/(v1+v2).Mag(); 
-      return sinacol;
-   }
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
