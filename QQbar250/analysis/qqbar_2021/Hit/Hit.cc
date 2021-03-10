@@ -41,6 +41,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200) );
 	h2_pfo.push_back( new TH2F(name_pfo+"LeadKaon_p","; p_{K^{-}} [GeV]; p_{K^{+}} [GeV]",120,0,120,120,0,120) );
+	h2_pfo.push_back( new TH2F(name_pfo+"LeadPi_p","; p_{#pi^{-}} [GeV]; p_{#pi^{+}} [GeV]",120,0,120,120,0,120) );
+
 
 
 
@@ -124,6 +126,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 			float mom    = pfoVec.GetMomentum();
+			float charge = pfo_charge[ipfo];
 
 			h2_pfo.at(0)->Fill(abscos, pfo_tpc_hits[ipfo]);
 
@@ -150,12 +153,16 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					LeadiPFO0 = ipfo;
 				}
 
-				// kaon in jet1?
-				if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
-				
-					nJETkaons1++;
-				
-				} // end kaon in jet1?
+				if(pfo_isoverlay[ipfo]==0){
+
+					// kaon in jet1?
+					if( fabs(pfo_pdgcheat[ipfo])==321 ){
+					
+						nJETkaons1++;
+					
+					} // end kaon in jet1?
+
+				}
 
 			} // end jet1
 
@@ -168,13 +175,16 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					LeadiPFO1 = ipfo;
 				}
 
-				// kaon in jet2?
-				if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
-				
-					nJETkaons2++;
-				
-				} // end kaon in jet2?
+				if(pfo_isoverlay[ipfo]==0){
 
+					// kaon in jet2?
+					if( fabs(pfo_pdgcheat[ipfo])==321 ){
+					
+						nJETkaons2++;
+					
+					} // end kaon in jet2?
+
+				}
 
 			} // end jet1
 		
@@ -201,34 +211,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		if( pfo_isoverlay[LeadiPFO0]==0 && pfo_isoverlay[LeadiPFO1]==0){
 
-			// are leading PFOs Kaons?
-			if( fabs(pfo_pdgcheat[LeadiPFO0]) == 321 && fabs(pfo_pdgcheat[LeadiPFO1]) == 321 ){
-
-				float multchg = pfo_charge[LeadiPFO0] * pfo_charge[LeadiPFO1];
-				bool signPM = (multchg < 0) ? true : false;
-
-				if(signPM){
-
-					Kpm++;
-
-					if(pfo_charge[LeadiPFO0] > 0){
-
-						h2_pfo.at(3)->Fill(maxP1,maxP0);
-
-					}else if(pfo_charge[LeadiPFO0] < 0){
-
-						h2_pfo.at(3)->Fill(maxP0,maxP1);
-
-					}
-
-
-				}else{
-
-					Ksame++;
-
-				} // end if sign check
-
-			} // end Leading Kaon check
+			LeadingMom(h2_pfo.at(3), 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+			LeadingMom(h2_pfo.at(4), 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
 		} // end PFO isoverlay
 
@@ -251,7 +235,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		// trial
-		if(jentry==1000) break;
+		// if(jentry==1000) break;
 
 	} // end of event loop
 
@@ -273,6 +257,33 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 //   return false;
   
 // }
+
+void Hit::LeadingMom(TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
+
+	// are leading PFOs Kaons?
+	if( fabs(pfo_pdgcheat[iPFO0]) == subject && fabs(pfo_pdgcheat[iPFO1]) == subject ){
+
+		float multchg = pfo_charge[iPFO0] * pfo_charge[iPFO1];
+		bool signPM = (multchg < 0) ? true : false;
+
+		if(signPM){
+
+			if(pfo_charge[iPFO0] > 0){
+
+				h2->Fill(P1,P0);
+
+			}else if(pfo_charge[iPFO0] < 0){
+
+				h2->Fill(P0,P1);
+
+			}
+
+		} // end sign check
+
+	} // end Leading Kaon check
+
+}
+
 
 void Hit::SwitchEGPK(TH2F* h2 = 0, int pdgcheat = 0, float maxP = -2) {
 
