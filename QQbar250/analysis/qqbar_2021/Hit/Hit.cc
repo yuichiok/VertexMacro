@@ -36,6 +36,9 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	h1_pfo.push_back( new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400) );
 	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20) );
 
+	h1_pfo.push_back( new TH1F(name_pfo+"Hits_all",";# of Track Hits; Events",225,0,225) );
+	h1_pfo.push_back( new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225) );
+
 	// TH2F
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
@@ -72,7 +75,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 
-		if(PreSelection(0,Kvcut)==false) continue;
+		if(PreSelection(1,Kvcut)==false) continue;
 
 
 		///////////////////////////////
@@ -131,10 +134,13 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			h2_pfo.at(0)->Fill(abscos, pfo_tpc_hits[ipfo]);
 
 
-			if( pfo_vtx[ipfo]>0 && fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0) nPFOkaons_sec++;
+			if( pfo_vtx[ipfo]>0 && fabs(pfo_pdgcheat[ipfo])==321 ) nPFOkaons_sec++;
+
+			if( abscos>0.05 && abscos<0.8 ) h1_pfo.at(5)->Fill(pfo_tpc_hits[ipfo]);
+			if( fabs(pfo_pdgcheat[ipfo])==321 && abscos>0.05 && abscos<0.8 ) h1_pfo.at(6)->Fill(pfo_tpc_hits[ipfo]);
 
 			// PFO kaon?
-			if( fabs(pfo_pdgcheat[ipfo])==321 && pfo_isoverlay[ipfo]==0 ){
+			if( fabs(pfo_pdgcheat[ipfo])==321 ){
 			
 				nPFOkaons++;
 
@@ -153,16 +159,12 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					LeadiPFO0 = ipfo;
 				}
 
-				if(pfo_isoverlay[ipfo]==0){
-
-					// kaon in jet1?
-					if( fabs(pfo_pdgcheat[ipfo])==321 ){
-					
-						nJETkaons1++;
-					
-					} // end kaon in jet1?
-
-				}
+				// kaon in jet1?
+				if( fabs(pfo_pdgcheat[ipfo])==321 ){
+				
+					nJETkaons1++;
+				
+				} // end kaon in jet1?
 
 			} // end jet1
 
@@ -175,16 +177,12 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 					LeadiPFO1 = ipfo;
 				}
 
-				if(pfo_isoverlay[ipfo]==0){
-
-					// kaon in jet2?
-					if( fabs(pfo_pdgcheat[ipfo])==321 ){
-					
-						nJETkaons2++;
-					
-					} // end kaon in jet2?
-
-				}
+				// kaon in jet2?
+				if( fabs(pfo_pdgcheat[ipfo])==321 ){
+				
+					nJETkaons2++;
+				
+				} // end kaon in jet2?
 
 			} // end jet1
 		
@@ -209,12 +207,10 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		//////   Leading PFOs ANALYSIS   ///////
 		////////////////////////////////////////
 
-		if( pfo_isoverlay[LeadiPFO0]==0 && pfo_isoverlay[LeadiPFO1]==0){
 
-			LeadingMom(h2_pfo.at(3), 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
-			LeadingMom(h2_pfo.at(4), 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+		LeadingMom(h2_pfo.at(3), 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+		LeadingMom(h2_pfo.at(4), 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
-		} // end PFO isoverlay
 
 
 
