@@ -38,6 +38,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 	h1_pfo.push_back( new TH1F(name_pfo+"Hits_all",";# of Track Hits; Events",225,0,225) );
 	h1_pfo.push_back( new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225) );
+	h1_pfo.push_back( new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0) );
 
 	// TH2F
 	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
@@ -75,8 +76,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 
-		if(PreSelection(1,Kvcut)==false) continue;
-
+		// if(PreSelection(1,Kvcut)==false) continue;
+		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
 		///////////////////////////////
 		///////   MC ANALYSIS   ///////
@@ -117,13 +118,19 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		float maxP0 = 0;
 		float maxP1 = 0;
+
+		float LeadCos0 = -2;
+		float LeadCos1 = -2;
+
 		int LeadiPFO0 = -1;
 		int LeadiPFO1 = -1;
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
-			if(pfo_match[ipfo]<0) continue;
+			// if(pfo_match[ipfo]<0) continue;
 			if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
+			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
+			if(pfo_ntracks[ipfo]!=1) continue;
 
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
@@ -138,6 +145,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 			if( abscos>0.05 && abscos<0.8 ) h1_pfo.at(5)->Fill(pfo_tpc_hits[ipfo]);
 			if( fabs(pfo_pdgcheat[ipfo])==321 && abscos>0.05 && abscos<0.8 ) h1_pfo.at(6)->Fill(pfo_tpc_hits[ipfo]);
+
 
 			// PFO kaon?
 			if( fabs(pfo_pdgcheat[ipfo])==321 ){
@@ -156,6 +164,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 				if(mom > maxP0){
 					maxP0 = mom;
+					LeadCos0 = abscos;
 					LeadiPFO0 = ipfo;
 				}
 
@@ -174,6 +183,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 				if(mom > maxP1){
 					maxP1 = mom;
+					LeadCos1 = abscos;
 					LeadiPFO1 = ipfo;
 				}
 
@@ -198,6 +208,9 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO0]);
 		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO1]);
+
+		h1_pfo.at(7)->Fill(LeadCos0);
+		h1_pfo.at(7)->Fill(LeadCos1);
 
 		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO0],maxP0);
 		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO1],maxP1);
