@@ -15,13 +15,18 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TString name_mc_stable = "h_mc_stable_";
 
 	// TH1F
-	h1_mc_stable.push_back( new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20) );
-	h1_mc_stable.push_back( new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0) );
+	TH1F* mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* mc_k_cos 	 = new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
+
+	h1_mc_stable.push_back( mc_nk_evt );
+	h1_mc_stable.push_back( mc_k_cos );
 
 	// TH2F
-	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
-	h2_mc_stable.push_back( new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
+	TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	TH2F* mc_HitCos_k	 = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
 
+	h2_mc_stable.push_back( mc_HitCos_all );
+	h2_mc_stable.push_back( mc_HitCos_k );
 
 
 
@@ -30,22 +35,42 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
-	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20) );
-	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20) );
-	h1_pfo.push_back( new TH1F(name_pfo+"Kaons_cos",";|cos#theta|; Events",100,0,1.0) );
-	h1_pfo.push_back( new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400) );
-	h1_pfo.push_back( new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20) );
+	TH1F* pfo_nk_evt  		= new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* pfo_nk_jet	  	= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
+	TH1F* pfo_k_cos  		= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadPFO_pid	= new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400);
+	TH1F* pfo_nk_sec_evt  	= new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20);
 
-	h1_pfo.push_back( new TH1F(name_pfo+"Hits_all",";# of Track Hits; Events",225,0,225) );
-	h1_pfo.push_back( new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225) );
-	h1_pfo.push_back( new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0) );
+	TH1F* pfo_Hits_all  	= new TH1F(name_pfo+"Hits_all",";# of Track Hits; Events",225,0,225);
+	TH1F* pfo_Hits_k		= new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225);
+	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_PFOTracks_all	= new TH1F(name_pfo+"all_PFOTracks",";nTracks/PFO; Events",10,0,10);
+	TH1F* pfo_PFOTracks_k	= new TH1F(name_pfo+"Kaon_PFOTracks",";nTracks/PFO; Events",10,0,10);
+
+	h1_pfo.push_back( pfo_nk_evt );
+	h1_pfo.push_back( pfo_nk_jet );
+	h1_pfo.push_back( pfo_k_cos );
+	h1_pfo.push_back( pfo_LeadPFO_pid );
+	h1_pfo.push_back( pfo_nk_sec_evt );
+
+	h1_pfo.push_back( pfo_Hits_all );
+	h1_pfo.push_back( pfo_Hits_k );
+	h1_pfo.push_back( pfo_LeadK_cos );
+	h1_pfo.push_back( pfo_PFOTracks_all );
+	h1_pfo.push_back( pfo_PFOTracks_k );
 
 	// TH2F
-	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
-	h2_pfo.push_back( new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230) );
-	h2_pfo.push_back( new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200) );
-	h2_pfo.push_back( new TH2F(name_pfo+"LeadKaon_p","; p_{K^{-}} [GeV]; p_{K^{+}} [GeV]",120,0,120,120,0,120) );
-	h2_pfo.push_back( new TH2F(name_pfo+"LeadPi_p","; p_{#pi^{-}} [GeV]; p_{#pi^{+}} [GeV]",120,0,120,120,0,120) );
+	TH2F* pfo_HitCos_all 		= new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	TH2F* pfo_HitCos_k 			= new TH2F(name_pfo+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200);
+	TH2F* pfo_LeadK_p 			= new TH2F(name_pfo+"LeadKaon_p","; p_{K^{-}} [GeV]; p_{K^{+}} [GeV]",120,0,120,120,0,120);
+	TH2F* pfo_LeadPi_p			= new TH2F(name_pfo+"LeadPi_p","; p_{#pi^{-}} [GeV]; p_{#pi^{+}} [GeV]",120,0,120,120,0,120);
+
+	h2_pfo.push_back( pfo_HitCos_all );
+	h2_pfo.push_back( pfo_HitCos_k );
+	h2_pfo.push_back( pfo_LeadPFO_p_pid );
+	h2_pfo.push_back( pfo_LeadK_p );
+	h2_pfo.push_back( pfo_LeadPi_p );
 
 
 
@@ -69,6 +94,12 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 	Long64_t nbytes = 0, nb = 0;
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
+
+
+		// trial
+		// if(jentry>1000) break;
+
+
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -79,6 +110,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		// if(PreSelection(1,Kvcut)==false) continue;
 		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
+
+
 		///////////////////////////////
 		///////   MC ANALYSIS   ///////
 		///////////////////////////////
@@ -88,22 +121,22 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		for (int istable = 0; istable < mc_stable_n; istable++)
 		{
 
-			if(sqrt(pow(mc_stable_px[istable],2)+pow(mc_stable_py[istable],2))<2) continue;
+			if( sqrt(pow(mc_stable_px[istable],2)+pow(mc_stable_py[istable],2))<2 ) continue;
 
 			VecOP mcVec(mc_stable_px[istable],mc_stable_py[istable],mc_stable_pz[istable]);
 			float abscos = abs( mcVec.GetCostheta() );
 
-			if(fabs(mc_stable_pdg[istable])==321 && mc_stable_isoverlay[istable]==0){
+			if( fabs(mc_stable_pdg[istable])==321 ){
 				
 				nMCkaons++;
-				h1_mc_stable.at(1)->Fill(abscos);
+				mc_k_cos->Fill(abscos);
 			
 			} // kaon?
 
 
 		} // end of mc_stable
 
-		h1_mc_stable.at(0)->Fill(nMCkaons);
+		mc_nk_evt->Fill(nMCkaons);
 
 
 		////////////////////////////////
@@ -128,9 +161,12 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
 			// if(pfo_match[ipfo]<0) continue;
+
 			if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
 			if(pfo_ntracks[ipfo]!=1) continue;
+
+			pfo_PFOTracks_all->Fill(pfo_ntracks[ipfo]);
 
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
@@ -143,16 +179,17 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 			if( pfo_vtx[ipfo]>0 && fabs(pfo_pdgcheat[ipfo])==321 ) nPFOkaons_sec++;
 
-			if( abscos>0.05 && abscos<0.8 ) h1_pfo.at(5)->Fill(pfo_tpc_hits[ipfo]);
-			if( fabs(pfo_pdgcheat[ipfo])==321 && abscos>0.05 && abscos<0.8 ) h1_pfo.at(6)->Fill(pfo_tpc_hits[ipfo]);
+			if( abscos>0.05 && abscos<0.8 ) pfo_Hits_all->Fill(pfo_tpc_hits[ipfo]);
+			if( fabs(pfo_pdgcheat[ipfo])==321 && abscos>0.05 && abscos<0.8 ) pfo_Hits_k->Fill(pfo_tpc_hits[ipfo]);
 
 
 			// PFO kaon?
-			if( fabs(pfo_pdgcheat[ipfo])==321 ){
+			if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
 			
 				nPFOkaons++;
 
-				h1_pfo.at(2)->Fill(abscos);
+				pfo_k_cos->Fill(abscos);
+				pfo_PFOTracks_k->Fill(pfo_ntracks[ipfo]);
 
 				h2_pfo.at(1)->Fill(abscos, pfo_tpc_hits[ipfo]);
 			
@@ -169,7 +206,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 				}
 
 				// kaon in jet1?
-				if( fabs(pfo_pdgcheat[ipfo])==321 ){
+				if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
 				
 					nJETkaons1++;
 				
@@ -188,7 +225,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 				}
 
 				// kaon in jet2?
-				if( fabs(pfo_pdgcheat[ipfo])==321 ){
+				if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
 				
 					nJETkaons2++;
 				
@@ -201,16 +238,16 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		h1_pfo.at(0)->Fill(nPFOkaons);
-		h1_pfo.at(4)->Fill(nPFOkaons_sec);
+		pfo_nk_sec_evt->Fill(nPFOkaons_sec);
 
-		h1_pfo.at(1)->Fill(nJETkaons1);
-		h1_pfo.at(1)->Fill(nJETkaons2);
+		pfo_nk_jet->Fill(nJETkaons1);
+		pfo_nk_jet->Fill(nJETkaons2);
 
-		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO0]);
-		h1_pfo.at(3)->Fill(pfo_pdgcheat[LeadiPFO1]);
+		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO0]);
+		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO1]);
 
-		h1_pfo.at(7)->Fill(LeadCos0);
-		h1_pfo.at(7)->Fill(LeadCos1);
+		pfo_LeadK_cos->Fill(LeadCos0);
+		pfo_LeadK_cos->Fill(LeadCos1);
 
 		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO0],maxP0);
 		SwitchEGPK(h2_pfo.at(2),pfo_pdgcheat[LeadiPFO1],maxP1);
@@ -221,7 +258,8 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		////////////////////////////////////////
 
 
-		LeadingMom(h2_pfo.at(3), 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+		if(maxP0 > 2 && maxP1 > 2) LeadingMom(h2_pfo.at(3), 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+
 		LeadingMom(h2_pfo.at(4), 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
 
@@ -243,8 +281,6 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 
-		// trial
-		// if(jentry==1000) break;
 
 	} // end of event loop
 
