@@ -84,7 +84,9 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	//////////////////////////////////
 
 	int Kpm=0;
-	int Ksame=0;	
+	int Ksame=0;
+
+	float Kedge = 0;
 
 	Long64_t nentries = fChain->GetEntriesFast();
 
@@ -93,7 +95,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 
 		// trial
-		if(jentry>1000) break;
+		// if(jentry>1000) break;
 
 
 		Long64_t ientry = LoadTree(jentry);
@@ -181,10 +183,14 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 			if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
 			
 				nPFOkaons++;
-
 				pfo_k_cos->Fill(abscos);
-
 				pfo_HitCos_k->Fill(abscos, pfo_tpc_hits[ipfo]);
+
+				float tpcedge = -1.11849e3*abscos + 1.115e3;
+
+				if( (abscos<0.8 && pfo_tpc_hits[ipfo]>210) || (abscos>=0.8 && pfo_tpc_hits[ipfo]>tpcedge) ){
+					Kedge++;
+				}
 			
 			} // end PFO kaon?
 
@@ -269,13 +275,14 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		// }
 
-
-
-
-
-
-
 	} // end of event loop
+
+
+	float Khitall = pfo_HitCos_k->GetEntries();
+
+	std::cout << "Kedge   = " << Kedge << "\n";
+	std::cout << "Khitall = " << Khitall << "\n";
+	std::cout << "Kedge/Khitall = " << Kedge/Khitall << "\n";
 
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
