@@ -45,6 +45,11 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TH1F* pfo_Hits_k		= new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225);
 	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
 
+	TH1F* pfo_LeadKp_p  	= new TH1F(name_pfo+"LeadKp_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadKm_p  	= new TH1F(name_pfo+"LeadKm_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadPip_p  	= new TH1F(name_pfo+"LeadPip_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadPim_p  	= new TH1F(name_pfo+"LeadPim_p",";p[GeV]; Events",120,0,120);
+
 	h1_pfo.push_back( pfo_nk_evt );
 	h1_pfo.push_back( pfo_nk_jet );
 	h1_pfo.push_back( pfo_k_cos );
@@ -54,6 +59,11 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	h1_pfo.push_back( pfo_Hits_all );
 	h1_pfo.push_back( pfo_Hits_k );
 	h1_pfo.push_back( pfo_LeadK_cos );
+
+	h1_pfo.push_back( pfo_LeadKp_p );
+	h1_pfo.push_back( pfo_LeadKm_p );
+	h1_pfo.push_back( pfo_LeadPip_p );
+	h1_pfo.push_back( pfo_LeadPim_p );
 
 	// TH2F
 	TH2F* pfo_HitCos_all 		= new TH2F(name_pfo+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
@@ -257,9 +267,9 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		////////////////////////////////////////
 
 
-		if(maxP0 > 2 && maxP1 > 2) LeadingMom(pfo_LeadK_p, 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+		if(maxP0 > 2 && maxP1 > 2) LeadingMom(pfo_LeadKp_p, pfo_LeadKm_p, pfo_LeadK_p, 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
-		LeadingMom(pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+		LeadingMom(pfo_LeadPip_p, pfo_LeadPim_p, pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
 
 
@@ -303,7 +313,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
   
 // }
 
-void Hit::LeadingMom(TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
+void Hit::LeadingMom(TH1F* h1p = 0, TH1F* h1m = 0, TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
 
 	// are leading PFOs Kaons?
 	if( fabs(pfo_pdgcheat[iPFO0]) == subject && fabs(pfo_pdgcheat[iPFO1]) == subject ){
@@ -315,9 +325,15 @@ void Hit::LeadingMom(TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0
 
 			if(pfo_charge[iPFO0] > 0){
 
+				h1p->Fill(P0);
+				h1m->Fill(P1);
+
 				h2->Fill(P1,P0);
 
 			}else if(pfo_charge[iPFO0] < 0){
+
+				h1p->Fill(P1);
+				h1m->Fill(P0);
 
 				h2->Fill(P0,P1);
 
