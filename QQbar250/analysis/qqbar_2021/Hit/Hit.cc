@@ -37,13 +37,23 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	// TH1F
 	TH1F* pfo_nk_evt  		= new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
 	TH1F* pfo_nk_jet	  	= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
+
 	TH1F* pfo_k_cos  		= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
+
+	TH1F* pfo_k_2_10_cos	= new TH1F(name_pfo+"pfo_k_2_10_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_10_30_cos	= new TH1F(name_pfo+"pfo_k_10_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_30_cos		= new TH1F(name_pfo+"pfo_k_30_cos",";|cos#theta|; Events",100,0,1.0);
+
+	TH1F* pfo_LeadK_2_10_cos	= new TH1F(name_pfo+"pfo_LeadK_2_10_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_10_30_cos	= new TH1F(name_pfo+"pfo_LeadK_10_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_30_cos		= new TH1F(name_pfo+"pfo_LeadK_30_cos",";|cos#theta|; Events",100,0,1.0);
+
 	TH1F* pfo_LeadPFO_pid	= new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400);
 	TH1F* pfo_nk_sec_evt  	= new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20);
 
 	TH1F* pfo_Hits_all  	= new TH1F(name_pfo+"Hits_all",";# of Track Hits; Events",225,0,225);
 	TH1F* pfo_Hits_k		= new TH1F(name_pfo+"Hits_k",";# of Track Hits; Events",225,0,225);
-	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
 
 	TH1F* pfo_LeadKp_p  	= new TH1F(name_pfo+"LeadKp_p",";p[GeV]; Events",120,0,120);
 	TH1F* pfo_LeadKm_p  	= new TH1F(name_pfo+"LeadKm_p",";p[GeV]; Events",120,0,120);
@@ -52,13 +62,24 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 	h1_pfo.push_back( pfo_nk_evt );
 	h1_pfo.push_back( pfo_nk_jet );
+
 	h1_pfo.push_back( pfo_k_cos );
+	h1_pfo.push_back( pfo_LeadK_cos );
+
+	h1_pfo.push_back( pfo_k_2_10_cos );
+	h1_pfo.push_back( pfo_k_10_30_cos );
+	h1_pfo.push_back( pfo_k_30_cos );
+
+	h1_pfo.push_back( pfo_LeadK_2_10_cos );
+	h1_pfo.push_back( pfo_LeadK_10_30_cos );
+	h1_pfo.push_back( pfo_LeadK_30_cos );
+
+
 	h1_pfo.push_back( pfo_LeadPFO_pid );
 	h1_pfo.push_back( pfo_nk_sec_evt );
 
 	h1_pfo.push_back( pfo_Hits_all );
 	h1_pfo.push_back( pfo_Hits_k );
-	h1_pfo.push_back( pfo_LeadK_cos );
 
 	h1_pfo.push_back( pfo_LeadKp_p );
 	h1_pfo.push_back( pfo_LeadKm_p );
@@ -196,6 +217,15 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 				pfo_k_cos->Fill(abscos);
 				pfo_HitCos_k->Fill(abscos, pfo_tpc_hits[ipfo]);
 
+				// analysis with different momentum kaons
+				if(mom < 10){
+					pfo_k_2_10_cos->Fill(abscos);
+				}else if(mom < 30){
+					pfo_k_10_30_cos->Fill(abscos);
+				}else if(mom >= 30){
+					pfo_k_30_cos->Fill(abscos);
+				}
+
 				float tpcedge = -1.11849e3*abscos + 1.115e3;
 
 				if( (abscos<0.8 && pfo_tpc_hits[ipfo]>210) || (abscos>=0.8 && pfo_tpc_hits[ipfo]>tpcedge) ){
@@ -257,6 +287,26 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 
 		pfo_LeadK_cos->Fill(LeadCos0);
 		pfo_LeadK_cos->Fill(LeadCos1);
+
+		// analysis with different momentum kaons0
+		if(maxP0 < 10){
+			pfo_LeadK_2_10_cos->Fill(LeadCos0);
+		}else if(maxP0 < 30){
+			pfo_LeadK_10_30_cos->Fill(LeadCos0);
+		}else if(maxP0 >= 30){
+			pfo_LeadK_30_cos->Fill(LeadCos0);
+		}
+
+		// analysis with different momentum kaons1
+		if(maxP1 < 10){
+			pfo_LeadK_2_10_cos->Fill(LeadCos1);
+		}else if(maxP1 < 30){
+			pfo_LeadK_10_30_cos->Fill(LeadCos1);
+		}else if(maxP1 >= 30){
+			pfo_LeadK_30_cos->Fill(LeadCos1);
+		}
+
+
 
 		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO0],maxP0);
 		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO1],maxP1);
