@@ -41,13 +41,13 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 	TH1F* pfo_k_cos  		= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
 
-	TH1F* pfo_k_2_10_cos	= new TH1F(name_pfo+"pfo_k_2_10_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_k_10_30_cos	= new TH1F(name_pfo+"pfo_k_10_30_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_k_30_cos		= new TH1F(name_pfo+"pfo_k_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_2_10_cos	= new TH1F(name_pfo+"k_2_10_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_10_30_cos	= new TH1F(name_pfo+"k_10_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_30_cos		= new TH1F(name_pfo+"k_30_cos",";|cos#theta|; Events",100,0,1.0);
 
-	TH1F* pfo_LeadK_2_10_cos	= new TH1F(name_pfo+"pfo_LeadK_2_10_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_LeadK_10_30_cos	= new TH1F(name_pfo+"pfo_LeadK_10_30_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_LeadK_30_cos		= new TH1F(name_pfo+"pfo_LeadK_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_2_10_cos	= new TH1F(name_pfo+"LeadK_2_10_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_10_30_cos	= new TH1F(name_pfo+"LeadK_10_30_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_30_cos		= new TH1F(name_pfo+"LeadK_30_cos",";|cos#theta|; Events",100,0,1.0);
 
 	TH1F* pfo_LeadPFO_pid	= new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400);
 	TH1F* pfo_nk_sec_evt  	= new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20);
