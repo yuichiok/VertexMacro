@@ -137,6 +137,7 @@ void Hit::AnalyzeHit(int n_entries=-1, float Kvcut=35, TString output="test")
 		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 
 		// if(PreSelection(1,Kvcut)==false) continue;
+		if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
 		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
 
