@@ -1,0 +1,50 @@
+
+Processing analysis.cc("15162",true,false)...
+760000
+Progress: 26.3158 %
+Progress: 39.4737 %
+Progress: 52.6316 %
+Progress: 65.7895 %
+Progress: 78.9474 %
+Progress: 92.1053 %
+ FCN=0.739731 FROM MINOS     STATUS=SUCCESSFUL     12 CALLS          86 TOTAL
+                     EDM=8.05039e-22    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           9.45226e-02   4.92801e-03  -8.91737e-09   4.75637e-09
+   2  p1           1.95769e-02   1.66287e-03   1.66287e-03  -2.96011e-08
+eff_input>0.45:     purity=0.831958 eff=0.470192;    slope=0.0195769 upper=0.0994506 lower=0.0900874
+eff_input>0.5:     purity=0.821755 eff=0.514292;    slope=0.0195769 upper=0.0994506 lower=0.0891018
+eff_input>0.55:     purity=0.817216 eff=0.55737;    slope=0.0195769 upper=0.0994506 lower=0.0881162
+eff_input>0.6:     purity=0.808996 eff=0.608207;    slope=0.0195769 upper=0.100436 lower=0.0881162
+eff_input>0.65:     purity=0.80117 eff=0.663332;    slope=0.0195769 upper=0.100929 lower=0.0871306
+eff_input>0.7:     purity=0.793379 eff=0.715394;    slope=0.0195769 upper=0.101915 lower=0.0871306
+eff_input>0.75:     purity=0.784686 eff=0.75194;    slope=0.0195769 upper=0.101915 lower=0.086145
+eff_input>0.8:     purity=0.771652 eff=0.810943;    slope=0.0195769 upper=0.102407 lower=0.0851594
+eff_input>0.85:     purity=0.759799 eff=0.854226;    slope=0.0195769 upper=0.102407 lower=0.083681
+eff_input>0.9:     purity=0.746262 eff=0.901184;    slope=0.0195769 upper=0.1029 lower=0.0826954
+eff_input>0.95:     purity=0.732891 eff=0.954675;    slope=0.0195769 upper=0.103886 lower=0.0826954
+760000
+Progress: 26.3158 %
+Progress: 39.4737 %
+Progress: 52.6316 %
+Progress: 65.7895 %
+Progress: 78.9474 %
+Progress: 92.1053 %
+ FCN=0.229798 FROM MINOS     STATUS=SUCCESSFUL     12 CALLS          86 TOTAL
+                     EDM=7.53121e-21    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           9.54025e-02   4.53972e-03  -2.85043e-11  -1.60633e-09
+   2  p1           1.92152e-02   1.44133e-03   1.44133e-03   7.75778e-09
+eff_input>0.45:     purity=0.737091 eff=0.451276;    slope=0.0192152 upper=0.100396 lower=0.0913168
+eff_input>0.5:     purity=0.729748 eff=0.505454;    slope=0.0192152 upper=0.100396 lower=0.0899549
+eff_input>0.55:     purity=0.722327 eff=0.553051;    slope=0.0192152 upper=0.10085 lower=0.0895009
+eff_input>0.6:     purity=0.71147 eff=0.604339;    slope=0.0192152 upper=0.101758 lower=0.0895009
+eff_input>0.65:     purity=0.700862 eff=0.658901;    slope=0.0192152 upper=0.101758 lower=0.088139
+eff_input>0.7:     purity=0.689728 eff=0.704177;    slope=0.0192152 upper=0.101758 lower=0.0867771
+eff_input>0.75:     purity=0.679534 eff=0.751235;    slope=0.0192152 upper=0.10312 lower=0.087685
+eff_input>0.8:     purity=0.666768 eff=0.802713;    slope=0.0192152 upper=0.103574 lower=0.0867771
+eff_input>0.85:     purity=0.653038 eff=0.852547;    slope=0.0192152 upper=0.103574 lower=0.0854152
+eff_input>0.9:     purity=0.638069 eff=0.907369;    slope=0.0192152 upper=0.104028 lower=0.0845072
+eff_input>0.95:     purity=0.626062 eff=0.950101;    slope=0.0192152 upper=0.104482 lower=0.0840533
