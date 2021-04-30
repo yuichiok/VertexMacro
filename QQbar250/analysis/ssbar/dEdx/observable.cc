@@ -61,7 +61,7 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    if ( jentry > 100000 && jentry % 100000 ==0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+    if ( jentry > 1000 && jentry % 1000 ==0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 
     if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
 
@@ -404,7 +404,7 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
   if(secondary==true) fname = "secondary_tracks";
   if(ignoreoverlay==true) fname += "_ignoreoverlay";
   if(angular_correction==true) fname += "_angularcorrection";
-  fname = TString::Format("output_250_%s_%s.root",fname.Data(),process.Data());
+  fname = TString::Format("rootfiles/AdrianCorr/output_250_%s_%s.root",fname.Data(),process.Data());
   
   TFile *MyFile = new TFile(fname,"RECREATE");
   MyFile->cd();
