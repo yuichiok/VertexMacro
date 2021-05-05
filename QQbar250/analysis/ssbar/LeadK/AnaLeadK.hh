@@ -273,6 +273,8 @@ public :
    AnaLeadK(TString tree_s);
    AnaLeadK(TList *f=0);
    virtual ~AnaLeadK();
+
+   virtual void     printProgress(double percentage);
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);

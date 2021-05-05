@@ -1,8 +1,19 @@
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+
 #define AnaLeadK_cxx
 #include "AnaLeadK.hh"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+
+void AnaLeadK::printProgress(double percentage) {
+    int val = (int) (percentage * 100);
+    int lpad = (int) (percentage * PBWIDTH);
+    int rpad = PBWIDTH - lpad;
+    printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+    fflush(stdout);
+}
 
 void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="test")
 {
@@ -58,9 +69,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_pfo.push_back( pfo_LeadPFO_pid );
 	h1_pfo.push_back( pfo_nk_sec_evt );
 
-	h1_pfo.push_back( pfo_Hits_all );
-	h1_pfo.push_back( pfo_Hits_k );
-
 	h1_pfo.push_back( pfo_LeadKp_p );
 	h1_pfo.push_back( pfo_LeadKm_p );
 	h1_pfo.push_back( pfo_LeadPip_p );
@@ -110,7 +118,10 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
 		// if (Cut(ientry) < 0) continue;
 
-		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+		// Progress bar
+		// if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
+
 
 		if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
 		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
@@ -177,13 +188,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			float mom    = pfoVec.GetMomentum();
 			float charge = pfo_charge[ipfo];
 
-			pfo_HitCos_all->Fill(abscos, pfo_tpc_hits[ipfo]);
-
-
 			if( pfo_vtx[ipfo]>0 && fabs(pfo_pdgcheat[ipfo])==321 ) nPFOkaons_sec++;
-
-			if( abscos>0.05 && abscos<0.8 ) pfo_Hits_all->Fill(pfo_tpc_hits[ipfo]);
-			if( fabs(pfo_pdgcheat[ipfo])==321 && abscos>0.05 && abscos<0.8 ) pfo_Hits_k->Fill(pfo_tpc_hits[ipfo]);
 
 
 			// PFO kaon?
@@ -191,16 +196,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			
 				nPFOkaons++;
 				pfo_k_cos->Fill(abscos);
-				pfo_HitCos_k->Fill(abscos, pfo_tpc_hits[ipfo]);
-
-				// analysis with different momentum kaons
-				if(mom < 10){
-					pfo_k_2_10_cos->Fill(abscos);
-				}else if(mom < 30){
-					pfo_k_10_30_cos->Fill(abscos);
-				}else if(mom >= 30){
-					pfo_k_30_cos->Fill(abscos);
-				}
 
 				float tpcedge = -1.11849e3*abscos + 1.115e3;
 
@@ -264,26 +259,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		pfo_LeadK_cos->Fill(LeadCos0);
 		pfo_LeadK_cos->Fill(LeadCos1);
 
-		// analysis with different momentum kaons0
-		if(maxP0 < 10){
-			pfo_LeadK_2_10_cos->Fill(LeadCos0);
-		}else if(maxP0 < 30){
-			pfo_LeadK_10_30_cos->Fill(LeadCos0);
-		}else if(maxP0 >= 30){
-			pfo_LeadK_30_cos->Fill(LeadCos0);
-		}
-
-		// analysis with different momentum kaons1
-		if(maxP1 < 10){
-			pfo_LeadK_2_10_cos->Fill(LeadCos1);
-		}else if(maxP1 < 30){
-			pfo_LeadK_10_30_cos->Fill(LeadCos1);
-		}else if(maxP1 >= 30){
-			pfo_LeadK_30_cos->Fill(LeadCos1);
-		}
-
-
-
 		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO0],maxP0);
 		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO1],maxP1);
 
@@ -312,14 +287,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		// }
 
 	} // end of event loop
-
-
-	float Khitall = pfo_HitCos_k->GetEntries();
-
-	std::cout << "Kedge   = " << Kedge << "\n";
-	std::cout << "Khitall = " << Khitall << "\n";
-	std::cout << "Kedge/Khitall = " << Kedge/Khitall << "\n";
-
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
