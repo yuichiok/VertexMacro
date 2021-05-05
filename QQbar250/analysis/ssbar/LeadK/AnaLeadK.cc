@@ -46,19 +46,20 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
-	TH1F* pfo_nk_evt  		= new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
-	TH1F* pfo_nk_jet	  	= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
+	TH1F* pfo_nk_evt  				= new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* pfo_nk_jet	  			= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
 
-	TH1F* pfo_k_cos  		= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_LeadK_cos  	= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_k_cos  				= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_cos  			= new TH1F(name_pfo+"LeadKaons_cos",";|cos#theta|; Events",100,0,1.0);
 
-	TH1F* pfo_LeadPFO_pid	= new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400);
-	TH1F* pfo_nk_sec_evt  	= new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* pfo_LeadPFO_pid			= new TH1F(name_pfo+"LeadPFO_pid",";Leading PFO; Events",400,0,400);
+	TH1F* pfo_LeadPFO_pid_parent	= new TH1F(name_pfo+"LeadPFO_pid_parent",";Leading PFO parent; Events",400,0,400);
+	TH1F* pfo_nk_sec_evt  			= new TH1F(name_pfo+"nKaons_sec_evt",";nKaons/Evt; Events",20,0,20);
 
-	TH1F* pfo_LeadKp_p  	= new TH1F(name_pfo+"LeadKp_p",";p[GeV]; Events",120,0,120);
-	TH1F* pfo_LeadKm_p  	= new TH1F(name_pfo+"LeadKm_p",";p[GeV]; Events",120,0,120);
-	TH1F* pfo_LeadPip_p  	= new TH1F(name_pfo+"LeadPip_p",";p[GeV]; Events",120,0,120);
-	TH1F* pfo_LeadPim_p  	= new TH1F(name_pfo+"LeadPim_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadKp_p  			= new TH1F(name_pfo+"LeadKp_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadKm_p  			= new TH1F(name_pfo+"LeadKm_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadPip_p  			= new TH1F(name_pfo+"LeadPip_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadPim_p  			= new TH1F(name_pfo+"LeadPim_p",";p[GeV]; Events",120,0,120);
 
 	h1_pfo.push_back( pfo_nk_evt );
 	h1_pfo.push_back( pfo_nk_jet );
@@ -67,6 +68,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_pfo.push_back( pfo_LeadK_cos );
 
 	h1_pfo.push_back( pfo_LeadPFO_pid );
+	h1_pfo.push_back( pfo_LeadPFO_pid_parent );
 	h1_pfo.push_back( pfo_nk_sec_evt );
 
 	h1_pfo.push_back( pfo_LeadKp_p );
@@ -255,6 +257,9 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO0]);
 		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO1]);
+
+		if(fabs(pfo_pdgcheat[LeadiPFO0])==321)	pfo_LeadPFO_pid_parent->Fill(pfo_pdgcheat_parent[LeadiPFO0]);
+		if(fabs(pfo_pdgcheat[LeadiPFO1])==321)	pfo_LeadPFO_pid_parent->Fill(pfo_pdgcheat_parent[LeadiPFO1]);
 
 		pfo_LeadK_cos->Fill(LeadCos0);
 		pfo_LeadK_cos->Fill(LeadCos1);
