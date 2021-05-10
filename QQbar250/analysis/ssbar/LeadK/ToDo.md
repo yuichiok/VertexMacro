@@ -24,5 +24,5 @@ Next steps to be done.
 
 #### List of Tasks
  - [x] Leading Kaon multiplicity in a jet and in an event.
- - [ ] Leading Kaon momentum of those from ssbar and uubar.
+ - [x] Leading Kaon momentum of those from ssbar and uubar.
  - [ ] Leading Kaon polar angle.

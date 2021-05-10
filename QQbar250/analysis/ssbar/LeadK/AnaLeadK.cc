@@ -65,6 +65,9 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	TH1F* pfo_LeadPip_p  			= new TH1F(name_pfo+"LeadPip_p",";p[GeV]; Events",120,0,120);
 	TH1F* pfo_LeadPim_p  			= new TH1F(name_pfo+"LeadPim_p",";p[GeV]; Events",120,0,120);
 
+	TH1F* pfo_LeadK_p_ss  			= new TH1F(name_pfo+"LeadK_p_ss",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadK_p_uu  			= new TH1F(name_pfo+"LeadK_p_uu",";p[GeV]; Events",120,0,120);
+
 	h1_pfo.push_back( pfo_nk_evt );
 	h1_pfo.push_back( pfo_nk_evt_ss );
 	h1_pfo.push_back( pfo_nk_evt_uu );
@@ -83,6 +86,9 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_pfo.push_back( pfo_LeadKm_p );
 	h1_pfo.push_back( pfo_LeadPip_p );
 	h1_pfo.push_back( pfo_LeadPim_p );
+
+	h1_pfo.push_back( pfo_LeadK_p_ss );
+	h1_pfo.push_back( pfo_LeadK_p_uu );
 
 	// TH2F
 	TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200);
@@ -277,26 +283,28 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 			int pfo_parent = pfo_pdgcheat_parent[LeadiPFO0];
 
-			if(fabs(pfo_parent)==321){
+			if(fabs(pfo_pdgcheat[LeadiPFO0])==321){
 				
 				pfo_LeadPFO_pid_parent->Fill(pfo_parent);
 
+				switch( pfo_parent ){
+
+					case 3:
+						pfo_nk_jet_ss->Fill(nJetkaons0);
+						pfo_LeadK_p_ss->Fill(maxP0);
+						break;
+
+					case 2:
+						pfo_nk_jet_uu->Fill(nJetkaons0);
+						pfo_LeadK_p_uu->Fill(maxP0);						
+						break;
+
+					default:
+						break;
+
+				} // switch
+
 			} // Lead PFO = Kaon
-
-			switch( pfo_parent ){
-
-				case 3:
-					pfo_nk_jet_ss->Fill(nJetkaons0);
-					break;
-
-				case 2:
-					pfo_nk_jet_uu->Fill(nJetkaons0);
-					break;
-
-				default:
-					break;
-
-			}
 
 		} // maxP0 > 10
 
@@ -304,27 +312,29 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 			int pfo_parent = pfo_pdgcheat_parent[LeadiPFO1];
 
-			if(fabs(pfo_parent)==321){
+			if(fabs(pfo_pdgcheat[LeadiPFO1])==321){
 
 				pfo_LeadPFO_pid_parent->Fill(pfo_parent);
 			
+				switch( pfo_parent ){
+
+					case 3:
+						pfo_nk_jet_ss->Fill(nJetkaons1);
+						pfo_LeadK_p_ss->Fill(maxP1);						
+						break;
+					
+					case 2:
+						pfo_nk_jet_uu->Fill(nJetkaons1);
+						pfo_LeadK_p_uu->Fill(maxP1);
+						break;
+
+					default:
+						break;
+
+				} // switch
+		
 			} // Lead PFO = Kaon
 
-			switch( pfo_parent ){
-
-				case 3:
-					pfo_nk_jet_ss->Fill(nJetkaons1);
-					break;
-				
-				case 2:
-					pfo_nk_jet_uu->Fill(nJetkaons1);
-					break;
-
-				default:
-					break;
-
-			}
-		
 		}// maxP1 > 10
 
 		pfo_LeadK_cos->Fill(LeadCos0);
