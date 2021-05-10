@@ -23,6 +23,6 @@ Parents of MC is now tracked until ffbar pair.
 Next steps to be done.
 
 #### List of Tasks
- - [ ] Leading Kaon multiplicity in a jet and in an event.
+ - [x] Leading Kaon multiplicity in a jet and in an event.
  - [ ] Leading Kaon momentum of those from ssbar and uubar.
  - [ ] Leading Kaon polar angle.
