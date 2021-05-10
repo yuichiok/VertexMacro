@@ -68,7 +68,6 @@ public :
    Float_t         mc_stable_pz[746];   //[mc_stable_n]
    Float_t         mc_stable_m[746];   //[mc_stable_n]
    Int_t           mc_stable_pdg[746];   //[mc_stable_n]
-   Int_t           mc_stable_parent_pdg[746];   //[mc_stable_n]
    Float_t         mc_stable_charge[746];   //[mc_stable_n]
    Int_t           mc_stable_isoverlay[746];   //[mc_stable_n]
    Int_t           mc_stable_isisr[746];   //[mc_stable_n]
@@ -190,7 +189,6 @@ public :
    TBranch        *b_mc_stable_pz;   //!
    TBranch        *b_mc_stable_m;   //!
    TBranch        *b_mc_stable_pdg;   //!
-   TBranch        *b_mc_stable_parent_pdg;   //!
    TBranch        *b_mc_stable_charge;   //!
    TBranch        *b_mc_stable_isoverlay;   //!
    TBranch        *b_mc_stable_isisr;   //!
@@ -421,7 +419,6 @@ void AnaLeadK::Init(TTree *tree)
    fChain->SetBranchAddress("mc_stable_pz", mc_stable_pz, &b_mc_stable_pz);
    fChain->SetBranchAddress("mc_stable_m", mc_stable_m, &b_mc_stable_m);
    fChain->SetBranchAddress("mc_stable_pdg", mc_stable_pdg, &b_mc_stable_pdg);
-   fChain->SetBranchAddress("mc_stable_parent_pdg", mc_stable_parent_pdg, &b_mc_stable_parent_pdg);
    fChain->SetBranchAddress("mc_stable_charge", mc_stable_charge, &b_mc_stable_charge);
    fChain->SetBranchAddress("mc_stable_isoverlay", mc_stable_isoverlay, &b_mc_stable_isoverlay);
    fChain->SetBranchAddress("mc_stable_isisr", mc_stable_isisr, &b_mc_stable_isisr);
