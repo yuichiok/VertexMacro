@@ -18,9 +18,6 @@ void AnaLeadK::printProgress(double percentage) {
 void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="test")
 {
 
-	// DO NOT CHANGE THE ORDER OF HISTOGRAMS!!!
-
-
 	// Reco Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
@@ -98,7 +95,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	h2_pfo.push_back( pfo_LeadPFO_p_pid );
 	h2_pfo.push_back( pfo_LeadK_p );
 	h2_pfo.push_back( pfo_LeadPi_p );
-
 
 
 
@@ -295,75 +291,78 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 		LeadingMom(pfo_LeadPip_p, pfo_LeadPim_p, pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
-		if(maxP0 > 10){
 
-			int pfo_parent = pfo_pdgcheat_parent[LeadiPFO0];
+		float chg0 = pfo_charge[LeadiPFO0];
+		float chg1 = pfo_charge[LeadiPFO1];
 
-			if(fabs(pfo_pdgcheat[LeadiPFO0])==321){
-				
-				pfo_LeadPFO_pid_parent->Fill(pfo_parent);
+		if(chg0*chg1 < 0){
 
-				switch( pfo_parent ){
+			if(maxP0 > 10){
 
-					case 3:
-						pfo_nk_jet_ss->Fill(nJetkaons0);
-						pfo_LeadK_p_ss->Fill(maxP0);
-						break;
+				int pfo_parent = pfo_pdgcheat_parent[LeadiPFO0];
 
-					case 2:
-						pfo_nk_jet_uu->Fill(nJetkaons0);
-						pfo_LeadK_p_uu->Fill(maxP0);
-						break;
-
-					default:
-						break;
-
-				} // switch
-
-			} // Lead PFO = Kaon
-
-		} // maxP0 > 10
-
-		if(maxP1 > 10){
-
-			int pfo_parent = pfo_pdgcheat_parent[LeadiPFO1];
-
-			if(fabs(pfo_pdgcheat[LeadiPFO1])==321){
-
-				pfo_LeadPFO_pid_parent->Fill(pfo_parent);
-			
-				switch( pfo_parent ){
-
-					case 3:
-						pfo_nk_jet_ss->Fill(nJetkaons1);
-						pfo_LeadK_p_ss->Fill(maxP1);
-						break;
+				if(fabs(pfo_pdgcheat[LeadiPFO0])==321){
 					
-					case 2:
-						pfo_nk_jet_uu->Fill(nJetkaons1);
-						pfo_LeadK_p_uu->Fill(maxP1);
-						break;
+					pfo_LeadPFO_pid_parent->Fill(pfo_parent);
 
-					default:
-						break;
+					switch( pfo_parent ){
 
-				} // switch
-		
-			} // Lead PFO = Kaon
+						case 3:
+							pfo_nk_jet_ss->Fill(nJetkaons0);
+							pfo_LeadK_p_ss->Fill(maxP0);
+							break;
 
-		}// maxP1 > 10
+						case 2:
+							pfo_nk_jet_uu->Fill(nJetkaons0);
+							pfo_LeadK_p_uu->Fill(maxP0);
+							break;
+
+						default:
+							break;
+
+					} // switch
+
+				} // Lead PFO = Kaon
+
+			} // maxP0 > 10
+
+			if(maxP1 > 10){
+
+				int pfo_parent = pfo_pdgcheat_parent[LeadiPFO1];
+
+				if(fabs(pfo_pdgcheat[LeadiPFO1])==321){
+
+					pfo_LeadPFO_pid_parent->Fill(pfo_parent);
+				
+					switch( pfo_parent ){
+
+						case 3:
+							pfo_nk_jet_ss->Fill(nJetkaons1);
+							pfo_LeadK_p_ss->Fill(maxP1);
+							break;
+						
+						case 2:
+							pfo_nk_jet_uu->Fill(nJetkaons1);
+							pfo_LeadK_p_uu->Fill(maxP1);
+							break;
+
+						default:
+							break;
+
+					} // switch
+			
+				} // Lead PFO = Kaon
+
+			} // maxP1 > 10
+
+		} // if charge +/-
 
 
-		// int nJETkaons = 0;
-
-		// for(int ijet=0; ijet<2; ijet++){
-
-		// 	VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
-		// 	float abscos = abs( jetVec.GetCostheta() );
 
 
 
-		// }
+
+
 
 	} // end of event loop
 
