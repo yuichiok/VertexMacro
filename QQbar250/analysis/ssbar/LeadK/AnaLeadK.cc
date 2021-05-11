@@ -258,15 +258,18 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 				} // end kaon in jet2?
 
 			} // end jet1
-		
 
 		} // end of pfo
 
 
 		pfo_nk_evt->Fill(nPFOkaons);
 
-		if(fabs(mc_quark_pdg[0])==2) pfo_nk_evt_uu->Fill(nPFOkaons);
-		if(fabs(mc_quark_pdg[0])==3) pfo_nk_evt_ss->Fill(nPFOkaons);
+		if(fabs(mc_quark_pdg[0])==2){
+			pfo_nk_evt_uu->Fill(nPFOkaons);
+		}
+		if(fabs(mc_quark_pdg[0])==3){
+			pfo_nk_evt_ss->Fill(nPFOkaons);
+		}
 
 		pfo_nk_sec_evt->Fill(nPFOkaons_sec);
 
@@ -276,8 +279,21 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO0]);
 		pfo_LeadPFO_pid->Fill(pfo_pdgcheat[LeadiPFO1]);
 
+		pfo_LeadK_cos->Fill(LeadCos0);
+		pfo_LeadK_cos->Fill(LeadCos1);
 
-		// Leading Kaon Analysis
+		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO0],maxP0);
+		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO1],maxP1);
+
+
+		///////////////////////////////////////
+		//////   Leading PFOs ANALYSIS   //////
+		///////////////////////////////////////
+
+
+		if(maxP0 > 2 && maxP1 > 2) LeadingMom(pfo_LeadKp_p, pfo_LeadKm_p, pfo_LeadK_p, 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
+
+		LeadingMom(pfo_LeadPip_p, pfo_LeadPim_p, pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
 		if(maxP0 > 10){
 
@@ -296,7 +312,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 					case 2:
 						pfo_nk_jet_uu->Fill(nJetkaons0);
-						pfo_LeadK_p_uu->Fill(maxP0);						
+						pfo_LeadK_p_uu->Fill(maxP0);
 						break;
 
 					default:
@@ -320,7 +336,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 					case 3:
 						pfo_nk_jet_ss->Fill(nJetkaons1);
-						pfo_LeadK_p_ss->Fill(maxP1);						
+						pfo_LeadK_p_ss->Fill(maxP1);
 						break;
 					
 					case 2:
@@ -336,24 +352,6 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			} // Lead PFO = Kaon
 
 		}// maxP1 > 10
-
-		pfo_LeadK_cos->Fill(LeadCos0);
-		pfo_LeadK_cos->Fill(LeadCos1);
-
-		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO0],maxP0);
-		SwitchEGPK(pfo_LeadPFO_p_pid,pfo_pdgcheat[LeadiPFO1],maxP1);
-
-
-		////////////////////////////////////////
-		//////   Leading PFOs ANALYSIS   ///////
-		////////////////////////////////////////
-
-
-		if(maxP0 > 2 && maxP1 > 2) LeadingMom(pfo_LeadKp_p, pfo_LeadKm_p, pfo_LeadK_p, 321, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
-
-		LeadingMom(pfo_LeadPip_p, pfo_LeadPim_p, pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
-
-
 
 
 		// int nJETkaons = 0;
