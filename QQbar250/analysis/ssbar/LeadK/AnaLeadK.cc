@@ -295,17 +295,17 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		float chg0 = pfo_charge[LeadiPFO0];
 		float chg1 = pfo_charge[LeadiPFO1];
 
+		int ffbar_pdg = fabs(mc_quark_pdg[0]);
+
 		if(chg0*chg1 < 0){
 
 			if(maxP0 > 10){
 
-				int pfo_parent = pfo_pdgcheat_parent[LeadiPFO0];
-
 				if(fabs(pfo_pdgcheat[LeadiPFO0])==321){
-					
-					pfo_LeadPFO_pid_parent->Fill(pfo_parent);
 
-					switch( pfo_parent ){
+					pfo_LeadPFO_pid_parent->Fill(ffbar_pdg);
+					
+					switch( ffbar_pdg ){
 
 						case 3:
 							pfo_nk_jet_ss->Fill(nJetkaons0);
@@ -328,13 +328,11 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 			if(maxP1 > 10){
 
-				int pfo_parent = pfo_pdgcheat_parent[LeadiPFO1];
-
 				if(fabs(pfo_pdgcheat[LeadiPFO1])==321){
 
-					pfo_LeadPFO_pid_parent->Fill(pfo_parent);
+					pfo_LeadPFO_pid_parent->Fill(ffbar_pdg);
 				
-					switch( pfo_parent ){
+					switch( ffbar_pdg ){
 
 						case 3:
 							pfo_nk_jet_ss->Fill(nJetkaons1);
