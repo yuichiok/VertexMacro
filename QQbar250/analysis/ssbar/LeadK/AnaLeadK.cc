@@ -30,11 +30,11 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_mc_stable.push_back( mc_k_cos );
 
 	// TH2F
-	TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-	TH2F* mc_HitCos_k	 = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	// TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	// TH2F* mc_HitCos_k	 = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
 
-	h2_mc_stable.push_back( mc_HitCos_all );
-	h2_mc_stable.push_back( mc_HitCos_k );
+	// h2_mc_stable.push_back( mc_HitCos_all );
+	// h2_mc_stable.push_back( mc_HitCos_k );
 
 
 
@@ -44,8 +44,10 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 	// TH1F
 	TH1F* pfo_nk_evt  				= new TH1F(name_pfo+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* pfo_nk_evt_dd  			= new TH1F(name_pfo+"nKaons_evt_dd",";nKaons/Evt; Events",20,0,20);
 	TH1F* pfo_nk_evt_ss  			= new TH1F(name_pfo+"nKaons_evt_ss",";nKaons/Evt; Events",20,0,20);
 	TH1F* pfo_nk_evt_uu  			= new TH1F(name_pfo+"nKaons_evt_uu",";nKaons/Evt; Events",20,0,20);
+
 	TH1F* pfo_nk_jet	  			= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
 	TH1F* pfo_nk_jet_ss	  			= new TH1F(name_pfo+"nKaons_jet_ss",";nKaons/Jet; Events",20,0,20);
 	TH1F* pfo_nk_jet_uu	  			= new TH1F(name_pfo+"nKaons_jet_uu",";nKaons/Jet; Events",20,0,20);
@@ -66,8 +68,10 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	TH1F* pfo_LeadK_p_uu  			= new TH1F(name_pfo+"LeadK_p_uu",";p[GeV]; Events",120,0,120);
 
 	h1_pfo.push_back( pfo_nk_evt );
+	h1_pfo.push_back( pfo_nk_evt_dd );
 	h1_pfo.push_back( pfo_nk_evt_ss );
 	h1_pfo.push_back( pfo_nk_evt_uu );
+
 	h1_pfo.push_back( pfo_nk_jet );
 	h1_pfo.push_back( pfo_nk_jet_ss );
 	h1_pfo.push_back( pfo_nk_jet_uu );
@@ -112,8 +116,17 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 	int Kpm=0;
 	int Ksame=0;
-
 	float Kedge = 0;
+
+	int nLeadPFO     = 0;
+	int nLeadPFO_10  = 0;
+	int nLeadPFO_30  = 0;
+	int nLeadPFO_30_ = 0;
+
+	int nLeadK       = 0;
+	int nLeadK_10    = 0;
+	int nLeadK_30    = 0;
+	int nLeadK_30_   = 0;
 
 	Long64_t nentries = fChain->GetEntriesFast();
 
@@ -260,12 +273,16 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 		pfo_nk_evt->Fill(nPFOkaons);
 
+		if(fabs(mc_quark_pdg[0])==1){
+			pfo_nk_evt_dd->Fill(nPFOkaons);
+		}
 		if(fabs(mc_quark_pdg[0])==2){
 			pfo_nk_evt_uu->Fill(nPFOkaons);
 		}
 		if(fabs(mc_quark_pdg[0])==3){
 			pfo_nk_evt_ss->Fill(nPFOkaons);
 		}
+
 
 		pfo_nk_sec_evt->Fill(nPFOkaons_sec);
 
@@ -291,6 +308,46 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 		LeadingMom(pfo_LeadPip_p, pfo_LeadPim_p, pfo_LeadPi_p, 211, LeadiPFO0, LeadiPFO1, maxP0, maxP1);
 
+
+		// Number of Kaon Analysis
+
+		bool Kflag0 = (fabs(pfo_pdgcheat[LeadiPFO0])==321);
+		bool Kflag1 = (fabs(pfo_pdgcheat[LeadiPFO1])==321);
+
+		if(LeadiPFO0){
+			nLeadPFO++;
+			if(Kflag0) nLeadK++;
+
+			if(maxP0 < 10){
+				nLeadPFO_10++;
+				if(Kflag0) nLeadK_10++;
+			}else if(maxP0 < 30){
+				nLeadPFO_30++;
+				if(Kflag0) nLeadK_30++;
+			}else if(maxP0 >= 30){
+				nLeadPFO_30_++;
+				if(Kflag0) nLeadK_30_++;
+			}
+		}
+
+		if(LeadiPFO1){
+			nLeadPFO++;
+			if(Kflag1) nLeadK++;
+
+			if(maxP1 < 10){
+				nLeadPFO_10++;
+				if(Kflag1) nLeadK_10++;
+
+			}else if(maxP1 < 30){
+				nLeadPFO_30++;
+				if(Kflag1) nLeadK_30++;
+
+			}else if(maxP1 >= 30){
+				nLeadPFO_30_++;
+				if(Kflag1) nLeadK_30_++;
+
+			}
+		}
 
 		float chg0 = pfo_charge[LeadiPFO0];
 		float chg1 = pfo_charge[LeadiPFO1];
@@ -356,13 +413,10 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		} // if charge +/-
 
 
-
-
-
-
-
-
 	} // end of event loop
+
+	printProgress( 1.0 );
+	std::cout << std::endl;
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
@@ -370,8 +424,26 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	for(int h=0; h < h1_pfo.size(); h++) h1_pfo.at(h)->Write();
 	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
 
-	printProgress( 1.0 );
-	std::cout << std::endl;
+	std::cout << "=========  All Lead PFO   =========" << std::endl;;
+	std::cout << "# Lead K   = " << nLeadK << " (1)\n";
+	std::cout << "# Lead PFO = " << nLeadPFO << " (2)\n";
+	std::cout << "(1) / (2)  = " << (float)(nLeadK) / (float)(nLeadPFO) << std::endl;
+
+	std::cout << "========= Lead PFO 2 - 10 =========" << std::endl;;
+	std::cout << "# Lead K   = " << nLeadK_10 << " (1)\n";
+	std::cout << "# Lead PFO = " << nLeadPFO_10 << " (2)\n";
+	std::cout << "(1) / (2)  = " << (float)(nLeadK_10) / (float)(nLeadPFO_10) << std::endl;
+
+	std::cout << "========= Lead PFO 10 - 30 =========" << std::endl;;
+	std::cout << "# Lead K   = " << nLeadK_30 << " (1)\n";
+	std::cout << "# Lead PFO = " << nLeadPFO_30 << " (2)\n";
+	std::cout << "(1) / (2)  = " << (float)(nLeadK_30) / (float)(nLeadPFO_30) << std::endl;
+
+	std::cout << "========= Lead PFO 30 -    =========" << std::endl;;
+	std::cout << "# Lead K   = " << nLeadK_30_ << " (1)\n";
+	std::cout << "# Lead PFO = " << nLeadPFO_30_ << " (2)\n";
+	std::cout << "(1) / (2)  = " << (float)(nLeadK_30_) / (float)(nLeadPFO_30_) << std::endl;
+
 
 }
 
