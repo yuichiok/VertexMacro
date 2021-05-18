@@ -354,7 +354,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 		int ffbar_pdg = fabs(mc_quark_pdg[0]);
 
-		if(chg0*chg1 < 0){
+		// if(chg0*chg1 < 0){
 
 			if(maxP0 > 10){
 
@@ -410,7 +410,7 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 			} // maxP1 > 10
 
-		} // if charge +/-
+		// } // if charge +/-
 
 
 	} // end of event loop
@@ -424,12 +424,12 @@ void AnaLeadK::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	for(int h=0; h < h1_pfo.size(); h++) h1_pfo.at(h)->Write();
 	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
 
-	std::cout << "=========  All Lead PFO   =========" << std::endl;;
+	std::cout << "=========   All Lead PFO   =========" << std::endl;;
 	std::cout << "# Lead K   = " << nLeadK << " (1)\n";
 	std::cout << "# Lead PFO = " << nLeadPFO << " (2)\n";
 	std::cout << "(1) / (2)  = " << (float)(nLeadK) / (float)(nLeadPFO) << std::endl;
 
-	std::cout << "========= Lead PFO 2 - 10 =========" << std::endl;;
+	std::cout << "========= Lead PFO 2 - 10  =========" << std::endl;;
 	std::cout << "# Lead K   = " << nLeadK_10 << " (1)\n";
 	std::cout << "# Lead PFO = " << nLeadPFO_10 << " (2)\n";
 	std::cout << "(1) / (2)  = " << (float)(nLeadK_10) / (float)(nLeadPFO_10) << std::endl;
