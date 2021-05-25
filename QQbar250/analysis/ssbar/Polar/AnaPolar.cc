@@ -25,9 +25,12 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	// TH1F
 	TH1F* mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
 	TH1F* mc_k_cos 	 = new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* mc_qq_cos  = new TH1F("mc_quark_cos",";cos#theta; Events",100,-1.0,1.0);
 
 	h1_mc_stable.push_back( mc_nk_evt );
 	h1_mc_stable.push_back( mc_k_cos );
+
+	h1_mc_stable.push_back( mc_qq_cos );
 
 	// TH2F
 	// TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
@@ -44,17 +47,9 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 	// TH1F
 
-	TH1F* pfo_nk_jet	  			= new TH1F(name_pfo+"nKaons_jet",";nKaons/Jet; Events",20,0,20);
-	TH1F* pfo_nk_jet_ss	  			= new TH1F(name_pfo+"nKaons_jet_ss",";nKaons/Jet; Events",20,0,20);
-	TH1F* pfo_nk_jet_uu	  			= new TH1F(name_pfo+"nKaons_jet_uu",";nKaons/Jet; Events",20,0,20);
-
 	TH1F* pfo_k_cos  				= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_abscos 			= new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_cos				= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
-
-	h1_pfo.push_back( pfo_nk_jet );
-	h1_pfo.push_back( pfo_nk_jet_ss );
-	h1_pfo.push_back( pfo_nk_jet_uu );
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
@@ -106,13 +101,34 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 
 		if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
+		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+
 		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
 
+		////////////////////////////////
+		//////   MC QQ ANALYSIS   //////
+		////////////////////////////////
 
-		///////////////////////////////
-		///////   MC ANALYSIS   ///////
-		///////////////////////////////
+		float QQqCos = -2.0;
+
+		for(int iqq=0; iqq < 2; iqq++){
+
+			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
+			float cos 	 = qqVec.GetCostheta();
+			float charge = mc_quark_charge[iqq];
+
+			QQqCos = (charge < 0)? cos: -cos;
+
+			mc_qq_cos->Fill(QQqCos);
+
+		}
+
+
+		/////////////////////////////////////
+		///////   MC STABLE ANALYSIS   //////
+		/////////////////////////////////////
 
 		int nMCkaons = 0;
 
@@ -123,6 +139,7 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 			VecOP mcVec(mc_stable_px[istable],mc_stable_py[istable],mc_stable_pz[istable]);
 			float abscos = abs( mcVec.GetCostheta() );
+			float cos 	 = mcVec.GetCostheta();
 
 			if( fabs(mc_stable_pdg[istable])==321 ){
 				
