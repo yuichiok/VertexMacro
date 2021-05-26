@@ -101,15 +101,12 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		//////   MC QQ ANALYSIS   //////
 		////////////////////////////////
 
-		float QQqCos = -2.0;
-
 		for(int iqq=0; iqq < 2; iqq++){
 
 			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
 			float cos 	 = qqVec.GetCostheta();
 			float charge = mc_quark_charge[iqq];
-
-			QQqCos = (charge < 0)? cos: -cos;
+			float QQqCos = (charge < 0)? cos: -cos;
 
 			mc_qq_cos->Fill(QQqCos);
 
@@ -202,20 +199,29 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		//////   Leading PFOs ANALYSIS   //////
 		///////////////////////////////////////
 
-		float chg0 = pfo_charge[LeadiPFO[0]];
-		float chg1 = pfo_charge[LeadiPFO[1]];
-
-		if(chg0*chg1<0){
-			LeadqCos[0] = (chg0 < 0)? LeadCos[0]: -LeadCos[0];
-			LeadqCos[1] = (chg1 < 0)? LeadCos[1]: -LeadCos[1];
-		}
-
+		float chg[2] = {0};
+		chg[0] = pfo_charge[LeadiPFO[0]];
+		chg[1] = pfo_charge[LeadiPFO[1]];
 		
-		for (int i = 0; i < 2; ++i)
-		{
-			pfo_LeadK_cos->Fill(LeadqCos[i]);
-			pfo_LeadK_abscos->Fill(LeadAbsCos[i]);
-		}
+
+		if (fabs(pfo_pdgcheat[LeadiPFO[0]])==321){
+
+			for (int i = 0; i < 2; ++i){
+
+				if(maxP[i]>10){
+
+					if(chg[0]*chg[1]<0){
+						LeadqCos[i] = (chg[i] < 0)? LeadCos[i]: -LeadCos[i];
+					}
+
+					pfo_LeadK_cos->Fill(LeadqCos[i]);
+					pfo_LeadK_abscos->Fill(LeadAbsCos[i]);
+
+				} // momentum cut (p > 10)
+			
+			} // Lead PFO loop
+
+		} // if Lead K
 
 
 
