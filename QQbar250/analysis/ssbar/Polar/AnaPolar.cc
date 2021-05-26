@@ -72,16 +72,6 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 	///////   EVENT ANALYSIS   ///////
 	//////////////////////////////////
 
-	int nLeadPFO     = 0;
-	int nLeadPFO_10  = 0;
-	int nLeadPFO_30  = 0;
-	int nLeadPFO_30_ = 0;
-
-	int nLeadK       = 0;
-	int nLeadK_10    = 0;
-	int nLeadK_30    = 0;
-	int nLeadK_30_   = 0;
-
 	Long64_t nentries = fChain->GetEntriesFast();
 
 	Long64_t nbytes = 0, nb = 0;
@@ -158,20 +148,12 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
-		float maxP0 = 0;
-		float maxP1 = 0;
+		float maxP[2] 			= {0};
+		float LeadAbsCos[2] = {-2,-2};
+		float LeadCos[2] 		= {-2,-2};
+		float LeadqCos[2] 	= {-2,-2};
+		int   LeadiPFO[2] 	= {-1,-1}; 
 
-		float LeadAbsCos0 = -2;
-		float LeadAbsCos1 = -2;
-
-		float LeadCos0 = -2;
-		float LeadCos1 = -2;
-
-		int LeadiPFO0 = -1;
-		int LeadiPFO1 = -1;
-
-		float LeadqCos0 = -2;
-		float LeadqCos1 = -2;
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -195,58 +177,45 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			
 			} // end PFO kaon?
 
+
+			// Jet Analysis
 			
-			// Jet1 Analysis
-			if(pfo_match[ipfo]==0){
+			for (int imatch = 0; imatch < 2; ++imatch)
+			{
+				if(pfo_match[ipfo]==imatch){
 
-				if(mom > maxP0){
-					maxP0 = mom;
-					LeadAbsCos0 = abscos;
-					LeadCos0 = cos;
-					LeadiPFO0 = ipfo;
-				}
+					if(mom > maxP[imatch]){
+						maxP[imatch] = mom;
+						LeadAbsCos[imatch] = abscos;
+						LeadCos[imatch] = cos;
+						LeadiPFO[imatch] = ipfo;
+					}
 
-			} // end jet1
+				} // end jet imatch
+			}
 
-
-			// Jet2 Analysis
-			if(pfo_match[ipfo]==1){
-
-				if(mom > maxP1){
-					maxP1 = mom;
-					LeadAbsCos1 = abscos;
-					LeadCos1 = cos;
-					LeadiPFO1 = ipfo;
-				}
-
-			} // end jet1
 
 		} // end of pfo
-
-
-		pfo_LeadK_abscos->Fill(LeadAbsCos0);
-		pfo_LeadK_abscos->Fill(LeadAbsCos1);
-
 
 
 		///////////////////////////////////////
 		//////   Leading PFOs ANALYSIS   //////
 		///////////////////////////////////////
 
-		float chg0 = pfo_charge[LeadiPFO0];
-		float chg1 = pfo_charge[LeadiPFO1];
+		float chg0 = pfo_charge[LeadiPFO[0]];
+		float chg1 = pfo_charge[LeadiPFO[1]];
 
 		if(chg0*chg1<0){
-			LeadqCos0 = (chg0 < 0)? LeadCos0: -LeadCos0;
-			LeadqCos1 = (chg1 < 0)? LeadCos1: -LeadCos1;
+			LeadqCos[0] = (chg0 < 0)? LeadCos[0]: -LeadCos[0];
+			LeadqCos[1] = (chg1 < 0)? LeadCos[1]: -LeadCos[1];
 		}
 
-		pfo_LeadK_cos->Fill(LeadqCos0);
-		pfo_LeadK_cos->Fill(LeadqCos1);
-
-
-
-
+		
+		for (int i = 0; i < 2; ++i)
+		{
+			pfo_LeadK_cos->Fill(LeadqCos[i]);
+			pfo_LeadK_abscos->Fill(LeadAbsCos[i]);
+		}
 
 
 
@@ -265,14 +234,6 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 
 }
 
-// bool AnaPolar::PreSelection(int type=0,float Kvcut=25) {
-  
-//   if(jet_E[0]<0.5 || jet_E[1]<0.5) return false;
-//   if(type == 0 ) return true;
-
-//   return false;
-  
-// }
 
 void AnaPolar::LeadingMom(TH1F* h1p = 0, TH1F* h1m = 0, TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
 
