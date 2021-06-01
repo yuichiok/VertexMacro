@@ -17,7 +17,9 @@ public:
 	std::vector< float > getAngles(std::vector< float > & direction);
 	std::vector< float > CalculateAnglesMom();
 	std::vector< float > CalculateAngles();
+	float CalculatePT(std::vector< float > & v);
 	float GetMomentum();
+	float GetPT();
 	float GetCostheta();
 	float GetCosphi();
 	float GetSinacol(TVector3 v1, TVector3 v2);

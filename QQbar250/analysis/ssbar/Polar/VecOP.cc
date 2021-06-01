@@ -66,6 +66,17 @@ float VecOP::GetMomentum(){
   return getModule(p);
 }
 
+float VecOP::GetPT(){
+  return CalculatePT(p);
+}
+
+float VecOP::CalculatePT(vector< float > & v){
+  float pt = 0.0;
+  for (unsigned int i = 0; i < 2; i++) pt += v[i]*v[i];
+     pt = sqrt(pt);
+  return pt;
+}
+
 
 float VecOP::GetCostheta(){
   float costheta1 =  -2.0;

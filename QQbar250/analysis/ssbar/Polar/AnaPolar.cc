@@ -15,7 +15,7 @@ void AnaPolar::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="test")
+void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="test")
 {
 
 	// Reco Histograms
@@ -145,6 +145,11 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
+		// Jet variables
+		float jet_pt[2] = {0};
+		float jet_charge[2] = {0};
+
+		// Leading PFO variables
 		float maxP[2] 			= {0};
 		float LeadAbsCos[2] = {-2,-2};
 		float LeadCos[2] 		= {-2,-2};
@@ -165,6 +170,7 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			float abscos = abs( pfoVec.GetCostheta() );
 			float cos    = pfoVec.GetCostheta();
 			float mom    = pfoVec.GetMomentum();
+			float pt     = pfoVec.GetPT();
 			float charge = pfo_charge[ipfo];
 
 			// PFO kaon?
@@ -180,6 +186,8 @@ void AnaPolar::AnalyzeLeadK(int n_entries=-1, float Kvcut=35, TString output="te
 			for (int imatch = 0; imatch < 2; ++imatch)
 			{
 				if(pfo_match[ipfo]==imatch){
+
+					jet_charge[imatch] += charge * sqrt(pt / 125);
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
