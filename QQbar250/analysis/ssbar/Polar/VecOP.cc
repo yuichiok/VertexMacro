@@ -14,14 +14,14 @@ VecOP::VecOP(float x, float y, float z){
 
 VecOP::VecOP() {};
 
-float VecOP::getModule(vector< float > & v)   {
+float VecOP::getModule( const vector< float > & v)   {
   float module = 0.0;
   for (unsigned int i = 0; i < v.size(); i++) module += v[i]*v[i];
      module = sqrt(module);
   return module;
 }
 
-std::vector< float > VecOP::getDirection(vector<float> & vectorPoint) {
+std::vector< float > VecOP::getDirection( const vector<float> & vectorPoint) {
   vector< float > vector1;
   float module = getModule(vectorPoint);
   for (int i = 0; i < 3; i++) vector1.push_back( vectorPoint[i]/module);
@@ -56,20 +56,6 @@ std::vector< float > VecOP::CalculateAnglesMom() {
   return angles;
 }
 
-std::vector< float > VecOP::CalculateAngles() {
-  std::vector< float > direction = getDirection(p);
-  std::vector< float > angles=getAngles(direction);
-  return angles;
-}
-
-float VecOP::GetMomentum(){
-  return getModule(p);
-}
-
-float VecOP::GetPT(){
-  return CalculatePT(p);
-}
-
 float VecOP::CalculatePT(vector< float > & v){
   float pt = 0.0;
   for (unsigned int i = 0; i < 2; i++) pt += v[i]*v[i];
@@ -77,6 +63,44 @@ float VecOP::CalculatePT(vector< float > & v){
   return pt;
 }
 
+std::vector< float > VecOP::CalculateAngles() {
+  std::vector< float > direction = getDirection(p);
+  std::vector< float > angles=getAngles(direction);
+  return angles;
+}
+
+float VecOP::getAngleBtw(const std::vector< float > & vector1, const std::vector< float > & vector2)
+{
+  vector< float > direction1 = getDirection(vector1);
+  vector< float > direction2 = getDirection(vector2);
+  float product = 0.0;
+  for (int i = 0; i < 3; i++) 
+  {
+    product += direction1[i]*direction2[i];
+  }
+  float result = acos(product);
+  if (isnan(result)) 
+  {
+    if (product > 0.999) 
+    {
+      return 0.0;
+    }
+
+  }
+  return result;
+}
+
+float VecOP::GetMomentum(){
+  return getModule(p);
+}
+
+std::vector< float > VecOP::GetMomentum3(){
+  return p;
+}
+
+float VecOP::GetPT(){
+  return CalculatePT(p);
+}
 
 float VecOP::GetCostheta(){
   float costheta1 =  -2.0;

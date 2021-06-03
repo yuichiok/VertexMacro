@@ -48,12 +48,26 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	// TH1F
 
 	TH1F* pfo_k_cos  				= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_LeadK_abscos 			= new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* pfo_LeadK_cos				= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_abscos 	= new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
+	TH1F* pfo_LeadK_cos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+
+	TH1F* pfo_jet_charge_u		= new TH1F(name_pfo+"jet_charge_u",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_jet_charge_ubar	= new TH1F(name_pfo+"jet_charge_ubar",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_jet_charge_d		= new TH1F(name_pfo+"jet_charge_d",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_jet_charge_dbar	= new TH1F(name_pfo+"jet_charge_dbar",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_jet_charge_s		= new TH1F(name_pfo+"jet_charge_s",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_jet_charge_sbar	= new TH1F(name_pfo+"jet_charge_sbar",";Jet charge; Events",100,-1.0,1.0);
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
 	h1_pfo.push_back( pfo_LeadK_cos );
+	
+	h1_pfo.push_back( pfo_jet_charge_u);
+	h1_pfo.push_back( pfo_jet_charge_ubar);
+	h1_pfo.push_back( pfo_jet_charge_d);
+	h1_pfo.push_back( pfo_jet_charge_dbar);
+	h1_pfo.push_back( pfo_jet_charge_s);
+	h1_pfo.push_back( pfo_jet_charge_sbar);
 
 	// TH2F
 	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200);
@@ -78,7 +92,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
 		// trial
-		// if(jentry>1000) break;
+		if(jentry>10) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -101,9 +115,13 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		//////   MC QQ ANALYSIS   //////
 		////////////////////////////////
 
+		std::vector<VecOP> qqVecs;
+
 		for(int iqq=0; iqq < 2; iqq++){
 
 			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
+			qqVecs.push_back(qqVec);
+
 			float cos 	 = qqVec.GetCostheta();
 			float charge = mc_quark_charge[iqq];
 			float QQqCos = (charge < 0)? cos: -cos;
@@ -147,14 +165,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		// Jet variables
 		float jet_pt[2] = {0};
+		float jet_qp[2] = {0};
 		float jet_charge[2] = {0};
 
 		// Leading PFO variables
 		float maxP[2] 			= {0};
-		float LeadAbsCos[2] = {-2,-2};
-		float LeadCos[2] 		= {-2,-2};
-		float LeadqCos[2] 	= {-2,-2};
-		int   LeadiPFO[2] 	= {-1,-1}; 
+		float lead_abscos[2] = {-2,-2};
+		float lead_cos[2] 		= {-2,-2};
+		float lead_qcos[2] 	= {-2,-2};
+		int   lead_ipfo[2] 	= {-1,-1};
 
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
@@ -187,20 +206,91 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					jet_charge[imatch] += charge * sqrt(pt / 125);
+					// jet_charge[imatch] += charge * sqrt(pt / 125.0);
+					jet_qp[imatch] += charge * sqrt(pt);
+					jet_pt[imatch] += pt;
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
-						LeadAbsCos[imatch] = abscos;
-						LeadCos[imatch] = cos;
-						LeadiPFO[imatch] = ipfo;
+						lead_abscos[imatch] = abscos;
+						lead_cos[imatch] = cos;
+						lead_ipfo[imatch] = ipfo;
 					}
 
 				} // end jet imatch
-			}
+			} // end imatch
 
 
 		} // end of pfo
+
+		///////////////////////////////
+		//////   Jet ANALYSIS   ///////
+		///////////////////////////////
+		
+		std::vector<VecOP> jetVecs;
+
+		for (int ijet = 0; ijet < 2; ++ijet){
+		
+			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
+			jetVecs.push_back(jetVec);
+
+			jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_pt[ijet]);
+		
+		}
+
+
+		// Compare jet and qqbar
+		for (int iqq = 0; iqq < 2; ++iqq)
+		{
+			for (int ijet = 0; ijet < 2; ++ijet)
+			{
+				VecOP angVec;
+				float angbtw = angVec.getAngleBtw(qqVecs.at(iqq).GetMomentum3(),jetVecs.at(ijet).GetMomentum3());
+				std::cout << "angbtw q" << iqq << ", jet" << ijet << " = " << angbtw << std::endl;
+			}
+
+		}
+
+		
+
+		if(jet_charge[0] * jet_charge[1] < 0){
+
+			// float pchg = 0;
+			// float mchg = 0;
+
+			// if(jet_charge[0] > 0){
+			// 	pchg = jet_charge[0];
+			// 	mchg = jet_charge[1];
+			// }else{
+			// 	pchg = jet_charge[1];
+			// 	mchg = jet_charge[0];				
+			// }
+
+			int mcqq = fabs(mc_quark_pdg[0]);
+
+			switch(mcqq){
+
+				case 1: // ddbar case
+					pfo_jet_charge_d->Fill(jet_charge[0]);
+					pfo_jet_charge_dbar->Fill(jet_charge[1]);
+					break;
+
+				case 2: // uubar case
+					pfo_jet_charge_u->Fill(jet_charge[0]);
+					pfo_jet_charge_ubar->Fill(jet_charge[1]);
+					break;
+
+				case 3: // ssbar case
+					pfo_jet_charge_s->Fill(jet_charge[0]);
+					pfo_jet_charge_sbar->Fill(jet_charge[1]);
+				break;
+
+				default:
+					break;
+
+			} // end switch qqbar			
+
+		}
 
 
 		///////////////////////////////////////
@@ -208,22 +298,22 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		///////////////////////////////////////
 
 		float chg[2] = {0};
-		chg[0] = pfo_charge[LeadiPFO[0]];
-		chg[1] = pfo_charge[LeadiPFO[1]];
+		chg[0] = pfo_charge[lead_ipfo[0]];
+		chg[1] = pfo_charge[lead_ipfo[1]];
 		
 
-		if (fabs(pfo_pdgcheat[LeadiPFO[0]])==321){
+		if (fabs(pfo_pdgcheat[lead_ipfo[0]])==321){
 
 			for (int i = 0; i < 2; ++i){
 
 				if(maxP[i]>10){
 
 					if(chg[0]*chg[1]<0){
-						LeadqCos[i] = (chg[i] < 0)? LeadCos[i]: -LeadCos[i];
+						lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
 					}
 
-					pfo_LeadK_cos->Fill(LeadqCos[i]);
-					pfo_LeadK_abscos->Fill(LeadAbsCos[i]);
+					pfo_LeadK_cos->Fill(lead_qcos[i]);
+					pfo_LeadK_abscos->Fill(lead_abscos[i]);
 
 				} // momentum cut (p > 10)
 			
@@ -247,6 +337,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 
 }
+
 
 
 void AnaPolar::LeadingMom(TH1F* h1p = 0, TH1F* h1m = 0, TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
