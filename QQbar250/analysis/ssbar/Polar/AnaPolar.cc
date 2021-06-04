@@ -6,6 +6,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TMath.h>
 
 void AnaPolar::printProgress(double percentage) {
     int val = (int) (percentage * 100);
@@ -51,6 +52,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	TH1F* pfo_LeadK_abscos 	= new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_cos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
 
+	TH1F* pfo_jet_angdiff  		= new TH1F(name_pfo+"jet_angdiff","; sep. ang qq - jet; Entry",100,0.0,TMath::Pi());
+
 	TH1F* pfo_jet_charge_u		= new TH1F(name_pfo+"jet_charge_u",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_ubar	= new TH1F(name_pfo+"jet_charge_ubar",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_d		= new TH1F(name_pfo+"jet_charge_d",";Jet charge; Events",100,-1.0,1.0);
@@ -61,6 +64,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
 	h1_pfo.push_back( pfo_LeadK_cos );
+
+	h1_pfo.push_back( pfo_jet_angdiff );
 	
 	h1_pfo.push_back( pfo_jet_charge_u);
 	h1_pfo.push_back( pfo_jet_charge_ubar);
@@ -92,7 +97,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
 		// trial
-		if(jentry>10) break;
+		// if(jentry>10000) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -206,9 +211,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					// jet_charge[imatch] += charge * sqrt(pt / 125.0);
-					jet_qp[imatch] += charge * sqrt(pt);
-					jet_pt[imatch] += pt;
+					jet_charge[imatch] += charge * sqrt(mom / 125.0);
+					// jet_qp[imatch] += charge * sqrt(pt);
+					// jet_pt[imatch] += pt;
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
@@ -234,55 +239,68 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
 			jetVecs.push_back(jetVec);
 
-			jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_pt[ijet]);
+			// jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_pt[ijet]);
 		
 		}
 
 
 		// Compare jet and qqbar
+		float min_angbtw = 1000;
+		int min_iqq = -1;
+		int min_ijet= -1;
+
 		for (int iqq = 0; iqq < 2; ++iqq)
 		{
 			for (int ijet = 0; ijet < 2; ++ijet)
 			{
 				VecOP angVec;
 				float angbtw = angVec.getAngleBtw(qqVecs.at(iqq).GetMomentum3(),jetVecs.at(ijet).GetMomentum3());
-				std::cout << "angbtw q" << iqq << ", jet" << ijet << " = " << angbtw << std::endl;
-			}
+				pfo_jet_angdiff->Fill(angbtw);
 
-		}
+				if(angbtw < min_angbtw){
+				
+					min_angbtw = angbtw;
+					min_iqq    = iqq;
+					min_ijet   = ijet;
+				
+				} // min angbtw
+			
+			} // jet loop
+
+		} // qq loop
 
 		
 
 		if(jet_charge[0] * jet_charge[1] < 0){
 
-			// float pchg = 0;
-			// float mchg = 0;
+			float jetchg_q = 0;
+			float jetchg_qbar = 0;
 
-			// if(jet_charge[0] > 0){
-			// 	pchg = jet_charge[0];
-			// 	mchg = jet_charge[1];
-			// }else{
-			// 	pchg = jet_charge[1];
-			// 	mchg = jet_charge[0];				
-			// }
+			if(min_iqq == 0){ // if it is q
+				jetchg_q = jet_charge[min_iqq];
+				jetchg_qbar = jet_charge[1-min_iqq];
+			}else{ // if it is qbar
+				jetchg_q = jet_charge[1-min_iqq];
+				jetchg_qbar = jet_charge[min_iqq];
+			}
 
 			int mcqq = fabs(mc_quark_pdg[0]);
 
 			switch(mcqq){
 
 				case 1: // ddbar case
-					pfo_jet_charge_d->Fill(jet_charge[0]);
-					pfo_jet_charge_dbar->Fill(jet_charge[1]);
+					pfo_jet_charge_d->Fill(jetchg_q);
+					pfo_jet_charge_dbar->Fill(jetchg_qbar);
 					break;
 
 				case 2: // uubar case
-					pfo_jet_charge_u->Fill(jet_charge[0]);
-					pfo_jet_charge_ubar->Fill(jet_charge[1]);
+					pfo_jet_charge_u->Fill(jetchg_q);
+					pfo_jet_charge_ubar->Fill(jetchg_qbar);
 					break;
 
 				case 3: // ssbar case
-					pfo_jet_charge_s->Fill(jet_charge[0]);
-					pfo_jet_charge_sbar->Fill(jet_charge[1]);
+					pfo_jet_charge_s->Fill(jetchg_q);
+					pfo_jet_charge_sbar->Fill(jetchg_qbar);
 				break;
 
 				default:
