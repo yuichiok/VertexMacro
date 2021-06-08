@@ -22,6 +22,7 @@ public:
 	float GetMomentum();
 	std::vector< float > GetMomentum3();
     static float    getAngleBtw(const std::vector< float > & vector1, const std::vector< float > & vector2);
+    float GetThrustPT(const std::vector< float > & v);
 	float GetPT();
 	float GetCostheta();
 	float GetCosphi();
