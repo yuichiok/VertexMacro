@@ -19,19 +19,22 @@ void AnaPolar::printProgress(double percentage) {
 void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="test")
 {
 
-	// Reco Histograms
+	// MC Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
 
 	// TH1F
 	TH1F* mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
 	TH1F* mc_k_cos 	 = new TH1F(name_mc_stable+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
-	TH1F* mc_qq_cos  = new TH1F("mc_quark_cos",";cos#theta; Events",100,-1.0,1.0);
+	
+	TH1F* mc_qq_cos  = new TH1F("h_mc_quark_cos",";cos#theta; Entries",100,-1.0,1.0);
+	TH1F* mc_qq_sep  = new TH1F("h_mc_quark_sep",";#theta (rad); Events",100,0.,TMath::Pi());
 
 	h1_mc_stable.push_back( mc_nk_evt );
 	h1_mc_stable.push_back( mc_k_cos );
 
 	h1_mc_stable.push_back( mc_qq_cos );
+	h1_mc_stable.push_back( mc_qq_sep );
 
 	// TH2F
 	// TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
@@ -135,6 +138,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		}
 
+		// VecOP qqAngVec;
+		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
+		mc_qq_sep->Fill(qqsep);
+
+
 
 		/////////////////////////////////////
 		///////   MC STABLE ANALYSIS   //////
@@ -180,6 +188,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		float lead_qcos[2] 	= {-2,-2};
 		int   lead_ipfo[2] 	= {-1,-1};
 
+		VecOP thrustVec(principle_thrust_axis[0],principle_thrust_axis[1],principle_thrust_axis[2]);
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -194,7 +203,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			float abscos = abs( pfoVec.GetCostheta() );
 			float cos    = pfoVec.GetCostheta();
 			float mom    = pfoVec.GetMomentum();
-			float pt     = pfoVec.GetPT();
+			std::vector<float> mom3   = pfoVec.GetMomentum3();
+
+			float pT     = pfoVec.GetThrustPT(thrustVec.GetMomentum3());
+
+			// float pt     = pfoVec.GetPT();
 			float charge = pfo_charge[ipfo];
 
 			// PFO kaon?
@@ -211,9 +224,13 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					jet_charge[imatch] += charge * sqrt(mom / 125.0);
+					// jet_charge[imatch] += charge * sqrt(mom / 125.0);
 					// jet_qp[imatch] += charge * sqrt(pt);
 					// jet_pt[imatch] += pt;
+
+					jet_charge[imatch] += charge * sqrt(pT / 125.0);
+
+
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
@@ -253,8 +270,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		{
 			for (int ijet = 0; ijet < 2; ++ijet)
 			{
-				VecOP angVec;
-				float angbtw = angVec.getAngleBtw(qqVecs.at(iqq).GetMomentum3(),jetVecs.at(ijet).GetMomentum3());
+				float angbtw = VecOP::getAngleBtw(qqVecs.at(iqq).GetMomentum3(),jetVecs.at(ijet).GetMomentum3());
 				pfo_jet_angdiff->Fill(angbtw);
 
 				if(angbtw < min_angbtw){
