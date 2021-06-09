@@ -99,16 +99,16 @@ std::vector< float > VecOP::GetMomentum3(){
   return p;
 }
 
-float VecOP::GetThrustPT(const std::vector< float > & v){
+float VecOP::GetThrustPz(const std::vector< float > & v){
 
-  float pt = 0.0;
+  float pz = 0.0;
   float angbtw = getAngleBtw(p,v);
   float flip = ( angbtw < TMath::Pi()/2 ) ? 1.0 : -1.0;
   float thval = getModule(v);
 
-  for (unsigned int i = 0; i < 3; i++) pt += p[i]*flip*v[i];
-     pt = sqrt(pt) / thval;
-  return pt;
+  for (unsigned int i = 0; i < 3; i++) pz += p[i]*flip*v[i];
+     pz = sqrt(pz) / thval;
+  return pz;
 }
 
 float VecOP::GetPT(){

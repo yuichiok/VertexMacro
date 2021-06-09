@@ -57,25 +57,42 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 	TH1F* pfo_jet_angdiff  		= new TH1F(name_pfo+"jet_angdiff","; sep. ang qq - jet; Entry",100,0.0,TMath::Pi());
 
+	TH1F* pfo_jet_mult			  = new TH1F(name_pfo+"jet_mult",";Jet multiplicity; Entry",10,0,10);
+	TH1F* pfo_jet_mult_uu			= new TH1F(name_pfo+"jet_mult_uu",";Jet multiplicity (u#bar{u}); Entry",10,0,10);
+	TH1F* pfo_jet_mult_dd			= new TH1F(name_pfo+"jet_mult_dd",";Jet multiplicity (d#bar{d}); Entry",10,0,10);
+	TH1F* pfo_jet_mult_ss			= new TH1F(name_pfo+"jet_mult_ss",";Jet multiplicity (s#bar{s}); Entry",10,0,10);
+
+	TH1F* pfo_jet_charge		  = new TH1F(name_pfo+"jet_charge",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_u		= new TH1F(name_pfo+"jet_charge_u",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_ubar	= new TH1F(name_pfo+"jet_charge_ubar",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_d		= new TH1F(name_pfo+"jet_charge_d",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_dbar	= new TH1F(name_pfo+"jet_charge_dbar",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_s		= new TH1F(name_pfo+"jet_charge_s",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_sbar	= new TH1F(name_pfo+"jet_charge_sbar",";Jet charge; Events",100,-1.0,1.0);
+	TH1F* pfo_q_match_charge	  = new TH1F(name_pfo+"q_match_charge",";Q match charge; Events",100,-4.0,4.0);
+	TH1F* pfo_qbar_match_charge	= new TH1F(name_pfo+"qbar_match_charge",";Qbar match charge; Events",100,-4.0,4.0);
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
 	h1_pfo.push_back( pfo_LeadK_cos );
 
 	h1_pfo.push_back( pfo_jet_angdiff );
+
+	h1_pfo.push_back( pfo_jet_mult );
+	h1_pfo.push_back( pfo_jet_mult_uu );
+	h1_pfo.push_back( pfo_jet_mult_dd );
+	h1_pfo.push_back( pfo_jet_mult_ss );
 	
+	h1_pfo.push_back( pfo_jet_charge);
 	h1_pfo.push_back( pfo_jet_charge_u);
 	h1_pfo.push_back( pfo_jet_charge_ubar);
 	h1_pfo.push_back( pfo_jet_charge_d);
 	h1_pfo.push_back( pfo_jet_charge_dbar);
 	h1_pfo.push_back( pfo_jet_charge_s);
 	h1_pfo.push_back( pfo_jet_charge_sbar);
+
+	h1_pfo.push_back( pfo_q_match_charge);
+	h1_pfo.push_back( pfo_qbar_match_charge);
 
 	// TH2F
 	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200);
@@ -96,11 +113,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 	Long64_t nentries = fChain->GetEntriesFast();
 
+	int nevents = 0;
+	int nevents_kaon_match = 0;
+
 	Long64_t nbytes = 0, nb = 0;
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
 		// trial
-		// if(jentry>10000) break;
+		// if(jentry>100000) break;
+		// if(jentry>100) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -112,11 +133,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
-		if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
-		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		// if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
+		if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
 		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
+
+
+		nevents++;
 
 
 		////////////////////////////////
@@ -141,6 +166,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		// VecOP qqAngVec;
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
 		mc_qq_sep->Fill(qqsep);
+
+
+		// std::cout << "qqsep = " << cos(qqsep) << "\n";
+
+		if(abs(cos(qqsep)) < 0.9) continue;
 
 
 
@@ -176,10 +206,18 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
+		// Compare qqbar
+		int qq_match = -1;
+		float qq_match_qp[2] = {0};
+		float qq_match_ThrustPz[2] = {0};
+		float qq_match_charge[2] = {0};
+
 		// Jet variables
 		float jet_pt[2] = {0};
+		float jet_ThrustPz[2] = {0};
 		float jet_qp[2] = {0};
-		float jet_charge[2] = {0};
+		float jet_charge[2] = {-100};
+		int   jet_mult[2] = {0};
 
 		// Leading PFO variables
 		float maxP[2] 			= {0};
@@ -204,11 +242,28 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			float cos    = pfoVec.GetCostheta();
 			float mom    = pfoVec.GetMomentum();
 			std::vector<float> mom3   = pfoVec.GetMomentum3();
-
-			float pT     = pfoVec.GetThrustPT(thrustVec.GetMomentum3());
-
+			float ThrustPz     = pfoVec.GetThrustPz(thrustVec.GetMomentum3());
 			// float pt     = pfoVec.GetPT();
 			float charge = pfo_charge[ipfo];
+
+			float q_pfo_sep    = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+			float qbar_pfo_sep = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+
+			qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
+
+			float ThrustPz_match = pfoVec.GetThrustPz(qqVecs.at(qq_match).GetMomentum3());
+
+			qq_match_qp[qq_match] += charge * sqrt(ThrustPz_match);
+			qq_match_ThrustPz[qq_match] += ThrustPz_match;
+
+
+		// std::cout << "\n";
+		// std::cout << "q sep    = " << q_pfo_sep << "\n";
+		// std::cout << "qbar sep = " << qbar_pfo_sep << "\n";
+		// std::cout << "qq match = " << qq_match << "\n";
+		// std::cout << "charge   = " << charge << "\n";
+
+
 
 			// PFO kaon?
 			if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
@@ -224,12 +279,13 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					// jet_charge[imatch] += charge * sqrt(mom / 125.0);
 					// jet_qp[imatch] += charge * sqrt(pt);
 					// jet_pt[imatch] += pt;
 
-					jet_charge[imatch] += charge * sqrt(pT / 125.0);
+					jet_mult[imatch]++;
 
+					jet_qp[imatch] += charge * sqrt(ThrustPz);
+					jet_ThrustPz[imatch] += ThrustPz;
 
 
 					if(mom > maxP[imatch]){
@@ -245,6 +301,18 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		} // end of pfo
 
+
+
+		for(int qmatch=0;qmatch<2;qmatch++){
+			qq_match_charge[qmatch] = qq_match_qp[qmatch] / sqrt(qq_match_ThrustPz[qq_match]);
+		}
+
+		pfo_q_match_charge->Fill(qq_match_charge[0]);
+		pfo_qbar_match_charge->Fill(qq_match_charge[1]);
+		// std::cout << "q match    = " << qq_match_charge[0] << "\n";
+		// std::cout << "qbar match = " << qq_match_charge[1] << "\n";
+
+
 		///////////////////////////////
 		//////   Jet ANALYSIS   ///////
 		///////////////////////////////
@@ -256,7 +324,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
 			jetVecs.push_back(jetVec);
 
-			// jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_pt[ijet]);
+			jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_ThrustPz[ijet]);
 		
 		}
 
@@ -292,6 +360,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 			float jetchg_q = 0;
 			float jetchg_qbar = 0;
 
+			pfo_jet_charge->Fill(jet_charge[0]);
+			pfo_jet_charge->Fill(jet_charge[1]);
+
+
 			if(min_iqq == 0){ // if it is q
 				jetchg_q = jet_charge[min_iqq];
 				jetchg_qbar = jet_charge[1-min_iqq];
@@ -302,19 +374,24 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 			int mcqq = fabs(mc_quark_pdg[0]);
 
+			for(int i=0;i<2;i++) pfo_jet_mult->Fill(jet_mult[i]);
+
 			switch(mcqq){
 
 				case 1: // ddbar case
+					for(int i=0;i<2;i++) pfo_jet_mult_dd->Fill(jet_mult[i]);
 					pfo_jet_charge_d->Fill(jetchg_q);
 					pfo_jet_charge_dbar->Fill(jetchg_qbar);
 					break;
 
 				case 2: // uubar case
+					for(int i=0;i<2;i++) pfo_jet_mult_uu->Fill(jet_mult[i]);
 					pfo_jet_charge_u->Fill(jetchg_q);
 					pfo_jet_charge_ubar->Fill(jetchg_qbar);
 					break;
 
 				case 3: // ssbar case
+					for(int i=0;i<2;i++) pfo_jet_mult_ss->Fill(jet_mult[i]);
 					pfo_jet_charge_s->Fill(jetchg_q);
 					pfo_jet_charge_sbar->Fill(jetchg_qbar);
 				break;
@@ -335,6 +412,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		chg[0] = pfo_charge[lead_ipfo[0]];
 		chg[1] = pfo_charge[lead_ipfo[1]];
 		
+		bool kkpass = false;
 
 		if (fabs(pfo_pdgcheat[lead_ipfo[0]])==321){
 
@@ -343,17 +421,22 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 				if(maxP[i]>10){
 
 					if(chg[0]*chg[1]<0){
-						lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
-					}
 
-					pfo_LeadK_cos->Fill(lead_qcos[i]);
-					pfo_LeadK_abscos->Fill(lead_abscos[i]);
+						kkpass = true;
+
+						lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
+						
+						pfo_LeadK_cos->Fill(lead_qcos[i]);
+						pfo_LeadK_abscos->Fill(lead_abscos[i]);
+					}
 
 				} // momentum cut (p > 10)
 			
 			} // Lead PFO loop
 
 		} // if Lead K
+
+		if(kkpass) nevents_kaon_match++;
 
 
 
@@ -362,6 +445,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 	printProgress( 1.0 );
 	std::cout << std::endl;
+
+	std::cout << "# Events: " << nevents << "\n";
+	std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
