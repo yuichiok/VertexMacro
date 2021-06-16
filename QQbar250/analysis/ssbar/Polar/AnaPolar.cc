@@ -37,10 +37,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_mc_stable.push_back( mc_qq_sep );
 
 	// TH2F
-	// TH2F* mc_HitCos_all	 = new TH2F(name_mc_stable+"HitCos_all",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
-	// TH2F* mc_HitCos_k	 = new TH2F(name_mc_stable+"HitCos_k",";|cos#theta|; # of Track Hits",100,0,1,230,0,230);
+	TH2F* mc_qq_p	 = new TH2F("h_mc_quark_p",";qbar momentum (GeV); q momentum (GeV)",200,0,200,200,0,200);
 
-	// h2_mc_stable.push_back( mc_HitCos_all );
+	h2_mc_stable.push_back( mc_qq_p );
 	// h2_mc_stable.push_back( mc_HitCos_k );
 
 
@@ -69,8 +68,13 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	TH1F* pfo_jet_charge_dbar	= new TH1F(name_pfo+"jet_charge_dbar",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_s		= new TH1F(name_pfo+"jet_charge_s",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_sbar	= new TH1F(name_pfo+"jet_charge_sbar",";Jet charge; Events",100,-1.0,1.0);
-	TH1F* pfo_q_match_charge	  = new TH1F(name_pfo+"q_match_charge",";Q match charge; Events",100,-4.0,4.0);
-	TH1F* pfo_qbar_match_charge	= new TH1F(name_pfo+"qbar_match_charge",";Qbar match charge; Events",100,-4.0,4.0);
+
+	TH1F* pfo_q_match_charge	  = new TH1F(name_pfo+"q_match_charge",";Q match charge; Events",100,-1.0,1.0);
+	TH1F* pfo_qbar_match_charge	= new TH1F(name_pfo+"qbar_match_charge",";Qbar match charge; Events",100,-1.0,1.0);
+
+	TH1F* pfo_q_match_count      = new TH1F(name_pfo+"q_match_count",";pz; PFOs",40,0,40);
+	TH1F* pfo_q_match_count0     = new TH1F(name_pfo+"q_match_count0",";pz; PFOs",40,0,40);
+
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
@@ -94,8 +98,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	h1_pfo.push_back( pfo_q_match_charge);
 	h1_pfo.push_back( pfo_qbar_match_charge);
 
+	h1_pfo.push_back( pfo_q_match_count);
+	h1_pfo.push_back( pfo_q_match_count0);
+
 	// TH2F
-	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",4,0,4,200,0,200);
+	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",200,0,200,200,0,200);
 
 	// h2_pfo.push_back( pfo_LeadPFO_p_pid );
 
@@ -121,7 +128,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		// trial
 		// if(jentry>100000) break;
-		// if(jentry>100) break;
+		// if(jentry>1000) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -138,7 +145,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
 		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
-		if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
+		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
 
 		nevents++;
@@ -163,13 +170,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		}
 
-		// VecOP qqAngVec;
+		mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
+
+		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 125 ) continue;
+		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 125 ) continue;
+
+
+		// Cut qq with qq separation
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
 		mc_qq_sep->Fill(qqsep);
-
-
-		// std::cout << "qqsep = " << cos(qqsep) << "\n";
-
 		if(abs(cos(qqsep)) < 0.9) continue;
 
 
@@ -183,7 +192,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		for (int istable = 0; istable < mc_stable_n; istable++)
 		{
 
-			if( sqrt(pow(mc_stable_px[istable],2)+pow(mc_stable_py[istable],2))<2 ) continue;
+			// if( sqrt(pow(mc_stable_px[istable],2)+pow(mc_stable_py[istable],2))<2 ) continue;
 
 			VecOP mcVec(mc_stable_px[istable],mc_stable_py[istable],mc_stable_pz[istable]);
 			float abscos = abs( mcVec.GetCostheta() );
@@ -208,9 +217,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		// Compare qqbar
 		int qq_match = -1;
+		int qq_match_count[2] = {0};
+
 		float qq_match_qp[2] = {0};
 		float qq_match_ThrustPz[2] = {0};
-		float qq_match_charge[2] = {0};
+		float qq_match_charge[2] = {-100};
 
 		// Jet variables
 		float jet_pt[2] = {0};
@@ -232,7 +243,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 			// if(pfo_match[ipfo]<0) continue;
 
-			if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
+			// if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
 			if(pfo_ntracks[ipfo]!=1) continue;
 
@@ -251,18 +262,16 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 			qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
 
+			qq_match_count[qq_match]++;
+
 			float ThrustPz_match = pfoVec.GetThrustPz(qqVecs.at(qq_match).GetMomentum3());
 
-			qq_match_qp[qq_match] += charge * sqrt(ThrustPz_match);
-			qq_match_ThrustPz[qq_match] += ThrustPz_match;
+			if(charge!=0){
+				float qp = charge * sqrt(ThrustPz_match);
+				qq_match_qp[qq_match] += qp;
+				qq_match_ThrustPz[qq_match] += sqrt(ThrustPz_match);
 
-
-		// std::cout << "\n";
-		// std::cout << "q sep    = " << q_pfo_sep << "\n";
-		// std::cout << "qbar sep = " << qbar_pfo_sep << "\n";
-		// std::cout << "qq match = " << qq_match << "\n";
-		// std::cout << "charge   = " << charge << "\n";
-
+			}
 
 
 			// PFO kaon?
@@ -304,11 +313,21 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 
 		for(int qmatch=0;qmatch<2;qmatch++){
-			qq_match_charge[qmatch] = qq_match_qp[qmatch] / sqrt(qq_match_ThrustPz[qq_match]);
+			qq_match_charge[qmatch] = qq_match_qp[qmatch] / qq_match_ThrustPz[qq_match];
+
+			//debug
+			pfo_q_match_count->Fill(qq_match_count[qmatch]);
+
+			if(qq_match_charge[qmatch]>=0 && qq_match_charge[qmatch]<=0.08){
+
+				pfo_q_match_count0->Fill(qq_match_count[qmatch]);
+
+			} // endif chgvec
+
 		}
 
-		pfo_q_match_charge->Fill(qq_match_charge[0]);
-		pfo_qbar_match_charge->Fill(qq_match_charge[1]);
+		if(qq_match_count[0]>1) pfo_q_match_charge->Fill(qq_match_charge[0]);
+		if(qq_match_count[1]>1) pfo_qbar_match_charge->Fill(qq_match_charge[1]);
 		// std::cout << "q match    = " << qq_match_charge[0] << "\n";
 		// std::cout << "qbar match = " << qq_match_charge[1] << "\n";
 
