@@ -44,7 +44,7 @@ void AnaPolar::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="test")
+void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test")
 {
 
 	// MC Histograms
@@ -58,16 +58,30 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	TH1F* mc_qq_cos  = new TH1F("h_mc_quark_cos",";cos#theta; Entries",100,-1.0,1.0);
 	TH1F* mc_qq_sep  = new TH1F("h_mc_quark_sep",";#theta (rad); Events",100,0.,TMath::Pi());
 
+	TH1F* mc_qq_m     = new TH1F("h_mc_quark_m",";Mass (GeV); Entries",100,0,0.003);
+	TH1F* mc_qq_pp = new TH1F("h_mc_quark_pp",";p0+p1; Entries",300,0,300);
+	TH1F* mc_qq_pz = new TH1F("h_mc_quark_pz",";pz (beam direction); Entries",125,0,125);
+
+
 	h1_mc_stable.push_back( mc_nk_evt );
 	h1_mc_stable.push_back( mc_k_cos );
 
 	h1_mc_stable.push_back( mc_qq_cos );
 	h1_mc_stable.push_back( mc_qq_sep );
 
-	// TH2F
-	TH2F* mc_qq_p	 = new TH2F("h_mc_quark_p",";qbar momentum (GeV); q momentum (GeV)",200,0,200,200,0,200);
+	h1_mc_stable.push_back( mc_qq_m );
+	h1_mc_stable.push_back( mc_qq_pp );
+	h1_mc_stable.push_back( mc_qq_pz );
 
+
+	// TH2F
+	TH2F* mc_qq_E	   = new TH2F("h_mc_quark_E",";qbar energy (GeV); q energy (GeV)",200,0,130,200,0,130);
+	TH2F* mc_qq_p	   = new TH2F("h_mc_quark_p",";qbar momentum (GeV); q momentum (GeV)",200,0,130,200,0,130);
+	TH2F* mc_isr_p	 = new TH2F(name_mc_stable+"isr_p",";qbar momentum (GeV); q momentum (GeV)",200,0,130,200,0,130);
+
+	h2_mc_stable.push_back( mc_qq_E );
 	h2_mc_stable.push_back( mc_qq_p );
+	h2_mc_stable.push_back( mc_isr_p );
 	// h2_mc_stable.push_back( mc_HitCos_k );
 
 
@@ -198,17 +212,47 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 
 		}
 
-		mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
 
-		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 125 ) continue;
-		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 125 ) continue;
+
+		mc_qq_E->Fill(mc_quark_E[0],mc_quark_E[1]);
+
+		mc_qq_pz->Fill(mc_quark_pz[0]);
+		mc_qq_pz->Fill(mc_quark_pz[1]);
+
+		if(abs(mc_quark_pz[0]) < 60 && abs(mc_quark_pz[1]) < 60) mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
+		mc_qq_pp->Fill(qqVecs.at(0).GetMomentum()+qqVecs.at(1).GetMomentum());
+
+
+
+		mc_qq_m->Fill(mc_quark_m[0]);
+		mc_qq_m->Fill(mc_quark_m[1]);
 
 
 		// Cut qq with qq separation
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
 		mc_qq_sep->Fill(qqsep);
+
 		if(abs(cos(qqsep)) < 0.9) continue;
 
+
+		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
+		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
+
+
+		/////////////////////////////////
+		//////   MC ISR ANALYSIS   //////
+		/////////////////////////////////
+
+		std::vector<VecOP> isrVecs;
+
+		for(int isr=0; isr < 2; isr++){
+
+			VecOP isrVec(mc_ISR_px[isr],mc_ISR_py[isr],mc_ISR_pz[isr]);
+			isrVecs.push_back(isrVec);
+
+		}
+
+		mc_isr_p->Fill(isrVecs.at(0).GetMomentum(),isrVecs.at(1).GetMomentum());
 
 
 		/////////////////////////////////////
@@ -251,7 +295,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 		float qq_match_ThrustPz[2] = {0};
 		float qq_match_charge[2] = {-100};
 
-		float wk = 0.3;
+		// float wk = 0.3;
 
 		// Jet variables
 		float jet_pt[2] = {0};
@@ -300,7 +344,6 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 				float qp = charge * pow(ThrustPz_match,wk);
 				qq_match_qp[qq_match] += qp;
 				qq_match_ThrustPz[qq_match] += pow(ThrustPz_match,wk);
-
 			}
 
 
@@ -492,8 +535,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float Kvcut=35, TString output="te
 	printProgress( 1.0 );
 	std::cout << std::endl;
 
-	std::cout << "# Events: " << nevents << "\n";
-	std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	// std::cout << "# Events: " << nevents << "\n";
+	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
 
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
