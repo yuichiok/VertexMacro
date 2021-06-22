@@ -76,7 +76,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	// TH2F
 	TH2F* mc_qq_E	   = new TH2F("h_mc_quark_E",";qbar energy (GeV); q energy (GeV)",200,0,130,200,0,130);
-	TH2F* mc_qq_p	   = new TH2F("h_mc_quark_p",";qbar momentum (GeV); q momentum (GeV)",200,0,130,200,0,130);
+	TH2F* mc_qq_p	   = new TH2F("h_mc_quark_p",";qbar momentum (GeV); q momentum (GeV)",200,120,127,200,120,127);
 	TH2F* mc_isr_p	 = new TH2F(name_mc_stable+"isr_p",";qbar momentum (GeV); q momentum (GeV)",200,0,130,200,0,130);
 
 	h2_mc_stable.push_back( mc_qq_E );
@@ -117,6 +117,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_q_match_count      = new TH1F(name_pfo+"q_match_count",";pz; PFOs",40,0,40);
 	TH1F* pfo_q_match_count0     = new TH1F(name_pfo+"q_match_count0",";pz; PFOs",40,0,40);
 
+	TH1F* pfo_LeadK_p  			= new TH1F(name_pfo+"LeadK_p",";p[GeV]; Events",120,0,120);
+
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
@@ -142,6 +144,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	h1_pfo.push_back( pfo_q_match_count);
 	h1_pfo.push_back( pfo_q_match_count0);
+
+	h1_pfo.push_back( pfo_LeadK_p);
 
 	// TH2F
 	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",200,0,200,200,0,200);
@@ -183,9 +187,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 
 		// if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
-		if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
 		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
-		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
@@ -204,22 +208,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
 			qqVecs.push_back(qqVec);
 
-			float cos 	 = qqVec.GetCostheta();
-			float charge = mc_quark_charge[iqq];
-			float QQqCos = (charge < 0)? cos: -cos;
-
-			mc_qq_cos->Fill(QQqCos);
-
 		}
-
-
 
 		mc_qq_E->Fill(mc_quark_E[0],mc_quark_E[1]);
 
 		mc_qq_pz->Fill(mc_quark_pz[0]);
 		mc_qq_pz->Fill(mc_quark_pz[1]);
 
-		if(abs(mc_quark_pz[0]) < 60 && abs(mc_quark_pz[1]) < 60) mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
+		// if(abs(mc_quark_pz[0]) < 60 && abs(mc_quark_pz[1]) < 60) mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
+		mc_qq_p->Fill(qqVecs.at(0).GetMomentum(),qqVecs.at(1).GetMomentum());
 		mc_qq_pp->Fill(qqVecs.at(0).GetMomentum()+qqVecs.at(1).GetMomentum());
 
 
@@ -237,6 +234,20 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
+
+
+
+		for(int iqq=0; iqq < 2; iqq++){
+
+			VecOP qq2Vec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
+
+			float cos 	 = qq2Vec.GetCostheta();
+			float charge = mc_quark_charge[iqq];
+			float QQqCos = (charge < 0)? cos: -cos;
+
+			mc_qq_cos->Fill(QQqCos);
+
+		}
 
 
 		/////////////////////////////////
@@ -340,6 +351,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 			float ThrustPz_match = pfoVec.GetThrustPz(qqVecs.at(qq_match).GetMomentum3());
 
+
+			// CHANGE HERE FOR SELECTION
+
+			// if(charge!=0 &&  mom > 5.0){
 			if(charge!=0){
 				float qp = charge * pow(ThrustPz_match,wk);
 				qq_match_qp[qq_match] += qp;
@@ -399,8 +414,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 		}
 
-		if(qq_match_count[0]>1) pfo_q_match_charge->Fill(qq_match_charge[0]);
-		if(qq_match_count[1]>1) pfo_qbar_match_charge->Fill(qq_match_charge[1]);
+		if(qq_match_count[0]>0) pfo_q_match_charge->Fill(qq_match_charge[0]);
+		if(qq_match_count[1]>0) pfo_qbar_match_charge->Fill(qq_match_charge[1]);
 		// std::cout << "q match    = " << qq_match_charge[0] << "\n";
 		// std::cout << "qbar match = " << qq_match_charge[1] << "\n";
 
@@ -520,6 +535,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 						
 						pfo_LeadK_cos->Fill(lead_qcos[i]);
 						pfo_LeadK_abscos->Fill(lead_abscos[i]);
+						pfo_LeadK_p->Fill(maxP[i]); // rm 10GeV cut for the full distribution
 					}
 
 				} // momentum cut (p > 10)
