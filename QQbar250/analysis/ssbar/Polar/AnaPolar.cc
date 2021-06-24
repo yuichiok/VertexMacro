@@ -169,6 +169,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	int nevents = 0;
 	int nevents_kaon_match = 0;
 
+	int nLeadK_pass  = 0;
+	int nLeadK_match = 0;
+
 	Long64_t nbytes = 0, nb = 0;
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
@@ -187,9 +190,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 
 		// if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
-		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
 		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
-		if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
@@ -521,24 +524,34 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		
 		bool kkpass = false;
 
-		if (fabs(pfo_pdgcheat[lead_ipfo[0]])==321){
+		if (fabs(pfo_pdgcheat[lead_ipfo[0]])==321 && fabs(pfo_pdgcheat[lead_ipfo[1]])==321){
 
 			for (int i = 0; i < 2; ++i){
 
-				if(maxP[i]>10){
+				if(chg[0]*chg[1]<0){
 
-					if(chg[0]*chg[1]<0){
+					pfo_LeadK_p->Fill(maxP[i]); // rm 10GeV cut for the full distribution
+
+					if(maxP[i]>10){
+
+						VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
+						float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+						float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+						int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
+						int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] > 0) ? 0 : 1;  // s,d: 0 = K-, 1 = K+ | u: 0 = K+, 1 = K-
 
 						kkpass = true;
+						nLeadK_pass++;
+						if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
 
 						lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
 						
 						pfo_LeadK_cos->Fill(lead_qcos[i]);
 						pfo_LeadK_abscos->Fill(lead_abscos[i]);
-						pfo_LeadK_p->Fill(maxP[i]); // rm 10GeV cut for the full distribution
-					}
 
-				} // momentum cut (p > 10)
+					}// momentum cut (p > 10)
+
+				} // charge +-
 			
 			} // Lead PFO loop
 
@@ -553,6 +566,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	// std::cout << "# Events: " << nevents << "\n";
 	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << std::endl;
 
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
