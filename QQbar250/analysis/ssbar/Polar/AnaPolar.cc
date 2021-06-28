@@ -117,7 +117,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_q_match_count      = new TH1F(name_pfo+"q_match_count",";pz; PFOs",40,0,40);
 	TH1F* pfo_q_match_count0     = new TH1F(name_pfo+"q_match_count0",";pz; PFOs",40,0,40);
 
-	TH1F* pfo_LeadK_p  			= new TH1F(name_pfo+"LeadK_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadK_p  					= new TH1F(name_pfo+"LeadK_p",";p[GeV]; Events",120,0,120);
+	TH1F* pfo_LeadK_p_10  			= new TH1F(name_pfo+"LeadK_p_10",";p[GeV]; Events",120,0,120);
 
 
 	h1_pfo.push_back( pfo_k_cos );
@@ -146,6 +147,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	h1_pfo.push_back( pfo_q_match_count0);
 
 	h1_pfo.push_back( pfo_LeadK_p);
+	h1_pfo.push_back( pfo_LeadK_p_10);
 
 	// TH2F
 	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",200,0,200,200,0,200);
@@ -190,8 +192,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 
 		// if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
-		if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
-		// if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
 		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
@@ -532,7 +534,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 					pfo_LeadK_p->Fill(maxP[i]); // rm 10GeV cut for the full distribution
 
-					if(maxP[i]>10){
+					// if(maxP[i]>10){
+					if(maxP[0]>10 && maxP[1]>10){
 
 						VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
 						float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
@@ -548,6 +551,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 						
 						pfo_LeadK_cos->Fill(lead_qcos[i]);
 						pfo_LeadK_abscos->Fill(lead_abscos[i]);
+						pfo_LeadK_p_10->Fill(maxP[i]); // with 10GeV cut
 
 					}// momentum cut (p > 10)
 
