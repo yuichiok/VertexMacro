@@ -191,10 +191,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
-		// if(fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) continue; // ignore MC b/c quarks
-		// if(fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
-		if(fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
-		// if(fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
+		if(output=="uu" && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		if(output=="ss" && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		if(output=="dd" && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
