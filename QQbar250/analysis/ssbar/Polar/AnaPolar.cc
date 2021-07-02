@@ -166,10 +166,19 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	///////   EVENT ANALYSIS   ///////
 	//////////////////////////////////
 
+	const float MAXP_CUT = 10.;
+
+
+
 	Long64_t nentries = fChain->GetEntriesFast();
 
 	int nevents = 0;
 	int nevents_kaon_match = 0;
+
+	int n_kk   = 0;
+	int n_kpkm = 0;
+	int n_kpkp = 0;
+	int n_kmkm = 0;
 
 	int nLeadK_pass  = 0;
 	int nLeadK_match = 0;
@@ -188,7 +197,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 		// Progress bar
 		// if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
-		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
+		// printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
 		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
@@ -523,54 +532,70 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		float chg[2] = {0};
 		chg[0] = pfo_charge[lead_ipfo[0]];
 		chg[1] = pfo_charge[lead_ipfo[1]];
-		
-		bool kkpass = false;
 
-		if (fabs(pfo_pdgcheat[lead_ipfo[0]])==321 && fabs(pfo_pdgcheat[lead_ipfo[1]])==321){
+		bool kchg_configs[4] = {0};
+		kchg_configs[0] = ( (chg[0]<0) && (chg[1]>0) ) ? true : false;
+		kchg_configs[1] = ( (chg[0]>0) && (chg[1]<0) ) ? true : false;
+		kchg_configs[2] = ( (chg[0]>0) && (chg[1]>0) ) ? true : false;
+		kchg_configs[3] = ( (chg[0]<0) && (chg[1]<0) ) ? true : false;
 
-			for (int i = 0; i < 2; ++i){
+		bool ktags[2] = {0};
+		ktags[0] = (fabs(pfo_pdgcheat[lead_ipfo[0]])==321) ? true : false;
+		ktags[1] = (fabs(pfo_pdgcheat[lead_ipfo[1]])==321) ? true : false;
 
-				if(chg[0]*chg[1]<0){
+		bool maxP_check = ( maxP[0]>MAXP_CUT && maxP[1]>MAXP_CUT ) ? true : false;
 
-					pfo_LeadK_p->Fill(maxP[i]); // rm 10GeV cut for the full distribution
+		if(ktags[0] && ktags[1] && maxP_check){
 
-					// if(maxP[i]>10){
-					if(maxP[0]>10 && maxP[1]>10){
+			n_kk++;
 
-						VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
-						float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
-						float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
-						int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
-						int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] > 0) ? 0 : 1;  // s,d: 0 = K-, 1 = K+ | u: 0 = K+, 1 = K-
+			if(kchg_configs[0] || kchg_configs[1]){
 
-						kkpass = true;
-						nLeadK_pass++;
-						if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
+				n_kpkm++;
 
-						lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
-						
-						pfo_LeadK_cos->Fill(lead_qcos[i]);
-						pfo_LeadK_abscos->Fill(lead_abscos[i]);
-						pfo_LeadK_p_10->Fill(maxP[i]); // with 10GeV cut
+				for (int i = 0; i < 2; ++i){
 
-					}// momentum cut (p > 10)
+					VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
+					float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+					float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+					int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
+					int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
 
-				} // charge +-
+					nLeadK_pass++;
+					if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
+
+					lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
+					
+					pfo_LeadK_cos->Fill(lead_qcos[i]);
+					pfo_LeadK_abscos->Fill(lead_abscos[i]);
+					pfo_LeadK_p_10->Fill(maxP[i]); // with 10GeV cut
+
+				}  // loop 2 leading kaons 
+
+			}else if( kchg_configs[2] ){ 
+				
+				n_kpkp++;
+
+			}else if( kchg_configs[3] ){
+
+				n_kmkm++;
 			
-			} // Lead PFO loop
+			}
 
-		} // if Lead K
+		} // k double tag / MAXP check
 
-		if(kkpass) nevents_kaon_match++;
+
 
 	} // end of event loop
 
-	printProgress( 1.0 );
-	std::cout << std::endl;
+	// printProgress( 1.0 );
+	// std::cout << std::endl;
 
 	// std::cout << "# Events: " << nevents << "\n";
 	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	std::cout << "Process: " << output << std::endl;
 	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << std::endl;
+	std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << "n_kmkm:" << n_kmkm << std::endl;
 
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
