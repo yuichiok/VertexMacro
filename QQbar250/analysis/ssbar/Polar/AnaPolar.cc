@@ -116,6 +116,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_q_match_charge	  = new TH1F(name_pfo+"q_match_charge",";Q match charge; Events",100,-1.0,1.0);
 	TH1F* pfo_qbar_match_charge	= new TH1F(name_pfo+"qbar_match_charge",";Qbar match charge; Events",100,-1.0,1.0);
 
+	TH1F* pfo_LeadK_q_match_charge	  = new TH1F(name_pfo+"LeadK_q_match_charge",";Q match charge (LeadK cond.); Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qbar_match_charge	= new TH1F(name_pfo+"LeadK_qbar_match_charge",";Qbar match charge (LeadK cond.); Events",100,-1.0,1.0);
+
+
 	TH1F* pfo_q_match_count      = new TH1F(name_pfo+"q_match_count",";pz; PFOs",40,0,40);
 	TH1F* pfo_q_match_count0     = new TH1F(name_pfo+"q_match_count0",";pz; PFOs",40,0,40);
 
@@ -146,6 +150,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	h1_pfo.push_back( pfo_q_match_charge);
 	h1_pfo.push_back( pfo_qbar_match_charge);
+
+	h1_pfo.push_back( pfo_LeadK_q_match_charge);
+	h1_pfo.push_back( pfo_LeadK_qbar_match_charge);	
 
 	h1_pfo.push_back( pfo_q_match_count);
 	h1_pfo.push_back( pfo_q_match_count0);
@@ -417,6 +424,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 
 		for(int qmatch=0;qmatch<2;qmatch++){
+
 			qq_match_charge[qmatch] = qq_match_qp[qmatch] / qq_match_ThrustPz[qq_match];
 
 			//debug
@@ -524,7 +532,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 			} // end switch qqbar			
 
-		}
+		} // jet charge opposite
 
 
 		///////////////////////////////////////
@@ -554,6 +562,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 			if(kchg_configs[0] || kchg_configs[1]){
 
 				n_kpkm++;
+
+				if(qq_match_count[0]>0) pfo_LeadK_q_match_charge->Fill(qq_match_charge[0]);
+				if(qq_match_count[1]>0) pfo_LeadK_qbar_match_charge->Fill(qq_match_charge[1]);
 
 				for (int i = 0; i < 2; ++i){
 
