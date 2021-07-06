@@ -103,6 +103,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_jet_mult_dd			= new TH1F(name_pfo+"jet_mult_dd",";Jet multiplicity (d#bar{d}); Entry",10,0,10);
 	TH1F* pfo_jet_mult_ss			= new TH1F(name_pfo+"jet_mult_ss",";Jet multiplicity (s#bar{s}); Entry",10,0,10);
 
+	TH1F* pfo_jet_LeadK_cos   = new TH1F(name_pfo+"jet_LeadK_cos",";|#theta_{Jet} - #theta_{LeadK}|; Entries",100,0,1.0);
+
 	TH1F* pfo_jet_charge		  = new TH1F(name_pfo+"jet_charge",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_u		= new TH1F(name_pfo+"jet_charge_u",";Jet charge; Events",100,-1.0,1.0);
 	TH1F* pfo_jet_charge_ubar	= new TH1F(name_pfo+"jet_charge_ubar",";Jet charge; Events",100,-1.0,1.0);
@@ -131,6 +133,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	h1_pfo.push_back( pfo_jet_mult_uu );
 	h1_pfo.push_back( pfo_jet_mult_dd );
 	h1_pfo.push_back( pfo_jet_mult_ss );
+
+	h1_pfo.push_back( pfo_jet_LeadK_cos );
 	
 	h1_pfo.push_back( pfo_jet_charge);
 	h1_pfo.push_back( pfo_jet_charge_u);
@@ -167,8 +171,6 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	//////////////////////////////////
 
 	const float MAXP_CUT = 10.;
-
-
 
 	Long64_t nentries = fChain->GetEntriesFast();
 
@@ -569,6 +571,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 					pfo_LeadK_cos->Fill(lead_qcos[i]);
 					pfo_LeadK_abscos->Fill(lead_abscos[i]);
 					pfo_LeadK_p_10->Fill(maxP[i]); // with 10GeV cut
+
+					float jet_LeadK_sep  = fabs( VecOP::getAngleBtw(LeadKVec.GetMomentum3(),jetVecs.at(i).GetMomentum3()) );
+					pfo_jet_LeadK_cos->Fill(jet_LeadK_sep);
+
 
 				}  // loop 2 leading kaons 
 
