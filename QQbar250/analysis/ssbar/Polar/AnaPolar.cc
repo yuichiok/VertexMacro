@@ -95,6 +95,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_k_cos  				= new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_abscos 	= new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_cos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_k_mult_jet 		= new TH1F(name_pfo+"k_mult_jet","; # kaons/jet ; Entry",10,0,10);
 
 	TH1F* pfo_jet_angdiff  		= new TH1F(name_pfo+"jet_angdiff","; sep. ang qq - jet; Entry",100,0.0,TMath::Pi());
 
@@ -130,6 +131,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
 	h1_pfo.push_back( pfo_LeadK_cos );
+	h1_pfo.push_back( pfo_k_mult_jet );
 
 	h1_pfo.push_back( pfo_jet_angdiff );
 
@@ -165,7 +167,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	// h2_pfo.push_back( pfo_LeadPFO_p_pid );
 
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.root",output.Data()),"RECREATE");
 	MyFile->cd();
 
 
@@ -337,6 +340,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		float jet_qp[2] = {0};
 		float jet_charge[2] = {-100};
 		int   jet_mult[2] = {0};
+		int   jet_k_mult[2] = {0};
 
 		// Leading PFO variables
 		float maxP[2] 			= {0};
@@ -399,10 +403,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					// jet_qp[imatch] += charge * sqrt(pt);
-					// jet_pt[imatch] += pt;
-
 					jet_mult[imatch]++;
+					if(fabs(pfo_pdgcheat[ipfo])==321) jet_k_mult[imatch]++;
 
 					jet_qp[imatch] += charge * sqrt(ThrustPz);
 					jet_ThrustPz[imatch] += ThrustPz;
@@ -456,6 +458,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 			jetVecs.push_back(jetVec);
 
 			jet_charge[ijet] = jet_qp[ijet] / sqrt(jet_ThrustPz[ijet]);
+
+			pfo_k_mult_jet->Fill(jet_k_mult[ijet]);
 		
 		}
 
