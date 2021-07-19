@@ -78,7 +78,7 @@ void FitJetCharge_LK() {
   TCanvas* c1 = new TCanvas("c1","c1",500,500);
 
 
-  TString filename = "/home/ilc/yokugawa/macros/QQbar250/analysis/ssbar/Polar/rootfiles/DQ_250GeV_uds.root";
+  TString filename = "/home/ilc/yokugawa/macros/QQbar250/analysis/ssbar/Polar/rootfiles/DQ_250GeV_uu.400.root";
   TFile *f = new TFile(filename);
   TH1F* h_pfo_LeadK_q_match_charge = (TH1F*)f->Get("h_pfo_LeadK_q_match_charge");
   TH1F* h_pfo_LeadK_qbar_match_charge = (TH1F*)f->Get("h_pfo_LeadK_qbar_match_charge");
@@ -98,8 +98,8 @@ void FitJetCharge_LK() {
   leg->SetFillColor(kWhite);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
-  leg->AddEntry(h_pfo_LeadK_q_match_charge,"uds matched PFO","fp");
-  leg->AddEntry(h_pfo_LeadK_qbar_match_charge,"#bar{uds} matched PFO","fp");
+  leg->AddEntry(h_pfo_LeadK_q_match_charge,"uu matched PFO","fp");
+  leg->AddEntry(h_pfo_LeadK_qbar_match_charge,"#bar{uu} matched PFO","fp");
   leg->Draw();
 
 
