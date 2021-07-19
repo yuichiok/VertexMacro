@@ -96,6 +96,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	TH1F* pfo_LeadK_abscos 	  = new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_qcos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
 	TH1F* pfo_LeadK_cosAdd		= new TH1F(name_pfo+"LeadKaons_cosAdd",";cos#theta_{0}+cos#theta_{1}; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_phiDiff		= new TH1F(name_pfo+"LeadK_phiDiff",";#delta#phi_{LeadK}; Events",100,-TMath::Pi(),TMath::Pi());
 	TH1F* pfo_k_mult_jet 		  = new TH1F(name_pfo+"k_mult_jet","; # kaons/jet ; Entry",10,0,10);
 
 	TH1F* pfo_jet_angdiff  		= new TH1F(name_pfo+"jet_angdiff","; sep. ang qq - jet; Entry",100,0.0,TMath::Pi());
@@ -129,6 +130,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	h1_pfo.push_back( pfo_LeadK_abscos );
 	h1_pfo.push_back( pfo_LeadK_qcos );
 	h1_pfo.push_back( pfo_LeadK_cosAdd );
+	h1_pfo.push_back( pfo_LeadK_phiDiff );
 	h1_pfo.push_back( pfo_k_mult_jet );
 
 	h1_pfo.push_back( pfo_jet_angdiff );
@@ -338,11 +340,12 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		int   jet_k_mult[2] = {0};
 
 		// Leading PFO variables
-		float maxP[2] 			= {0};
+		float maxP[2] 			 = {0};
 		float lead_abscos[2] = {-2,-2};
-		float lead_cos[2] 		= {-2,-2};
-		float lead_qcos[2] 	= {-2,-2};
-		int   lead_ipfo[2] 	= {-1,-1};
+		float lead_cos[2] 	 = {-2,-2};
+		float lead_phi[2] 	 = {-2,-2};
+		float lead_qcos[2] 	 = {-2,-2};
+		int   lead_ipfo[2] 	 = {-1,-1};
 
 		VecOP thrustVec(principle_thrust_axis[0],principle_thrust_axis[1],principle_thrust_axis[2]);
 
@@ -358,6 +361,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 			float cos    = pfoVec.GetCostheta();
+			float phi    = pfoVec.GetPhi();
 			float mom    = pfoVec.GetMomentum();
 			std::vector<float> mom3   = pfoVec.GetMomentum3();
 			float ThrustPz     = pfoVec.GetThrustPz(thrustVec.GetMomentum3());
@@ -409,6 +413,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 						maxP[imatch] = mom;
 						lead_abscos[imatch] = abscos;
 						lead_cos[imatch] = cos;
+						lead_phi[imatch] = phi;
 						lead_ipfo[imatch] = ipfo;
 					}
 
@@ -555,6 +560,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 				if(qq_match_count[1]>0) pfo_LeadK_qbar_match_charge->Fill(qq_match_charge[1]);
 
 				pfo_LeadK_cosAdd->Fill(lead_cos[0]+lead_cos[1]);
+				pfo_LeadK_phiDiff->Fill(lead_phi[0]-lead_phi[1]);
 
 				for (int i = 0; i < 2; ++i){
 

@@ -129,6 +129,13 @@ float VecOP::GetCosphi(){
   return cosphi;
 }
 
+float VecOP::GetPhi(){
+  float phi= -10.0;
+  std::vector<float> d1 = getDirection(p);
+  phi = getAngles(d1).at(0);
+  return phi;
+}
+
 float VecOP::GetSinacol(TVector3 v1, TVector3 v2){
   float sinacol =  -2.0;
   TVector3 v= v1.Cross(v2);

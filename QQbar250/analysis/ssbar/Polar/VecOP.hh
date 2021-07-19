@@ -26,6 +26,7 @@ public:
 	float GetPT();
 	float GetCostheta();
 	float GetCosphi();
+	float GetPhi();
 	float GetSinacol(TVector3 v1, TVector3 v2);
 
 private:
