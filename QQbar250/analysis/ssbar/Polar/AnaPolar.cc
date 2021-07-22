@@ -44,7 +44,7 @@ void AnaPolar::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test")
+void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0, TString output="test")
 {
 
 	// MC Histograms
@@ -164,8 +164,16 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 	// h2_pfo.push_back( pfo_LeadPFO_p_pid );
 
+
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(0) << MAXP_CUT;
+	TString maxp_it = stream.str();
+	cout << "MAXP = " << MAXP_CUT << endl;
+	process = output;
+
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.root",output.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.pISR.root",output.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	MyFile->cd();
 
 
@@ -177,20 +185,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	///////   EVENT ANALYSIS   ///////
 	//////////////////////////////////
 
-	const float MAXP_CUT = 10.;
+	// const float MAXP_CUT = 10.;
 
 	Long64_t nentries = fChain->GetEntriesFast();
-
-	int nevents = 0;
-	int nevents_kaon_match = 0;
-
-	int n_kk   = 0;
-	int n_kpkm = 0;
-	int n_kpkp = 0;
-	int n_kmkm = 0;
-
-	int nLeadK_pass  = 0;
-	int nLeadK_match = 0;
 
 	Long64_t nbytes = 0, nb = 0;
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -210,9 +207,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 
 
 		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
-		if(output=="uu" && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
-		if(output=="ss" && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
-		if(output=="dd" && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		if(output=="uu"  && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		if(output=="ss"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		if(output=="dd"  && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
@@ -252,11 +249,14 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
 		mc_qq_sep->Fill(qqsep);
 
-		if(abs(cos(qqsep)) < 0.9) continue;
 
+		// ISR protection
+		if(abs(cos(qqsep)) < 0.9) continue;
 
 		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
+
+		nevents_after_preselec++;
 
 
 
@@ -332,12 +332,12 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 		// float wk = 0.3;
 
 		// Jet variables
-		float jet_pt[2] = {0};
+		float jet_pt[2]       = {0};
 		float jet_ThrustPz[2] = {0};
-		float jet_qp[2] = {0};
-		float jet_charge[2] = {-100};
-		int   jet_mult[2] = {0};
-		int   jet_k_mult[2] = {0};
+		float jet_qp[2]       = {0};
+		float jet_charge[2]   = {-100};
+		int   jet_mult[2]     = {0};
+		int   jet_k_mult[2]   = {0};
 
 		// Leading PFO variables
 		float maxP[2] 			 = {0};
@@ -604,12 +604,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	// printProgress( 1.0 );
 	// std::cout << std::endl;
 
-	// std::cout << "# Events: " << nevents << "\n";
-	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
-	std::cout << "Process: " << output << std::endl;
-	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << std::endl;
-	std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << "n_kmkm:" << n_kmkm << std::endl;
-
+	printResults();
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
@@ -617,6 +612,19 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, TString output="test
 	for(int h=0; h < h1_pfo.size(); h++) h1_pfo.at(h)->Write();
 	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
 
+
+}
+
+void AnaPolar::printResults(){
+
+	std::cout << "========= Event Results =========" << "\n";
+	std::cout << "Process: " << process << "\n";
+	std::cout << "# Events: " << nevents << "\n";
+	std::cout << "# Events after preselection: " << nevents_after_preselec << "\n";
+	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	std::cout << "LeadK_match: " << nLeadK_match << " LeadK_pass: " << nLeadK_pass << "\n";
+	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << "\n";
+	std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << " n_kmkm:" << n_kmkm << "\n";
 
 }
 

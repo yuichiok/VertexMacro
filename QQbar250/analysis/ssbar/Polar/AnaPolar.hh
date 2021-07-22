@@ -276,6 +276,7 @@ public :
    AnaPolar(TList *f=0);
    virtual ~AnaPolar();
 
+   virtual void     printResults();
    virtual void     printProgress(double percentage);
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -286,7 +287,7 @@ public :
    virtual bool     PreSelection(int type, float egamma);
    virtual void     LeadingMom(TH1F* h1p, TH1F* h1m, TH2F* h2, int subject, int iPFO0, int iPFO1, float P0, float P1);
 
-   virtual void     AnalyzePolar(int , float , TString);
+   virtual void     AnalyzePolar(int, float, float, TString);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
@@ -298,6 +299,20 @@ public :
    }
 
 private:
+
+   TString process="default";
+
+   int nevents = 0;
+   int nevents_after_preselec = 0;
+   int nevents_kaon_match = 0;
+
+   int n_kk   = 0;
+   int n_kpkm = 0;
+   int n_kpkp = 0;
+   int n_kmkm = 0;
+
+   int nLeadK_pass  = 0;
+   int nLeadK_match = 0;
 
    // TH1F* h1_mc_stable[10];
    // TH1F* h1_pfo[10];
