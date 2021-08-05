@@ -95,7 +95,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 	TH1F* pfo_k_cos  				  = new TH1F(name_pfo+"Kaon_cos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_abscos 	  = new TH1F(name_pfo+"LeadKaons_abscos",";|cos#theta|; Events",100,0,1.0);
 	TH1F* pfo_LeadK_qcos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
-	TH1F* pfo_LeadK_cosAdd		= new TH1F(name_pfo+"LeadKaons_cosAdd",";cos#theta_{0}+cos#theta_{1}; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_cosAdd		= new TH1F(name_pfo+"LeadKaons_cosAdd",";cos#theta_{0}+cos#theta_{1}; Events",100,-2.0,2.0);
 	TH1F* pfo_LeadK_phiDiff		= new TH1F(name_pfo+"LeadK_phiDiff",";#delta#phi_{LeadK}; Events",100,-TMath::Pi(),TMath::Pi());
 	TH1F* pfo_k_mult_jet 		  = new TH1F(name_pfo+"k_mult_jet","; # kaons/jet ; Entry",10,0,10);
 
@@ -251,7 +251,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 
 		// ISR protection
-		if(abs(cos(qqsep)) < 0.9) continue;
+		if(abs(cos(qqsep)) < 0.95) continue;
 
 		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
