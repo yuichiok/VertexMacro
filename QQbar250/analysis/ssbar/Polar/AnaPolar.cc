@@ -187,6 +187,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 	// const float MAXP_CUT = 10.;
 
+	// pdg ratio
+	int kaon_dEdx_cheat_same = 0;
+	int kaon_dEdx_cheat_all  = 0;
+
+
 	Long64_t nentries = fChain->GetEntriesFast();
 
 	Long64_t nbytes = 0, nb = 0;
@@ -194,7 +199,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 		// trial
 		// if(jentry>100000) break;
-		if(jentry>1000) break;
+		// if(jentry>1000) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -202,7 +207,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 		// if (Cut(ientry) < 0) continue;
 
 		// Progress bar
-		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+		// if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
 		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
@@ -210,6 +215,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 		if(output=="uu"  && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
 		if(output=="ss"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
 		if(output=="dd"  && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		if(output=="default"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
@@ -387,6 +393,9 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 				qq_match_ThrustPz[qq_match] += pow(ThrustPz_match,wk);
 			}
 
+
+			kaon_dEdx_cheat_all++;
+			if(fabs(pfo_pdgcheat[ipfo])==fabs(pfo_piddedx[ipfo])) kaon_dEdx_cheat_same++;
 
 			// PFO kaon?
 			// if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
@@ -602,12 +611,15 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 		} // k double tag / MAXP check
 
-
-
 	} // end of event loop
 
 	printProgress( 1.0 );
 	std::cout << std::endl;
+
+	// pdg dEdx cheat ratio
+	float kaon_dEdx_cheat_ratio = float(kaon_dEdx_cheat_same) / float(kaon_dEdx_cheat_all);
+	std::cout << "kaon_dEdx_cheat_ratio = " << kaon_dEdx_cheat_ratio << std::endl;
+
 
 	printResults();
 
