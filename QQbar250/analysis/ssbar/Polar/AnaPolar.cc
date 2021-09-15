@@ -389,7 +389,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 
 			// PFO kaon?
-			if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
+			// if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
+			if( fabs(pfo_piddedx[ipfo])==321 && mom > 2.0 ){
 			
 				pfo_k_cos->Fill(abscos);
 			
@@ -403,7 +404,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 				if(pfo_match[ipfo]==imatch){
 
 					jet_mult[imatch]++;
-					if(fabs(pfo_pdgcheat[ipfo])==321) jet_k_mult[imatch]++;
+					// if(fabs(pfo_pdgcheat[ipfo])==321) jet_k_mult[imatch]++;
+					if(fabs(pfo_piddedx[ipfo])==321) jet_k_mult[imatch]++;
 
 					jet_qp[imatch] += charge * sqrt(ThrustPz);
 					jet_ThrustPz[imatch] += ThrustPz;
@@ -543,8 +545,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 		kchg_configs[3] = ( (chg[0]<0) && (chg[1]<0) ) ? true : false;
 
 		bool ktags[2] = {0};
-		ktags[0] = (fabs(pfo_pdgcheat[lead_ipfo[0]])==321) ? true : false;
-		ktags[1] = (fabs(pfo_pdgcheat[lead_ipfo[1]])==321) ? true : false;
+		// ktags[0] = (fabs(pfo_pdgcheat[lead_ipfo[0]])==321) ? true : false;
+		// ktags[1] = (fabs(pfo_pdgcheat[lead_ipfo[1]])==321) ? true : false;
+		ktags[0] = (fabs(pfo_piddedx[lead_ipfo[0]])==321) ? true : false;
+		ktags[1] = (fabs(pfo_piddedx[lead_ipfo[1]])==321) ? true : false;
 
 		bool maxP_check = ( maxP[0]>MAXP_CUT && maxP[1]>MAXP_CUT ) ? true : false;
 
@@ -568,7 +572,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 					float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
 					float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
 					int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
-					int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
+					// int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
+					int   LeadKchg_match = (pfo_piddedx[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
 
 					nLeadK_pass++;
 					if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
@@ -633,7 +638,8 @@ void AnaPolar::printResults(){
 void AnaPolar::LeadingMom(TH1F* h1p = 0, TH1F* h1m = 0, TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
 
 	// are leading PFOs Kaons?
-	if( fabs(pfo_pdgcheat[iPFO0]) == subject && fabs(pfo_pdgcheat[iPFO1]) == subject ){
+	// if( fabs(pfo_pdgcheat[iPFO0]) == subject && fabs(pfo_pdgcheat[iPFO1]) == subject ){
+	if( fabs(pfo_piddedx[iPFO0]) == subject && fabs(pfo_piddedx[iPFO1]) == subject ){
 
 		float multchg = pfo_charge[iPFO0] * pfo_charge[iPFO1];
 		bool signPM = (multchg < 0) ? true : false;
