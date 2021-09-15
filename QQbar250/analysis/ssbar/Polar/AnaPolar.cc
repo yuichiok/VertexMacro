@@ -194,7 +194,7 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 		// trial
 		// if(jentry>100000) break;
-		// if(jentry>1000) break;
+		if(jentry>1000) break;
 
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
@@ -202,8 +202,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 		// if (Cut(ientry) < 0) continue;
 
 		// Progress bar
-		// if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
-		// printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
+		if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
+		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
 		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
@@ -606,8 +606,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 	} // end of event loop
 
-	// printProgress( 1.0 );
-	// std::cout << std::endl;
+	printProgress( 1.0 );
+	std::cout << std::endl;
 
 	printResults();
 
