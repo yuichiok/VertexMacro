@@ -1,3 +1,5 @@
 plot/
 tmp/
+log/
 rootfiles/
+run_*.sh
