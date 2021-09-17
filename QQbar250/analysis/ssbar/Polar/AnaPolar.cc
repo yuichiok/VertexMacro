@@ -188,7 +188,8 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 	// const float MAXP_CUT = 10.;
 
 	// pdg ratio
-	int kaon_dEdx_cheat_same = 0;
+	int kaon_dEdx_cheat_same0 = 0;
+	int kaon_dEdx_cheat_same1 = 0;
 	int kaon_dEdx_cheat_all  = 0;
 
 
@@ -394,9 +395,6 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 			}
 
 
-			kaon_dEdx_cheat_all++;
-			if(fabs(pfo_pdgcheat[ipfo])==fabs(pfo_piddedx[ipfo])) kaon_dEdx_cheat_same++;
-
 			// PFO kaon?
 			// if( fabs(pfo_pdgcheat[ipfo])==321 && mom > 2.0 ){
 			if( fabs(pfo_piddedx[ipfo])==321 && mom > 2.0 ){
@@ -559,6 +557,11 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 		ktags[0] = (fabs(pfo_piddedx[lead_ipfo[0]])==321) ? true : false;
 		ktags[1] = (fabs(pfo_piddedx[lead_ipfo[1]])==321) ? true : false;
 
+		kaon_dEdx_cheat_all++;
+		if(fabs(pfo_pdgcheat[lead_ipfo[0]])==fabs(pfo_piddedx[lead_ipfo[0]])) kaon_dEdx_cheat_same0++;
+		if(fabs(pfo_pdgcheat[lead_ipfo[1]])==fabs(pfo_piddedx[lead_ipfo[1]])) kaon_dEdx_cheat_same1++;
+
+
 		bool maxP_check = ( maxP[0]>MAXP_CUT && maxP[1]>MAXP_CUT ) ? true : false;
 
 		if(ktags[0] && ktags[1] && maxP_check){
@@ -617,8 +620,10 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 	std::cout << std::endl;
 
 	// pdg dEdx cheat ratio
-	float kaon_dEdx_cheat_ratio = float(kaon_dEdx_cheat_same) / float(kaon_dEdx_cheat_all);
-	std::cout << "kaon_dEdx_cheat_ratio = " << kaon_dEdx_cheat_ratio << std::endl;
+	float kaon_dEdx_cheat_ratio0 = float(kaon_dEdx_cheat_same0) / float(kaon_dEdx_cheat_all);
+	float kaon_dEdx_cheat_ratio1 = float(kaon_dEdx_cheat_same1) / float(kaon_dEdx_cheat_all);
+	std::cout << "kaon_dEdx_cheat_ratio0 = " << kaon_dEdx_cheat_ratio0 << std::endl;
+	std::cout << "kaon_dEdx_cheat_ratio1 = " << kaon_dEdx_cheat_ratio1 << std::endl;
 
 
 	printResults();
