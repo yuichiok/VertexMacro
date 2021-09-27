@@ -28,16 +28,23 @@ const int NPAR = 5;
 const TString particles[5] = {"kaon","proton","pion","electron","muon"};
 const Color_t colors[5]    = {kRed,kGreen,kBlue,kBlack,kGray};
 
-void color1(TH1D* hists[]){
-  for (int i = 0; i < NPAR; ++i) hists[i]->SetLineColor(colors[i]);
-}
+// void colorTH1D(TH1D* hists[]){
+//   for (int i = 0; i < NPAR; ++i) hists[i]->SetLineColor(colors[i]);
+// }
 
-void draw1(TCanvas* c, TH1D* hists[]){
+// void colorTGE(TGraphErrors* TGEs[]){
+//   for (int i = 0; i < NPAR; ++i) TGEs[i]->SetLineColor(colors[i]);
+// }
+
+void drawTH1D(TCanvas* c, TH1D* hists[]){
 
   c->cd();
 
   float valMAX = 0;
   for (int i = 0; i < NPAR; ++i){
+
+    hists[i]->SetLineColor(colors[i]);
+
     if(i==0){
       hists[i]->Draw();
     }else{
@@ -52,9 +59,24 @@ void draw1(TCanvas* c, TH1D* hists[]){
 
   }
 
-  color1(hists);
   hists[0]->GetYaxis()->SetRangeUser(0,valMAX+100);
   c->Update();
+
+}
+
+void drawTGEs(TGraphErrors* TGEs[]){
+
+  for (int i = 0; i < NPAR; ++i){
+
+    TGEs[i]->SetLineColor(colors[i]);
+    
+    if(i==0){
+      TGEs[i]->Draw("AP");
+    }else{
+      TGEs[i]->Draw("Psame");
+    }
+
+  } // for NPAR
 
 }
 
@@ -82,7 +104,7 @@ void proj_dEdx() {
     dEdx_truths[i] = (TH2F*)f->Get(particles[i]);
   }
 
-  // Projection dE/dx
+  //////////// Projection Momentum dE/dx ////////////
 
   TCanvas* cs[5];
   float rLow[5]  = {1.0,2.0,5.0,10.0,30.0};
@@ -100,19 +122,63 @@ void proj_dEdx() {
       projs[j] = dEdx_truths[j]->ProjectionY(TString::Format("proj_%s",particles[j].Data()),xaxis->FindBin(rLow[i]),xaxis->FindBin(rHigh[i]));
     }
 
-    draw1(cs[i],projs);
+    drawTH1D(cs[i],projs);
 
   }
 
 
-  TFile *MyFile = new TFile("proj_dEdx.root","RECREATE");
-  MyFile->cd();
-  for (int i = 0; i < 5; ++i)
+  //////////// Projection Individual dE/dx ////////////
+
+  float momentum_min=0.95;
+
+  // //kaon
+
+  TCanvas* c_ind_proj = new TCanvas("c_ind_proj","c_ind_proj",500,500);
+  c_ind_proj->cd();
+
+  TH1D *ind_projs[NPAR];
+  TGraphErrors *GEprojs[NPAR];
+  TGraphErrors *GEproj2s[NPAR];
+
+
+  for (int i = 0; i < NPAR; ++i)
   {
-    cs[i]->Write();
+    float x[200], y[200], ey[200], ey2[200];
+    float ex[200];
+    int n_particle=0;
+
+    for(int j=0; j<dEdx_truths[i]->GetNbinsX(); j++) {
+
+      ind_projs[i] =dEdx_truths[i]->ProjectionY(TString::Format("ind_proj_%s",particles[i].Data()),j,j+1);
+
+      x[n_particle]=dEdx_truths[i]->GetXaxis()->GetBinCenter(j+1);
+      y[n_particle]=ind_projs[i]->GetMean();
+      ey[n_particle]=ind_projs[i]->GetRMS();
+      ey2[n_particle]=ind_projs[i]->GetMean()/sqrt(ind_projs[i]->GetEntries());
+      ex[n_particle]=0;//dEdx_truths[0]->GetXaxis()->GetBinWidth(i+1)/2.;
+      n_particle++;
+
+    }
+
+    GEprojs[i]  = new TGraphErrors(n_particle,x,y,ex,ey);
+    GEproj2s[i] = new TGraphErrors(n_particle,x,y,ex,ey2);
+
   }
 
-  std::cout << "DONE" << std::endl;
+  drawTGEs(GEprojs);
+
+
+  //////////// Save Plots ////////////
+
+  // TFile *MyFile = new TFile("proj_dEdx.root","RECREATE");
+  // MyFile->cd();
+  // for (int i = 0; i < 5; ++i)
+  // {
+  //   cs[i]->Write();
+  // }
+
+
+ std::cout << "DONE" << std::endl;
   
   
 }
