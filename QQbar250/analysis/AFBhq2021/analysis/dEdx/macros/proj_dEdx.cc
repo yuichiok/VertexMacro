@@ -32,7 +32,9 @@ void color1(TH1D* hists[]){
   for (int i = 0; i < NPAR; ++i) hists[i]->SetLineColor(colors[i]);
 }
 
-void draw1(TH1D* hists[]){
+void draw1(TCanvas* c, TH1D* hists[]){
+
+  c->cd();
 
   float valMAX = 0;
   for (int i = 0; i < NPAR; ++i){
@@ -42,7 +44,7 @@ void draw1(TH1D* hists[]){
       hists[i]->Draw("same");
     }
 
-    float MAX = hists[i]->GetMaximum();
+    float MAX = hists[i]->GetBinContent(hists[i]->GetMaximumBin());
     if (MAX>valMAX)
     {
       valMAX = MAX;
@@ -52,6 +54,7 @@ void draw1(TH1D* hists[]){
 
   color1(hists);
   hists[0]->GetYaxis()->SetRangeUser(0,valMAX+100);
+  c->Update();
 
 }
 
@@ -79,25 +82,35 @@ void proj_dEdx() {
     dEdx_truths[i] = (TH2F*)f->Get(particles[i]);
   }
 
-
-  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(1.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(1.5) << std::endl;
-  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(2.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(2.5) << std::endl;
-  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(5.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(6.0) << std::endl;
-  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(10.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(11.5) << std::endl;
-  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(30.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(40.0) << std::endl;
-
   // Projection dE/dx
+
+  TCanvas* cs[5];
+  float rLow[5]  = {1.0,2.0,5.0,10.0,30.0};
+  float rHigh[5] = {1.5,2.5,6.0,11.5,40.0};
   
-  TCanvas *c1 = new TCanvas("c1","c1",500,500);
-
-  TH1D* projs[5];
-
-  for (int i = 0; i < NPAR; ++i)
+  for (int i = 0; i < 5; ++i)
   {
-    projs[i] = dEdx_truths[i]->ProjectionY(TString::Format("proj_%s",particles[i].Data()),22,22);
+    TAxis* xaxis = dEdx_truths[i]->GetXaxis();
+
+    cs[i] = new TCanvas(TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),500,500);
+    TH1D* projs[5];
+
+    for (int j = 0; j < NPAR; ++j)
+    {
+      projs[j] = dEdx_truths[j]->ProjectionY(TString::Format("proj_%s",particles[j].Data()),xaxis->FindBin(rLow[i]),xaxis->FindBin(rHigh[i]));
+    }
+
+    draw1(cs[i],projs);
+
   }
 
-  draw1(projs);
+
+  TFile *MyFile = new TFile("proj_dEdx.root","RECREATE");
+  MyFile->cd();
+  for (int i = 0; i < 5; ++i)
+  {
+    cs[i]->Write();
+  }
 
   std::cout << "DONE" << std::endl;
   
