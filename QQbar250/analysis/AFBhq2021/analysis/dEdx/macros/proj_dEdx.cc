@@ -25,13 +25,35 @@
 #include "../../../style/Labels.C"
 
 const int NPAR = 5;
+const TString particles[5] = {"kaon","proton","pion","electron","muon"};
+const Color_t colors[5]    = {kRed,kGreen,kBlue,kBlack,kGray};
 
-// void getProj(TH2F dEdx_truths[]){
+void color1(TH1D* hists[]){
+  for (int i = 0; i < NPAR; ++i) hists[i]->SetLineColor(colors[i]);
+}
 
-//   TH1D * proj_kaon = kaon_dEdx_truth->ProjectionY("proj_kaon",22,22);
+void draw1(TH1D* hists[]){
 
-// }
+  float valMAX = 0;
+  for (int i = 0; i < NPAR; ++i){
+    if(i==0){
+      hists[i]->Draw();
+    }else{
+      hists[i]->Draw("same");
+    }
 
+    float MAX = hists[i]->GetMaximum();
+    if (MAX>valMAX)
+    {
+      valMAX = MAX;
+    }
+
+  }
+
+  color1(hists);
+  hists[0]->GetYaxis()->SetRangeUser(0,valMAX+100);
+
+}
 
 void proj_dEdx() {
 
@@ -50,8 +72,6 @@ void proj_dEdx() {
 
   TFile *f = new TFile(filename);
 
-  TString particles[5] = {"kaon","proton","pion","electron","muon"};
-  Color_t colors[5]    = {kRed,kGreen,kBlue,kBlack,kGray};
   TH2F* dEdx_truths[5];
 
   for (int i = 0; i < 5; ++i)
@@ -60,56 +80,24 @@ void proj_dEdx() {
   }
 
 
+  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(1.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(1.5) << std::endl;
+  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(2.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(2.5) << std::endl;
+  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(5.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(6.0) << std::endl;
+  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(10.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(11.5) << std::endl;
+  std::cout << dEdx_truths[0]->GetXaxis()->FindBin(30.0) << ", " << dEdx_truths[0]->GetXaxis()->FindBin(40.0) << std::endl;
 
   // Projection dE/dx
   
   TCanvas *c1 = new TCanvas("c1","c1",500,500);
 
   TH1D* projs[5];
-  float valMAX = 0;
-  for (int i = 0; i < 5; ++i)
+
+  for (int i = 0; i < NPAR; ++i)
   {
     projs[i] = dEdx_truths[i]->ProjectionY(TString::Format("proj_%s",particles[i].Data()),22,22);
-    projs[i]->SetLineColor(colors[i]);
-
-    float MAX = projs[i]->GetMaximum();
-    if (MAX>valMAX)
-    {
-      valMAX = MAX;
-    }
-
-    // if(i==0){
-    //   projs[i]->Draw();
-    // }else{
-    //   projs[i]->Draw("same");
-    // }
   }
 
-  // projs[0]->GetYaxis()->SetRangeUser(0,valMAX+100);
-
-
-
-
-
-  // TH2F* kaon_dEdx_truth     = (TH2F*)f->Get("kaon");
-  // TH2F* proton_dEdx_truth   = (TH2F*)f->Get("proton");
-  // TH2F* pion_dEdx_truth     = (TH2F*)f->Get("pion");
-  // TH2F* electron_dEdx_truth = (TH2F*)f->Get("electron");
-  // TH2F* muon_dEdx_truth     = (TH2F*)f->Get("muon");
-
-  // TCanvas *c1 = new TCanvas("c1","c1",500,500);
-
-  // TH1D * proj_kaon = kaon_dEdx_truth->ProjectionY("proj_kaon",22,22);
-  // TH1D * proj_proton = proton_dEdx_truth->ProjectionY("proj_proton",22,22);
-  // TH1D * proj_pion = pion_dEdx_truth->ProjectionY("proj_pion",22,22);
-  // TH1D * proj_electron = electron_dEdx_truth->ProjectionY("proj_electron",22,22);
-  // TH1D * proj_muon = muon_dEdx_truth->ProjectionY("proj_muon",22,22);
-
-  // proj_kaon->Draw();
-  // proj_proton->Draw();
-  // proj_pion->Draw();
-  // proj_electron->Draw();
-  // proj_muon->Draw();
+  draw1(projs);
 
   std::cout << "DONE" << std::endl;
   
