@@ -28,14 +28,6 @@ const int NPAR = 5;
 const TString particles[5] = {"kaon","proton","pion","electron","muon"};
 const Color_t colors[5]    = {kRed,kGreen,kBlue,kBlack,kGray};
 
-// void colorTH1D(TH1D* hists[]){
-//   for (int i = 0; i < NPAR; ++i) hists[i]->SetLineColor(colors[i]);
-// }
-
-// void colorTGE(TGraphErrors* TGEs[]){
-//   for (int i = 0; i < NPAR; ++i) TGEs[i]->SetLineColor(colors[i]);
-// }
-
 void drawTH1D(TCanvas* c, TH1D* hists[]){
 
   c->cd();
@@ -157,9 +149,12 @@ void proj_dEdx() {
 
     }
 
-    GEprojs[i]  = new TGraphErrors(npt,x,y,ex,ey);
+    GEprojs[i] = new TGraphErrors(npt,x,y,ex,ey);
+    GEprojs[i]->SetName(TString::Format("GE_proj_%s",particles[i].Data()));
     GEprojs[i]->SetTitle(TString::Format("%s;p [GeV];#frac{dE}{dx} [MeV]",particles[i].Data()));
+
     GEproj2s[i] = new TGraphErrors(npt,x,y,ex,ey2);
+    GEproj2s[i]->SetName(TString::Format("GE_proj2_%s",particles[i].Data()));
     GEproj2s[i]->SetTitle(TString::Format("%s_2;p [GeV];#frac{dE}{dx} [MeV]",particles[i].Data()));
 
   }
@@ -178,7 +173,7 @@ void proj_dEdx() {
 
   //////////// Save Plots ////////////
 
-  TFile *MyFile = new TFile("proj_dEdx.root","RECREATE");
+  TFile *MyFile = new TFile("plots/proj_dEdx.root","RECREATE");
   MyFile->cd();
   for (int i = 0; i < 5; ++i){ 
     cs_proj[i]->Write(); 
