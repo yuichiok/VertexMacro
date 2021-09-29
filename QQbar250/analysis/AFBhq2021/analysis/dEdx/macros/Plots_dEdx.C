@@ -714,44 +714,7 @@ void EffPurity_dedxdist5() {
   TGraph* purity = new TGraph(n,x,pur);
   TGraph* efficiency_purity = new TGraph(n,eff,pur);
   
-
-  // //----------
-  // TString filename2 = "../results/histos_bquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  // TFile *f2 = new TFile(filename2);
-  // TH2F*  kdEdxdist_kaon2 = (TH2F*)f2->Get("p_kdEdx_dist_kaon");
-  // TH2F*  kdEdxdist_pion2 = (TH2F*)f2->Get("p_kdEdx_dist_pion");
-  // TH2F*  kdEdxdist_proton2 = (TH2F*)f2->Get("p_kdEdx_dist_proton");
-  // TH2F*  kdEdxdist_muon2 = (TH2F*)f2->Get("p_kdEdx_dist_muon");
-  // TH2F*  kdEdxdist_electron2 = (TH2F*)f2->Get("p_kdEdx_dist_electron");
-  
-  // float x2[100], eff2[100], pur2[100];
-  // int n2=0;
-  // //  option 1, 80eff, 92 pur = 16,21
-  // //  option 1, 87eff, 87 pur = 16,23
-
-  // for(int i=0;i<80; i++) {
-  //   int ipion=22;
-  //   //  if(i>16) ipion=22-(i-16);
-  //   float n_kaons=  kdEdxdist_kaon2->Integral(i, i,16,ipion);
-  //   float n_pions=  kdEdxdist_pion2->Integral(i, i,16,ipion);
-  //   float n_protons=  kdEdxdist_proton2->Integral(i, i,16,ipion);
-  //   float n_muons=  kdEdxdist_muon2->Integral(i, i,16,ipion);
-  //   float n_electrons=  kdEdxdist_electron2->Integral(i, i,16,ipion);
-  //   float nkaons=  kdEdxdist_kaon2->Integral(i, i);
-  //   if(nkaons==0) nkaons=10000000;
-  //   x2[i]=i;//*1./20;
-  //   eff2[i]=100.*(n_kaons)/nkaons;       
-  //   //  eff2[i-1]=100.*(n_kaons+n_pions+n_protons+n_muons+n_electrons)/nkaons;                    
-  //   pur2[i]=100.*n_kaons/(n_kaons+n_pions+n_protons+n_muons+n_electrons);
-  //   n2++;
-  // }
- 
-
-  // TGraph* efficiency2 = new TGraph(n2,x2,eff2);
-  // TGraph* purity2 = new TGraph(n2,x2,pur2);
-  // TGraph* efficiency_purity2 = new TGraph(n2,eff2,pur2);
-  
-  cquark=true;
+  cquark=false;
 
   TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
   c_mom->cd(1);
@@ -784,42 +747,6 @@ void EffPurity_dedxdist5() {
   leg0->SetLineColor(0);
   leg0->SetShadowColor(0);
   leg0->Draw();
-
-  cquark=false;
-
- // TCanvas* c_mom2 = new TCanvas("c_mom2","c_mom2",800,800);
- //  c_mom2->cd(1);
- //  c_mom2->SetGrid();
- //  efficiency2->GetXaxis()->SetTitle("p [GeV]");
- //  efficiency2->GetYaxis()->SetTitle("[%]");
- //  efficiency2->GetYaxis()->SetTitleOffset(1.25);
- //  efficiency2->GetXaxis()->SetTitleOffset(1.);
- //  efficiency2->GetYaxis()->SetRangeUser(0,100);
-
- //  efficiency2->SetLineColor(4);
- //  efficiency2->SetLineWidth(3);
- //  efficiency2->SetLineStyle(2);
- //  efficiency2->Draw("alp");
-  
- //  purity2->SetLineColor(kGreen+1);
- //  purity2->SetLineWidth(1);
- //  purity2->SetLineStyle(1);
- //  purity2->Draw("lp");
-
-  
- //  Labels("");
-  
- //  TLegend *leg2 = new TLegend(0.2,0.3,0.5,0.4);
- //  leg2->SetTextSize(0.035);
- //  leg2->SetTextFont(42);
- //  leg2->AddEntry(efficiency,"Efficiency","lp");
- //  leg2->AddEntry(purity,"Purity","lp");
- //  leg2->SetFillColor(0);
- //  leg2->SetLineColor(0);
- //  leg2->SetShadowColor(0);
- //  leg2->Draw();
- 
-
 
 }
 
