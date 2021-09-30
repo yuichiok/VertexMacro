@@ -53,6 +53,7 @@ void drawTH1D(TCanvas* c, TH1D* hists[]){
 
   hists[0]->GetYaxis()->SetRangeUser(0,valMAX+100);
   c->Update();
+  // c->Write();
 
 }
 
@@ -87,7 +88,8 @@ void proj_dEdx() {
   gStyle->SetMarkerSize(0.2);
 
 
-  TString filename = "../rootfiles/dEdx_out.root";
+  // TString filename = "../rootfiles/dEdx_out.root";
+  TString filename = "../rootfiles/dEdx_test.root";
 
   TFile *f = new TFile(filename);
 
@@ -98,9 +100,12 @@ void proj_dEdx() {
     dEdx_truths[i] = (TH2F*)f->Get(particles[i]);
   }
 
+
+  TFile *MyFile = new TFile("plots/proj_dEdx.root","RECREATE");
+  MyFile->cd();
+
   //////////// Projection Momentum dE/dx ////////////
 
-  TCanvas* cs_proj[5];
   float rLow[5]  = {1.0,2.0,5.0,10.0,30.0};
   float rHigh[5] = {1.5,2.5,6.0,11.5,40.0};
   
@@ -108,7 +113,7 @@ void proj_dEdx() {
   {
     TAxis* xaxis = dEdx_truths[i]->GetXaxis();
 
-    cs_proj[i] = new TCanvas(TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),500,500);
+    TCanvas *cs_proj = new TCanvas(TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),TString::Format("mom_%.1f_%.1f",rLow[i],rHigh[i]),500,500);
     TH1D* projs[5];
 
     for (int j = 0; j < NPAR; ++j)
@@ -116,7 +121,8 @@ void proj_dEdx() {
       projs[j] = dEdx_truths[j]->ProjectionY(TString::Format("proj_%s",particles[j].Data()),xaxis->FindBin(rLow[i]),xaxis->FindBin(rHigh[i]));
     }
 
-    drawTH1D(cs_proj[i],projs);
+    drawTH1D(cs_proj,projs);
+    cs_proj->Write();
 
   }
 
@@ -171,13 +177,8 @@ void proj_dEdx() {
 
   drawTGEs(GEproj2s);
 
-  //////////// Save Plots ////////////
 
-  TFile *MyFile = new TFile("plots/proj_dEdx.root","RECREATE");
-  MyFile->cd();
-  for (int i = 0; i < 5; ++i){ 
-    cs_proj[i]->Write(); 
-  }
+  //////////// Save Plots ////////////
 
   for (int i = 0; i < NPAR; ++i)
   {
