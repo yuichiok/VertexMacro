@@ -8,6 +8,8 @@
 #ifndef observable_h
 #define observable_h
 
+#include "include/VecOP.hh"
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>

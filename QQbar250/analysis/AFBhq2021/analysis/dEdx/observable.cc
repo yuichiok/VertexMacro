@@ -228,8 +228,31 @@ void observable::dEdx(int n_entries=-1, TString process="",bool secondary=false,
 
     // if(selection==false) continue;
 
+
+    std::vector<VecOP> qqVecs;
+
+    for(int iqq=0; iqq < 2; iqq++){
+
+      VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
+      qqVecs.push_back(qqVec);
+
+    }
+
+
+    // Cut qq with qq separation
+    float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
+
+    // ISR protection
+    if(abs(cos(qqsep)) < 0.95) continue;
+
+    if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
+    if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
+
+
+
     //for the moment, we restrict the analysis to the bb events without radaitive return
-    if(fabs(mc_quark_pdg[0])==pdg && gamma_e<35) {
+    // if(fabs(mc_quark_pdg[0])==pdg && gamma_e<35) {
+    if(fabs(mc_quark_pdg[0])==pdg) {
 
       isrcut++;
 

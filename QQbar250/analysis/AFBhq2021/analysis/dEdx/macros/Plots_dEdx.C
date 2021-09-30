@@ -677,7 +677,8 @@ void EffPurity_dedxdist5() {
   // TGaxis::SetMaxDigits(2);
 
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  TString filename = "../rootfiles/dEdx_out.root";
+  // TString filename = "../rootfiles/dEdx_out.root";
+  TString filename = "../rootfiles/dEdx_test.root";
 
   TFile *f = new TFile(filename);
   TH2F*  kdEdxdist_kaon = (TH2F*)f->Get("p_kdEdx_dist_kaon");
@@ -736,7 +737,7 @@ void EffPurity_dedxdist5() {
   purity->Draw("lp");
 
   
-  Labels("");
+  // Labels("");
   
   TLegend *leg0 = new TLegend(0.2,0.3,0.5,0.4);
   leg0->SetTextSize(0.035);

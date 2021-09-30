@@ -43,7 +43,8 @@ void eff_purity_dEdx() {
   gStyle->SetMarkerSize(0.2);
 
 
-  TString filename0 = "../rootfiles/dEdx_out.root";
+  // TString filename0 = "../rootfiles/dEdx_out.root";
+  TString filename0 = "../rootfiles/dEdx_test.root";
   TString filename1 = "plots/proj_dEdx.root";
 
   TFile *file0  = new TFile(filename0);
