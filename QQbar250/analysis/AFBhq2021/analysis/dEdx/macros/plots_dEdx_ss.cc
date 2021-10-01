@@ -27,6 +27,8 @@
 
 bool cquark;
 
+const TString filename = "../rootfiles/dEdx_test.root";
+
 void Labels(TString pol){
   QQBARLabel(0.86,0.952,"");
   // QQBARLabel2(0.3,0.97, "e^{-}e^{+} #rightarrow q#bar{q}, q=udscb, 250 GeV, 250fb^{-1}",kGray+2);
@@ -72,7 +74,7 @@ void EffPurity_default() {
 
   //*-------------  
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
   TFile *f = new TFile(filename);
 
   TH1F*  p_kaon = (TH1F*)f->Get("p_kaon");
@@ -185,7 +187,7 @@ void EffPurity_dedxdist() {
 
   
   // TString filename = "../results/histos_bquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
   TFile *f = new TFile(filename);
   TH1F*  p_kaon = (TH1F*)f->Get("p_kaon");
   TH1F*  kdEdxdist_kaon = (TH1F*)f->Get("kdEdx_dist_kaon");
@@ -294,7 +296,7 @@ void EffPurity_dedxdist3() {
 
   
   // TString filename = "../results/histos_bquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_0GeV.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
   TFile *f = new TFile(filename);
   TH2F*  kdEdxdist_kaon = (TH2F*)f->Get("p_kdEdx_dist_kaon");
   TH2F*  kdEdxdist_pion = (TH2F*)f->Get("p_kdEdx_dist_pion");
@@ -390,7 +392,7 @@ void EffPurity_dedxdist4() {
   // TGaxis::SetMaxDigits(2);
 
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
 
   TFile *f = new TFile(filename);
   TH2F*  kdEdxdist_kaon = (TH2F*)f->Get("costheta_kdEdx_dist_kaon");
@@ -481,7 +483,7 @@ void EffPurity_dedxdist5() {
 
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
   // TString filename = "../rootfiles/dEdx_out.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
 
   TFile *f = new TFile(filename);
   TH2F*  kdEdxdist_kaon = (TH2F*)f->Get("p_kdEdx_dist_kaon");
@@ -571,7 +573,7 @@ void EffPurity_dedxdist2() {
 
   
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_0GeV.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
 
   TFile *f = new TFile(filename);
   TH1F*  p_kaon = (TH1F*)f->Get("p_kaon");
@@ -666,7 +668,6 @@ void EffPurity_dedxdist2() {
 
 void Mom() {
 
-  
   SetQQbarStyle();
   gStyle->SetOptFit(0); 
   gStyle->SetOptStat(0);
@@ -679,21 +680,15 @@ void Mom() {
   TGaxis::SetMaxDigits(3);
   
   
-  TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_0GeV.root";
+  // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_0GeV.root";
+  // TString filename = "../rootfiles/dEdx_pcut_2.root";
   TFile *f = new TFile(filename);
 
   TH1F*  p_kaon = (TH1F*)f->Get("p_kaon");
   TH1F*  p_pion = (TH1F*)f->Get("p_pion");
   TH1F*  p_proton = (TH1F*)f->Get("p_proton");
 
-  TString filename2 = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eR_pL_0GeV.root";
-  TFile *f2 = new TFile(filename2);
-
-  TH1F*  p_kaon2 = (TH1F*)f2->Get("p_kaon");
-  TH1F*  p_pion2 = (TH1F*)f2->Get("p_pion");
-  TH1F*  p_proton2 = (TH1F*)f2->Get("p_proton");
-
-  cquark=true;
+  cquark=false;
   TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
   c_mom->cd(1);
   c_mom->SetGrid();
@@ -716,10 +711,7 @@ void Mom() {
   p_proton->SetLineWidth(3);
   p_proton->SetLineStyle(1);
   p_proton->Draw("histosame");
-  
- 
-  Labels("eL");
-  
+    
   TLegend *leg = new TLegend(0.6,0.25,0.8,0.35);
   leg->SetTextSize(0.035);
   leg->SetTextFont(42);
@@ -730,44 +722,6 @@ void Mom() {
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
   leg->Draw();
-
-
-  TCanvas* c_mom2 = new TCanvas("c_mom2","c_mom2",800,800);
-  c_mom2->cd(1);
-  c_mom2->SetGrid();
-  p_pion2->GetXaxis()->SetTitle("momentum [GeV]");
-  p_pion2->GetYaxis()->SetTitle("a.u.");
-  //p_pion->GetYaxis()->SetTitleOffset(1.25);                                                                                                                                                              
-  //p_pion->GetXaxis()->SetTitleOffset(1.);                                                                                                                                                                
-
-  p_pion2->SetLineColor(4);
-  p_pion2->SetLineWidth(3);
-  p_pion2->SetLineStyle(1);
-  p_pion2->Draw("histo");
-
-  p_kaon2->SetLineColor(2);
-  p_kaon2->SetLineWidth(3);
-  p_kaon2->SetLineStyle(1);
-  p_kaon2->Draw("histosame");
-
-  p_proton2->SetLineColor(1);
-  p_proton2->SetLineWidth(3);
-  p_proton2->SetLineStyle(1);
-  p_proton2->Draw("histosame");
-
-
-  Labels("eR");
-  TLegend *leg2 = new TLegend(0.6,0.25,0.8,0.35);
-  leg2->SetTextSize(0.035);
-  leg2->SetTextFont(42);
-  leg2->AddEntry(p_pion2,"pions","l");
-  leg2->AddEntry(p_kaon2,"kaons","lp");
-  leg2->AddEntry(p_proton2,"protons","lp");
-  leg2->SetFillColor(0);
-  leg2->SetLineColor(0);
-  leg2->SetShadowColor(0);
-  leg2->Draw();
-
 
 }
 
@@ -788,7 +742,7 @@ void dEdxdist() {
   
   
   // TString filename = "../results/histos_cquark_secondary_tracks_ignoreoverlay_2f_hadronic_sample_eL_pR_2GeV.root";
-  TString filename = "../rootfiles/dEdx_pcut_1.root";
+  // TString filename = "../rootfiles/dEdx_pcut_2.root";
   TFile *f = new TFile(filename);
 
   TH1F*  kdEdx_dist_kaon = (TH1F*)f->Get("kdEdx_dist_kaon");
@@ -856,7 +810,7 @@ void dEdxdist() {
 
 
 void plots_dEdx_ss() {
-  //Mom();
+  // Mom();
   // EffPurity_default();
   // EffPurity_dedxdist();
   // EffPurity_dedxdist2();
