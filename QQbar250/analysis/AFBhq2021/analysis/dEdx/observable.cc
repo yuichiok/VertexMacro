@@ -2,8 +2,8 @@
 // irles @ lal.in2p3.fr
 // 30 March 2020
 
-#define observable_cxx#include "observable.h"
-
+#define observable_cxx
+#include "observable.h"
 #include "TPad.h"
 
 
@@ -282,6 +282,18 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
           if (fabs(costheta) > 0.75 && pfo_tpc_hits[ipfo] > (210 + (210 - 50) * (fabs(costheta) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
           if (fabs(costheta) > 0.9 && pfo_tpc_hits[ipfo] > 50) nhits_bool = true;
 
+          if(pfo_tpc_hits[ipfo]==0) nhits_bool=false;
+
+          // if(pfo_piddedx_k_dedxdist[ipfo]==0 && pfo_tpc_hits[ipfo]!=0) cout << "pfo tpc hists = " << pfo_tpc_hits[ipfo] << endl;
+
+          // if(pfo_piddedx_k_dedxdist[ipfo]!=0){
+          //   cout << "ntpc hits = " << pfo_tpc_hits[ipfo] << ", hit cos = " << fabs(costheta) << ", cos calc = " << 210 + (210 - 50) * (fabs(costheta) - 0.75) / (0.75 - 0.9) <<endl;
+
+          //   if(float(pfo_tpc_hits[ipfo]) > (210 + (210 - 50) * (fabs(costheta) - 0.75) / (0.75 - 0.9))) cout <<"true" << endl;
+
+          // }
+
+
           if (pfo_ntracks[ipfo] == 1 && nhits_bool == true) {
 
             if (fabs(pfo_pdgcheat[ipfo]) == 321) {
@@ -318,6 +330,15 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
 
             } else {
               if (fabs(pfo_pdgcheat[ipfo]) == 211) {
+
+                // if(pfo_piddedx_k_dedxdist[ipfo]==0){
+                //   cout << "zero charge pfo = " << fabs(pfo_piddedx[ipfo]) << endl;
+                // }else{
+                //   cout << "charge pfo = " << fabs(pfo_piddedx[ipfo]) << endl;
+                // }
+
+                // if(fabs(pfo_piddedx[ipfo])==11) continue;
+
                 p_pion -> Fill(momentum);
                 costheta_pion -> Fill(costheta);
                 p_costheta_pion -> Fill(momentum, costheta);
