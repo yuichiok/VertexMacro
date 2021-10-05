@@ -279,10 +279,10 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
 
           bool nhits_bool = false;
           if (fabs(costheta) < 0.75 && pfo_tpc_hits[ipfo] > 210) nhits_bool = true;
-          if (fabs(costheta) > 0.75 && pfo_tpc_hits[ipfo] > (210 + (210 - 50) * (fabs(costheta) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
+          if (fabs(costheta) > 0.75 && fabs(costheta) < 0.9 && pfo_tpc_hits[ipfo] > (210 + (210 - 50) * (fabs(costheta) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
           if (fabs(costheta) > 0.9 && pfo_tpc_hits[ipfo] > 50) nhits_bool = true;
 
-          if(pfo_tpc_hits[ipfo]==0) nhits_bool=false;
+          // if(pfo_tpc_hits[ipfo]==0) nhits_bool=false;
 
           // if(pfo_piddedx_k_dedxdist[ipfo]==0 && pfo_tpc_hits[ipfo]!=0) cout << "pfo tpc hists = " << pfo_tpc_hits[ipfo] << endl;
 
