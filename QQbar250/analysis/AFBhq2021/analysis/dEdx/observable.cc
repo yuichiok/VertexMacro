@@ -245,7 +245,10 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
 
     //for the moment, we restrict the analysis to the bb events without radaitive return
     // if(fabs(mc_quark_pdg[0])==pdg && gamma_e<35) {
-    if (fabs(mc_quark_pdg[0]) == pdg) {
+
+    // if (fabs(mc_quark_pdg[0]) == pdg) {
+
+    if (fabs(mc_quark_pdg[0]) == 1 || fabs(mc_quark_pdg[0]) == 2 || fabs(mc_quark_pdg[0]) == 3) {
 
       isrcut++;
 

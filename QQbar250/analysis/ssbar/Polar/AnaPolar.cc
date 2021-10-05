@@ -125,6 +125,14 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 	TH1F* pfo_LeadK_p  					= new TH1F(name_pfo+"LeadK_p",";p[GeV]; Events",120,0,120);
 	TH1F* pfo_LeadK_p_10  			= new TH1F(name_pfo+"LeadK_p_10",";p[GeV]; Events",120,0,120);
 
+  // dEdx distance
+  TH1F * pfo_kdEdx_dist_kaon     = new TH1F(name_pfo+"kdEdx_dist_kaon", "kdEdx_dist_kaon", 40, -10, 10);
+  TH1F * pfo_kdEdx_dist_proton   = new TH1F(name_pfo+"kdEdx_dist_proton", "kdEdx_dist_proton", 40, -10, 10);
+  TH1F * pfo_kdEdx_dist_pion     = new TH1F(name_pfo+"kdEdx_dist_pion", "kdEdx_dist_pion", 40, -10, 10);
+  TH1F * pfo_kdEdx_dist_electron = new TH1F(name_pfo+"kdEdx_dist_electron", "kdEdx_dist_electron", 40, -10, 10);
+  TH1F * pfo_kdEdx_dist_muon     = new TH1F(name_pfo+"kdEdx_dist_muon", "kdEdx_dist_muon", 40, -10, 10);
+  TH1F * pfo_kdEdx_dist_others   = new TH1F(name_pfo+"kdEdx_dist_others", "kdEdx_dist_others", 40, -10, 10);
+
 
 	h1_pfo.push_back( pfo_k_cos );
 	h1_pfo.push_back( pfo_LeadK_abscos );
@@ -158,6 +166,13 @@ void AnaPolar::AnalyzePolar(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0,
 
 	h1_pfo.push_back( pfo_LeadK_p);
 	h1_pfo.push_back( pfo_LeadK_p_10);
+
+	h1_pfo.push_back( kdEdx_dist_kaon );
+	h1_pfo.push_back( kdEdx_dist_proton );
+	h1_pfo.push_back( kdEdx_dist_pion );
+	h1_pfo.push_back( kdEdx_dist_electron );
+	h1_pfo.push_back( kdEdx_dist_muon );
+	h1_pfo.push_back( kdEdx_dist_others );
 
 	// TH2F
 	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",200,0,200,200,0,200);

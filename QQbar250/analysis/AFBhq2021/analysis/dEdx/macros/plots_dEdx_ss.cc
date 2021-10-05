@@ -27,7 +27,7 @@
 
 bool cquark;
 
-const TString filename = "../rootfiles/dEdx_pcut_2.root";
+const TString filename = "../rootfiles/dEdx_pcut_0.root";
 
 void Labels(TString pol){
   QQBARLabel(0.86,0.952,"");
