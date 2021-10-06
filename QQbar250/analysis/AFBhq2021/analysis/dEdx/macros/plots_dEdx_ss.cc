@@ -27,7 +27,7 @@
 
 bool cquark;
 
-const TString filename = "../rootfiles/dEdx_uds_pcut_0.root";
+const TString filename = "../rootfiles/dEdx_d_pcut_5.root";
 
 void Labels(TString pol){
   QQBARLabel(0.86,0.952,"");
@@ -819,6 +819,6 @@ void plots_dEdx_ss() {
   // EffPurity_dedxdist2();
   // EffPurity_dedxdist3();
   // EffPurity_dedxdist4();
-  EffPurity_dedxdist5();
-  // dEdxdist();
+  // EffPurity_dedxdist5();
+  dEdxdist();
 }

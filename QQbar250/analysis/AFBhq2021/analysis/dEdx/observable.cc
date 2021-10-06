@@ -276,7 +276,7 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
           p_track.push_back(pfo_pz[ipfo]);
           costheta = GetCostheta(p_track);
 
-          if (fabs(costheta) < 0.8) continue;
+          // if (fabs(costheta) < 0.8) continue;
           ncoscut_pfo++;
           float dedx = pfo_dedx[ipfo];
 
@@ -625,7 +625,7 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
   TString fname = "all_tracks";
   if (secondary == true) fname = "secondary_tracks";
   if (ignoreoverlay == true) fname += "_ignoreoverlay";
-  if (pdg == 3) fname = process;
+  if (pdg == 1 || pdg == 2 || pdg == 3) fname = process;
   if (pdg == 4) fname = TString::Format("output_250_%s_%s_cquark_costheta_lt08.root", fname.Data(), process.Data());
   if (pdg == 5) fname = TString::Format("output_250_%s_%s_bquark_costheta_lt08.root", fname.Data(), process.Data());
 
