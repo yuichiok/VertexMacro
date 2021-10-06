@@ -27,7 +27,7 @@
 
 bool cquark;
 
-const TString filename = "../rootfiles/dEdx_pcut_0.root";
+const TString filename = "../rootfiles/dEdx_uds_pcut_0.root";
 
 void Labels(TString pol){
   QQBARLabel(0.86,0.952,"");
@@ -499,13 +499,16 @@ void EffPurity_dedxdist5() {
 
 
   for(int i=0;i<80; i++) {
+    int iproton=16;
     int ipion=22;
+    // int iproton=18;
+    // int ipion=21;
     // if(i>16) ipion=22-(i-16);
-    float n_kaons=  kdEdxdist_kaon->Integral(i, i,16,ipion);
-    float n_pions=  kdEdxdist_pion->Integral(i, i,16,ipion);
-    float n_protons=  kdEdxdist_proton->Integral(i, i,16,ipion);
-    float n_muons=  kdEdxdist_muon->Integral(i, i,16,ipion);
-    float n_electrons=  kdEdxdist_electron->Integral(i, i,16,ipion);
+    float n_kaons=  kdEdxdist_kaon->Integral(i, i,iproton,ipion);
+    float n_pions=  kdEdxdist_pion->Integral(i, i,iproton,ipion);
+    float n_protons=  kdEdxdist_proton->Integral(i, i,iproton,ipion);
+    float n_muons=  kdEdxdist_muon->Integral(i, i,iproton,ipion);
+    float n_electrons=  kdEdxdist_electron->Integral(i, i,iproton,ipion);
     float nkaons=  kdEdxdist_kaon->Integral(i, i);
     if(nkaons==0) nkaons=10000000;
     x[i]=i;
@@ -816,6 +819,6 @@ void plots_dEdx_ss() {
   // EffPurity_dedxdist2();
   // EffPurity_dedxdist3();
   // EffPurity_dedxdist4();
-  // EffPurity_dedxdist5();
-  dEdxdist();
+  EffPurity_dedxdist5();
+  // dEdxdist();
 }
