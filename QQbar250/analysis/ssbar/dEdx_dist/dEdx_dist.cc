@@ -44,7 +44,7 @@ void dEdx_dist::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=10.0, TString output="test")
+void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString output="test")
 {
 
 	// MC Histograms
@@ -85,9 +85,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 	h1_pfo.push_back( pfo_kdEdx_dist_others );
 
 	// TH2F
-	// TH2F* pfo_LeadPFO_p_pid 	= new TH2F(name_pfo+"LeadPFO_p_pid",";Leading PFO; p [GeV]",200,0,200,200,0,200);
 
-	// h2_pfo.push_back( pfo_LeadPFO_p_pid );
 
 
 	std::stringstream stream;
@@ -183,11 +181,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 		int qq_match = -1;
 		int qq_match_count[2] = {0};
 
-		float qq_match_qp[2] = {0};
-		float qq_match_ThrustPz[2] = {0};
-
-		// float wk = 0.3;
-
 		// Jet variables
 		float jet_pt[2]       = {0};
 		float jet_ThrustPz[2] = {0};
@@ -197,12 +190,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 		int   jet_k_mult[2]   = {0};
 
 		// Leading PFO variables
-		float maxP[2] 			 = {0};
-		float lead_abscos[2] = {-2,-2};
-		float lead_cos[2] 	 = {-2,-2};
-		float lead_phi[2] 	 = {-2,-2};
-		float lead_qcos[2] 	 = {-2,-2};
-		int   lead_ipfo[2] 	 = {-1,-1};
+		float maxP[2] 			     = {0};
+		int   lead_ipfo[2] 	     = {-1};
 
 		VecOP thrustVec(principle_thrust_axis[0],principle_thrust_axis[1],principle_thrust_axis[2]);
 
@@ -218,12 +207,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 			float cos    = pfoVec.GetCostheta();
-			float phi    = pfoVec.GetPhi();
 			float mom    = pfoVec.GetMomentum();
 			std::vector<float> mom3   = pfoVec.GetMomentum3();
 			float ThrustPz     = pfoVec.GetThrustPz(thrustVec.GetMomentum3());
 			// float pt     = pfoVec.GetPT();
 			float charge = pfo_charge[ipfo];
+
+
+			// This compares pfo angle with MC angle -> giving which this pfo are from. 
+			// 0: PFO is from q
+			// 1: PFO is from qbar
 
 			float q_pfo_sep    = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
 			float qbar_pfo_sep = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
@@ -232,18 +225,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 
 			qq_match_count[qq_match]++;
 
-			float ThrustPz_match = pfoVec.GetThrustPz(qqVecs.at(qq_match).GetMomentum3());
-
-
-			// CHANGE HERE FOR SELECTION
-
-			// if(charge!=0 &&  mom > 5.0){
-			if(charge!=0){
-				float qp = charge * pow(ThrustPz_match,wk);
-				qq_match_qp[qq_match] += qp;
-				qq_match_ThrustPz[qq_match] += pow(ThrustPz_match,wk);
-			}
-
 
 			// Jet Analysis
 			
@@ -251,19 +232,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 			{
 				if(pfo_match[ipfo]==imatch){
 
-					jet_mult[imatch]++;
-					// if(fabs(pfo_pdgcheat[ipfo])==321) jet_k_mult[imatch]++;
-					if(fabs(pfo_piddedx[ipfo])==321) jet_k_mult[imatch]++;
-
-					jet_qp[imatch] += charge * sqrt(ThrustPz);
-					jet_ThrustPz[imatch] += ThrustPz;
-
-
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
-						lead_abscos[imatch] = abscos;
-						lead_cos[imatch] = cos;
-						lead_phi[imatch] = phi;
 						lead_ipfo[imatch] = ipfo;
 					}
 
@@ -292,21 +262,74 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 		//////   Leading PFOs ANALYSIS   //////
 		///////////////////////////////////////
 
-		float chg[2] = {0};
-		chg[0] = pfo_charge[lead_ipfo[0]];
-		chg[1] = pfo_charge[lead_ipfo[1]];
+		float lead_kdEdx_dist[2] = {0};
+		float lead_cos[2] 	     = {-2};
+		float lead_qcos[2] 	     = {-2};
+		float lead_chg[2]  			 = {0};
+
+		int   lead_pdg_cheat[2]	 = {0};
+
+		bool  ktags[2]					 = {0};
+
+		for (int i = 0; i < 2; ++i){
+
+			VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
+
+			lead_kdEdx_dist[i] = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
+			lead_cos[i]	= lead_pfoVec.GetCostheta();
+			lead_chg[i] = pfo_charge[lead_ipfo[i]];
+
+			lead_pdg_cheat[i] = pfo_pdgcheat[lead_ipfo[i]];
+
+			ktags[i] 		= (fabs(pfo_piddedx[lead_ipfo[i]])==321) ? true : false;
+
+
+			switch(lead_pdg_cheat[i]){
+
+				case 321:		// kaon
+					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					break;
+
+				case 211:		// pion
+					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					break;
+
+				case 2212:	// proton
+					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					break;
+					
+				case 11:		// electron
+					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					break;
+					
+				case 13:		// muon
+					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					break;
+					
+				default:
+					pfo_kdEdx_dist_others->Fill(lead_kdEdx_dist[i]);
+					break;
+
+			}
+
+
+
+
+
+
+
+
+		}
+
+		// chg[0] = pfo_charge[lead_ipfo[0]];
+		// chg[1] = pfo_charge[lead_ipfo[1]];
 
 		bool kchg_configs[4] = {0};
-		kchg_configs[0] = ( (chg[0]<0) && (chg[1]>0) ) ? true : false;
-		kchg_configs[1] = ( (chg[0]>0) && (chg[1]<0) ) ? true : false;
-		kchg_configs[2] = ( (chg[0]>0) && (chg[1]>0) ) ? true : false;
-		kchg_configs[3] = ( (chg[0]<0) && (chg[1]<0) ) ? true : false;
+		kchg_configs[0] = ( (lead_chg[0]<0) && (lead_chg[1]>0) ) ? true : false;
+		kchg_configs[1] = ( (lead_chg[0]>0) && (lead_chg[1]<0) ) ? true : false;
+		kchg_configs[2] = ( (lead_chg[0]>0) && (lead_chg[1]>0) ) ? true : false;
+		kchg_configs[3] = ( (lead_chg[0]<0) && (lead_chg[1]<0) ) ? true : false;
 
-		bool ktags[2] = {0};
-		// ktags[0] = (fabs(pfo_pdgcheat[lead_ipfo[0]])==321) ? true : false;
-		// ktags[1] = (fabs(pfo_pdgcheat[lead_ipfo[1]])==321) ? true : false;
-		ktags[0] = (fabs(pfo_piddedx[lead_ipfo[0]])==321) ? true : false;
-		ktags[1] = (fabs(pfo_piddedx[lead_ipfo[1]])==321) ? true : false;
 
 		kaon_dEdx_cheat_all++;
 		if(fabs(pfo_pdgcheat[lead_ipfo[0]])==fabs(pfo_piddedx[lead_ipfo[0]])) kaon_dEdx_cheat_same0++;
@@ -315,55 +338,50 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float wk=1.0, float MAXP_CUT=
 
 		bool maxP_check = ( maxP[0]>MAXP_CUT && maxP[1]>MAXP_CUT ) ? true : false;
 
-		if(ktags[0] && ktags[1] && maxP_check){
 
-			n_kk++;
 
-			if(kchg_configs[0] || kchg_configs[1]){
 
-				n_kpkm++;
 
-				for (int i = 0; i < 2; ++i){
+		// if(ktags[0] && ktags[1] && maxP_check){
 
-					VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
-					float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
-					float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
-					int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
-					// int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
-					int   LeadKchg_match = (pfo_piddedx[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
+		// 	n_kk++;
 
-					nLeadK_pass++;
-					if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
+		// 	if(kchg_configs[0] || kchg_configs[1]){
 
-					lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
+		// 		n_kpkm++;
+
+		// 		for (int i = 0; i < 2; ++i){
+
+		// 			VecOP LeadKVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
+		// 			float q_LeadK_sep    = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+		// 			float qbar_LeadK_sep = VecOP::getAngleBtw(LeadKVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+		// 			int   qq_LeadK_match = (q_LeadK_sep < qbar_LeadK_sep) ? 0 : 1;
+		// 			// int   LeadKchg_match = (pfo_pdgcheat[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
+		// 			int   LeadKchg_match = (pfo_piddedx[lead_ipfo[i]] < 0) ? 0 : 1;  // s,d (<): 0 = K-, 1 = K+ | u(>): 0 = K+, 1 = K-
+
+		// 			nLeadK_pass++;
+		// 			if(LeadKchg_match == qq_LeadK_match) nLeadK_match++;
+
+		// 			lead_qcos[i] = (chg[i] < 0)? lead_cos[i]: -lead_cos[i];
 					
+		// 		}  // loop 2 leading kaons 
 
-
-
-				}  // loop 2 leading kaons 
-
-			}else if( kchg_configs[2] ){ 
+		// 	}else if( kchg_configs[2] ){ 
 				
-				n_kpkp++;
+		// 		n_kpkp++;
 
-			}else if( kchg_configs[3] ){
+		// 	}else if( kchg_configs[3] ){
 
-				n_kmkm++;
+		// 		n_kmkm++;
 			
-			}
+		// 	}
 
-		} // k double tag / MAXP check
+		// } // k double tag / MAXP check
 
 	} // end of event loop
 
 	printProgress( 1.0 );
 	std::cout << std::endl;
-
-	// pdg dEdx cheat ratio
-	float kaon_dEdx_cheat_ratio0 = float(kaon_dEdx_cheat_same0) / float(kaon_dEdx_cheat_all);
-	float kaon_dEdx_cheat_ratio1 = float(kaon_dEdx_cheat_same1) / float(kaon_dEdx_cheat_all);
-	std::cout << "kaon_dEdx_cheat_ratio0 = " << kaon_dEdx_cheat_ratio0 << std::endl;
-	std::cout << "kaon_dEdx_cheat_ratio1 = " << kaon_dEdx_cheat_ratio1 << std::endl;
 
 
 	printResults();
