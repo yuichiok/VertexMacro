@@ -76,7 +76,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
   TH1F * pfo_kdEdx_dist_muon     = new TH1F(name_pfo+"kdEdx_dist_muon", "kdEdx_dist_muon", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_others   = new TH1F(name_pfo+"kdEdx_dist_others", "kdEdx_dist_others", 40, -10, 10);
 
-
 	h1_pfo.push_back( pfo_kdEdx_dist_kaon );
 	h1_pfo.push_back( pfo_kdEdx_dist_proton );
 	h1_pfo.push_back( pfo_kdEdx_dist_pion );
@@ -85,7 +84,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_kdEdx_dist_others );
 
 	// TH2F
+  TH2F * pfo_p_kdEdx_dist_kaon 			= new TH2F(name_pfo+"p_kdEdx_dist_kaon", "p_kdEdx_dist_kaon", 100, 0.5, 100.5, 40, -10, 10);
+  TH2F * pfo_p_kdEdx_dist_proton 		= new TH2F(name_pfo+"p_kdEdx_dist_proton", "p_kdEdx_dist_proton", 100, 0.5, 100.5, 40, -10, 10);
+  TH2F * pfo_p_kdEdx_dist_pion 			= new TH2F(name_pfo+"p_kdEdx_dist_pion", "p_kdEdx_dist_pion", 100, 0.5, 100.5, 40, -10, 10);
+  TH2F * pfo_p_kdEdx_dist_electron  = new TH2F(name_pfo+"p_kdEdx_dist_electron", "p_kdEdx_dist_electron", 100, 0.5, 100.5, 40, -10, 10);
+  TH2F * pfo_p_kdEdx_dist_muon 			= new TH2F(name_pfo+"p_kdEdx_dist_muon", "p_kdEdx_dist_muon", 100, 0.5, 100.5, 40, -10, 10);
+  TH2F * pfo_p_kdEdx_dist_others 		= new TH2F(name_pfo+"p_kdEdx_dist_others", "p_kdEdx_dist_others", 100, 0.5, 100.5, 40, -10, 10);
 
+  h2_pfo.push_back( pfo_p_kdEdx_dist_kaon );
+  h2_pfo.push_back( pfo_p_kdEdx_dist_proton );
+  h2_pfo.push_back( pfo_p_kdEdx_dist_pion );
+  h2_pfo.push_back( pfo_p_kdEdx_dist_electron );
+  h2_pfo.push_back( pfo_p_kdEdx_dist_muon );
+  h2_pfo.push_back( pfo_p_kdEdx_dist_others );
 
 
 	std::stringstream stream;
@@ -263,6 +274,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 		///////////////////////////////////////
 
 		float lead_kdEdx_dist[2] = {0};
+		float lead_mom[2]				 = {0};
 		float lead_cos[2] 	     = {-2};
 		float lead_qcos[2] 	     = {-2};
 		float lead_chg[2]  			 = {0};
@@ -276,38 +288,52 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 			VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
 
 			lead_kdEdx_dist[i] = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
+			lead_mom[i] = lead_pfoVec.GetMomentum();
 			lead_cos[i]	= lead_pfoVec.GetCostheta();
 			lead_chg[i] = pfo_charge[lead_ipfo[i]];
 
 			lead_pdg_cheat[i] = pfo_pdgcheat[lead_ipfo[i]];
 
-			ktags[i] 		= (fabs(pfo_piddedx[lead_ipfo[i]])==321) ? true : false;
+			ktags[i] = (fabs(pfo_piddedx[lead_ipfo[i]])==321) ? true : false;
 
+
+      bool nhits_bool = false;
+      if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
+      if (fabs(lead_cos[i]) > 0.75 && fabs(lead_cos[i]) < 0.9 && pfo_tpc_hits[lead_ipfo[i]] > (210 + (210 - 50) * (fabs(lead_cos[i]) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
+      if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
+
+      if(!nhits_bool) continue;
 
 			switch(lead_pdg_cheat[i]){
 
 				case 321:		// kaon
 					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_kaon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
 
 				case 211:		// pion
-					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					pfo_kdEdx_dist_pion->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_pion->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
 
 				case 2212:	// proton
-					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					pfo_kdEdx_dist_proton->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_proton->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
-					
+
 				case 11:		// electron
-					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					pfo_kdEdx_dist_electron->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_electron->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
-					
+
 				case 13:		// muon
-					pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+					pfo_kdEdx_dist_muon->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_muon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
-					
+
 				default:
 					pfo_kdEdx_dist_others->Fill(lead_kdEdx_dist[i]);
+					pfo_p_kdEdx_dist_others->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 					break;
 
 			}
