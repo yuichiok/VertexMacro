@@ -246,9 +246,9 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
     //for the moment, we restrict the analysis to the bb events without radaitive return
     // if(fabs(mc_quark_pdg[0])==pdg && gamma_e<35) {
 
-    // if (fabs(mc_quark_pdg[0]) == pdg) {
+    if (fabs(mc_quark_pdg[0]) == pdg) {
 
-    if (fabs(mc_quark_pdg[0]) == 1 || fabs(mc_quark_pdg[0]) == 2 || fabs(mc_quark_pdg[0]) == 3) {
+    // if (fabs(mc_quark_pdg[0]) == 1 || fabs(mc_quark_pdg[0]) == 2 || fabs(mc_quark_pdg[0]) == 3) {
 
       isrcut++;
 
@@ -623,11 +623,11 @@ void observable::dEdx(int n_entries = -1, TString process = "", bool secondary =
   leg1 -> Draw();
 
   TString fname = "all_tracks";
-  if (secondary == true) fname = "secondary_tracks";
-  if (ignoreoverlay == true) fname += "_ignoreoverlay";
-  if (pdg == 1 || pdg == 2 || pdg == 3) fname = process;
-  if (pdg == 4) fname = TString::Format("output_250_%s_%s_cquark_costheta_lt08.root", fname.Data(), process.Data());
-  if (pdg == 5) fname = TString::Format("output_250_%s_%s_bquark_costheta_lt08.root", fname.Data(), process.Data());
+  // if (secondary == true) fname = "secondary_tracks";
+  // if (ignoreoverlay == true) fname += "_ignoreoverlay";
+  if (pdg == 1 || pdg == 2 || pdg == 3 || pdg == 5) fname = process;
+  // if (pdg == 4) fname = TString::Format("output_250_%s_%s_cquark_costheta_lt08.root", fname.Data(), process.Data());
+  // if (pdg == 5) fname = TString::Format("output_250_%s_%s_bquark_costheta_lt08.root", fname.Data(), process.Data());
 
   TFile * MyFile = new TFile(fname, "RECREATE");
   MyFile -> cd();

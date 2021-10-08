@@ -13,8 +13,9 @@ int analysis(float cut){
 
   // uds now!!
   // TString output = "/home/ilc/yokugawa/macros/QQbar250/analysis/AFBhq2021/analysis/dEdx/rootfiles/dEdx_uds_pcut_" + to_string(int_cut) + ".root";
-  // TString output = "/home/ilc/yokugawa/macros/QQbar250/analysis/AFBhq2021/analysis/dEdx/rootfiles/dEdx_d_pcut_" + to_string(int_cut) + ".root";
-  TString output = "/home/ilc/yokugawa/macros/QQbar250/analysis/AFBhq2021/analysis/dEdx/rootfiles/dEdx_uds_no_pfocoscut.root";
+  
+  TString output = "/home/ilc/yokugawa/macros/QQbar250/analysis/AFBhq2021/analysis/dEdx/rootfiles/dEdx_b_pcut_" + to_string(int_cut) + ".root";
+  // TString output = "/home/ilc/yokugawa/macros/QQbar250/analysis/AFBhq2021/analysis/dEdx/rootfiles/dEdx_uds_no_pfocoscut.root";
 
   cout<< "input  = " << file << endl;
   cout<< "output = " << output << endl;
@@ -23,9 +24,10 @@ int analysis(float cut){
   
   // ss3.dEdx(-1,TString::Format("%s_cut_%i",output.Data(),cut),true,ignoreoverlay,float(cut),quark); 
   
-  ss3.dEdx(-1,output,false,true,cut,3); 
+  // ss3.dEdx(-1,output,false,true,cut,3); 
 
-  // ss3.dEdx(-1,output,false,true,cut,1); 
+  //bbar
+  ss3.dEdx(-1,output,false,true,cut,5); 
 
   //  ss3.dEdx(-1,output,false,ignoreoverlay);
   
