@@ -69,9 +69,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	// TH1F
 
 	// vertex position
-  TH1F * pfo_pv_kaon     = new TH1F(name_pfo+"pv_kaon", "pv_kaon", 80, -40, 40);
-  TH1F * pfo_pv_pion     = new TH1F(name_pfo+"pv_pion", "pv_pion", 80, -40, 40);
-  TH1F * pfo_pv_proton   = new TH1F(name_pfo+"pv_proton", "pv_proton", 80, -40, 40);
+  TH1F * pfo_pv_kaon     = new TH1F(name_pfo+"pv_kaon", "pv_kaon", 40, 0, 4.0);
+  TH1F * pfo_pv_pion     = new TH1F(name_pfo+"pv_pion", "pv_pion", 40, 0, 4.0);
+  TH1F * pfo_pv_proton   = new TH1F(name_pfo+"pv_proton", "pv_proton", 40, 0, 4.0);
 
   // dEdx distance
   TH1F * pfo_kdEdx_dist_kaon     = new TH1F(name_pfo+"kdEdx_dist_kaon", "kdEdx_dist_kaon", 40, -10, 10);
@@ -119,7 +119,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.pISR.root",output.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pv.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	MyFile->cd();
 
 
