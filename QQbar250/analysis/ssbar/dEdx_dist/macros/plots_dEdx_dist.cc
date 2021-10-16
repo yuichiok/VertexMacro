@@ -25,7 +25,20 @@
 
 // const TString filename = "../rootfiles/DQ_250GeV_ss.400.maxp5.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.400.maxp5.root";
-const TString filename = "../rootfiles/DQ_250GeV_ss.kpkm.400.maxp5.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.kpkm.pvcut.maxp10.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.kpkm.maxp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.kpkm.maxp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.kpkm.maxp10.root";
+const TString filename = "../rootfiles/DQ_250GeV_uds.kpkm.maxp10.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_uds.kpkm.pv.maxp5.root";
+
+void normalize(TH1F* h = 0){
+
+  h->Scale(1/h->GetEntries());
+
+}
 
 void EffPurity_dedxdist5() {
   
@@ -176,9 +189,87 @@ void dEdxdist() {
 
 }
 
+void pv() {
+
+  gStyle->SetOptFit(0); 
+  gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+  
+  gStyle->SetTitleBorderSize(0);
+  gStyle->SetTitleStyle(0);
+  gStyle->SetTitleX(0.2);
+  gStyle->SetMarkerSize(0.2);
+  //  gStyle->SetGridStyle(1);
+  TGaxis::SetMaxDigits(3);
+  
+  TFile *f = new TFile(filename);
+
+  TH1F*  pfo_pv_kaon   = (TH1F*)f->Get("h_pfo_pv_kaon");
+  TH1F*  pfo_pv_pion   = (TH1F*)f->Get("h_pfo_pv_pion");
+  TH1F*  pfo_pv_proton = (TH1F*)f->Get("h_pfo_pv_proton");
+
+
+  normalize(pfo_pv_kaon);
+  normalize(pfo_pv_pion);
+  normalize(pfo_pv_proton);
+
+
+  // cquark=true;
+  TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
+  c_mom->cd(1);
+  c_mom->SetGrid();
+  pfo_pv_pion->GetXaxis()->SetTitle("sqrt(d0^2 + z0^2)");
+  pfo_pv_pion->GetYaxis()->SetTitle("a.u.");
+
+  pfo_pv_pion->SetLineColor(4);
+  pfo_pv_pion->SetLineWidth(3);
+  pfo_pv_pion->SetLineStyle(1);
+  pfo_pv_pion->Draw("histo");
+
+  pfo_pv_kaon->SetLineColor(2);
+  pfo_pv_kaon->SetLineWidth(3);
+  pfo_pv_kaon->SetLineStyle(1);
+  pfo_pv_kaon->Draw("histosame");
+
+  pfo_pv_proton->SetLineColor(1);
+  pfo_pv_proton->SetLineWidth(3);
+  pfo_pv_proton->SetLineStyle(1);
+  pfo_pv_proton->Draw("histosame");
+  
+
+  // TF1 *f_k= new TF1("f_k","gaus",-4,4);
+  // kdEdx_dist_kaon->Fit(f_k,"SR");
+  // f_k->Draw("lsame");
+  // f_k->SetLineColor(2);
+  // f_k->SetLineWidth(2);
+  // f_k->SetLineStyle(2);
+  // f_k->Draw("lsame");
+
+  // TF1 *f_pi= new TF1("f_pi","gaus",-1,7);
+  // kdEdx_dist_pion->Fit(f_pi,"SR");
+  // f_pi->Draw("lsame");
+  // f_pi->SetLineColor(4);
+  // f_pi->SetLineWidth(2);
+  // f_pi->SetLineStyle(2);
+  // f_pi->Draw("lsame");
+  
+  TLegend *leg = new TLegend(0.2,0.7,0.5,0.85);
+  leg->SetTextSize(0.035);
+  leg->SetTextFont(42);
+  leg->AddEntry(pfo_pv_pion,"pions","l");
+  leg->AddEntry(pfo_pv_kaon,"kaons","lp");
+  leg->AddEntry(pfo_pv_proton,"protons","lp");
+  leg->SetFillColor(0);
+  leg->SetLineColor(0);
+  leg->SetShadowColor(0);
+  leg->Draw();
+
+}
+
 
 void plots_dEdx_dist() {
 
   // EffPurity_dedxdist5();
   dEdxdist();
+  // pv();
 }

@@ -120,7 +120,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.pISR.root",output.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pv.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	MyFile->cd();
 
 
@@ -325,6 +327,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	      if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
 
 	      if(!nhits_bool) continue;
+	      if(lead_pv[i]>1.0) continue;
 
 				switch(lead_pdg_cheat[i]){
 
