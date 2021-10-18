@@ -73,13 +73,29 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
   TH1F * pfo_pv_pion     = new TH1F(name_pfo+"pv_pion", "pv_pion", 40, 0, 4.0);
   TH1F * pfo_pv_proton   = new TH1F(name_pfo+"pv_proton", "pv_proton", 40, 0, 4.0);
 
-  // dEdx distance
+  // dEdx distance from kaon bethe-bloch
   TH1F * pfo_kdEdx_dist_kaon     = new TH1F(name_pfo+"kdEdx_dist_kaon", "kdEdx_dist_kaon", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_proton   = new TH1F(name_pfo+"kdEdx_dist_proton", "kdEdx_dist_proton", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_pion     = new TH1F(name_pfo+"kdEdx_dist_pion", "kdEdx_dist_pion", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_electron = new TH1F(name_pfo+"kdEdx_dist_electron", "kdEdx_dist_electron", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_muon     = new TH1F(name_pfo+"kdEdx_dist_muon", "kdEdx_dist_muon", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_others   = new TH1F(name_pfo+"kdEdx_dist_others", "kdEdx_dist_others", 40, -10, 10);
+
+  // dEdx distance from pion bethe-bloch
+  TH1F * pfo_pidEdx_dist_kaon     = new TH1F(name_pfo+"pidEdx_dist_kaon", "pidEdx_dist_kaon", 40, -10, 10);
+  TH1F * pfo_pidEdx_dist_proton   = new TH1F(name_pfo+"pidEdx_dist_proton", "pidEdx_dist_proton", 40, -10, 10);
+  TH1F * pfo_pidEdx_dist_pion     = new TH1F(name_pfo+"pidEdx_dist_pion", "pidEdx_dist_pion", 40, -10, 10);
+  TH1F * pfo_pidEdx_dist_electron = new TH1F(name_pfo+"pidEdx_dist_electron", "pidEdx_dist_electron", 40, -10, 10);
+  TH1F * pfo_pidEdx_dist_muon     = new TH1F(name_pfo+"pidEdx_dist_muon", "pidEdx_dist_muon", 40, -10, 10);
+  TH1F * pfo_pidEdx_dist_others   = new TH1F(name_pfo+"pidEdx_dist_others", "pidEdx_dist_others", 40, -10, 10);
+
+  // dEdx distance from proton bethe-bloch
+  TH1F * pfo_pdEdx_dist_kaon     = new TH1F(name_pfo+"pdEdx_dist_kaon", "pdEdx_dist_kaon", 40, -10, 10);
+  TH1F * pfo_pdEdx_dist_proton   = new TH1F(name_pfo+"pdEdx_dist_proton", "pdEdx_dist_proton", 40, -10, 10);
+  TH1F * pfo_pdEdx_dist_pion     = new TH1F(name_pfo+"pdEdx_dist_pion", "pdEdx_dist_pion", 40, -10, 10);
+  TH1F * pfo_pdEdx_dist_electron = new TH1F(name_pfo+"pdEdx_dist_electron", "pdEdx_dist_electron", 40, -10, 10);
+  TH1F * pfo_pdEdx_dist_muon     = new TH1F(name_pfo+"pdEdx_dist_muon", "pdEdx_dist_muon", 40, -10, 10);
+  TH1F * pfo_pdEdx_dist_others   = new TH1F(name_pfo+"pdEdx_dist_others", "pdEdx_dist_others", 40, -10, 10);
 
   // push_back hists
   h1_pfo.push_back( pfo_pv_kaon );
@@ -92,6 +108,20 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_kdEdx_dist_electron );
 	h1_pfo.push_back( pfo_kdEdx_dist_muon );
 	h1_pfo.push_back( pfo_kdEdx_dist_others );
+
+	h1_pfo.push_back( pfo_pidEdx_dist_kaon );
+	h1_pfo.push_back( pfo_pidEdx_dist_proton );
+	h1_pfo.push_back( pfo_pidEdx_dist_pion );
+	h1_pfo.push_back( pfo_pidEdx_dist_electron );
+	h1_pfo.push_back( pfo_pidEdx_dist_muon );
+	h1_pfo.push_back( pfo_pidEdx_dist_others );
+
+	h1_pfo.push_back( pfo_pdEdx_dist_kaon );
+	h1_pfo.push_back( pfo_pdEdx_dist_proton );
+	h1_pfo.push_back( pfo_pdEdx_dist_pion );
+	h1_pfo.push_back( pfo_pdEdx_dist_electron );
+	h1_pfo.push_back( pfo_pdEdx_dist_muon );
+	h1_pfo.push_back( pfo_pdEdx_dist_others );
 
 	// TH2F
   TH2F * pfo_p_kdEdx_dist_kaon 			= new TH2F(name_pfo+"p_kdEdx_dist_kaon", "p_kdEdx_dist_kaon", 100, 0.5, 100.5, 40, -10, 10);
@@ -121,8 +151,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.maxp%s.test2.root",output.Data(),maxp_it.Data()),"RECREATE");
+
 	MyFile->cd();
 
 
@@ -158,7 +191,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 		// Progress bar
 		// if ( jentry > 10000 && jentry % 10000 == 0 ) std::cout << "Progress: " << 100.*jentry/nentries <<" %"<<endl;
-		printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
+
+		// Comment on batch mode
+		// printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
 
 		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
@@ -289,6 +324,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 		///////////////////////////////////////
 
 		float lead_kdEdx_dist[2] = {0};
+		float lead_pdEdx_dist[2] = {0};
+		float lead_pidEdx_dist[2] = {0};
+
 		float lead_mom[2]				 = {0};
 		float lead_cos[2] 	     = {-2};
 		float lead_qcos[2] 	     = {-2};
@@ -312,7 +350,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 				VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
 
-				lead_kdEdx_dist[i] = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
+				lead_kdEdx_dist[i]  = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
+				lead_pdEdx_dist[i]  = pfo_piddedx_p_dedxdist[lead_ipfo[i]];
+				lead_pidEdx_dist[i] = pfo_piddedx_pi_dedxdist[lead_ipfo[i]];
+
 				lead_mom[i] = lead_pfoVec.GetMomentum();
 				lead_cos[i]	= lead_pfoVec.GetCostheta();
 				lead_pv[i]  = sqrt(pfo_d0[lead_ipfo[i]]*pfo_d0[lead_ipfo[i]] + pfo_z0[lead_ipfo[i]]*pfo_z0[lead_ipfo[i]]);
@@ -328,39 +369,59 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 	      if(!nhits_bool) continue;
 	      if(lead_pv[i]>1.0) continue;
+	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pdEdx_dist[i])) continue;
+	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pidEdx_dist[i])) continue;
 
 				switch(lead_pdg_cheat[i]){
 
 					case 321:		// kaon
 						pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_kaon->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_kaon->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_kaon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						pfo_pv_kaon->Fill(lead_pv[i]);
 						break;
 
 					case 211:		// pion
 						pfo_kdEdx_dist_pion->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_pion->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_pion->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_pion->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						pfo_pv_pion->Fill(lead_pv[i]);
 						break;
 
 					case 2212:	// proton
 						pfo_kdEdx_dist_proton->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_proton->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_proton->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_proton->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						pfo_pv_proton->Fill(lead_pv[i]);
 						break;
 
 					case 11:		// electron
 						pfo_kdEdx_dist_electron->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_electron->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_electron->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_electron->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						break;
 
 					case 13:		// muon
 						pfo_kdEdx_dist_muon->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_muon->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_muon->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_muon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						break;
 
 					default:
 						pfo_kdEdx_dist_others->Fill(lead_kdEdx_dist[i]);
+						pfo_pdEdx_dist_others->Fill(lead_pdEdx_dist[i]);
+						pfo_pidEdx_dist_others->Fill(lead_pidEdx_dist[i]);
+
 						pfo_p_kdEdx_dist_others->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 						break;
 
@@ -374,11 +435,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 	} // end of event loop
 
-	printProgress( 1.0 );
-	std::cout << std::endl;
+	// printProgress( 1.0 );
+	// std::cout << std::endl;
 
 
-	printResults();
+	// printResults();
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
