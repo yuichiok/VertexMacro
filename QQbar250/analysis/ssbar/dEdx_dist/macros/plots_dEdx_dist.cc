@@ -22,26 +22,22 @@
 #include "TMath.h"
 #include "TSystemFile.h"
 
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_ss.kpkm.pvcut.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_uu.kpkm.pvcut.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_dd.kpkm.pvcut.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_uds.kpkm.pvcut.maxp10.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.400.maxp5.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uds.400.maxp5.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_ss.kpkm.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_dd.kpkm.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_uu.kpkm.maxp10.root";
+// const TString filename = "../rootfiles/maxp10/DQ_250GeV_uds.kpkm.maxp10.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.kpkm.pvcut.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uu.kpkm.pvcut.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_dd.kpkm.pvcut.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uds.kpkm.pvcut.maxp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.test2.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.test.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.test.root";
+const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.test2.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.kpkm.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_dd.kpkm.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uu.kpkm.maxp10.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uds.kpkm.maxp10.root";
-
-const TString filename = "../rootfiles/DQ_250GeV_ss.maxp10.test2.root";
-// const TString filename = "../rootfiles/DQ_250GeV_dd.maxp10.test.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uu.maxp10.test.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uds.maxp10.test2.root";
-
-// const TString filename = "../rootfiles/DQ_250GeV_uds.kpkm.pv.maxp5.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
 
 void normalize(TH1F* h = 0){
 
@@ -349,8 +345,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  // EffPurity_dedxdist5();
-  dEdxdist_k();
+  EffPurity_dedxdist5();
+  // dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }

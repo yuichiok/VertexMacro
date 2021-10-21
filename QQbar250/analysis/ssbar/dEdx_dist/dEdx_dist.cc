@@ -44,7 +44,7 @@ void dEdx_dist::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString output="test")
+void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString output="test")
 {
 
 	// MC Histograms
@@ -141,20 +141,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 
 	std::stringstream stream;
-	stream << std::fixed << std::setprecision(0) << MAXP_CUT;
-	TString maxp_it = stream.str();
-	cout << "MAXP = " << MAXP_CUT << endl;
+	stream << std::fixed << std::setprecision(0) << MINP_CUT;
+	TString minp_it = stream.str();
+	cout << "MINP = " << MINP_CUT << endl;
 	process = output;
 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.pISR.root",output.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
 
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.maxp%s.root",output.Data(),maxp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
 
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.maxp%s.test2.root",output.Data(),maxp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.test2.root",output.Data(),minp_it.Data()),"RECREATE");
+
+	// TFile *MyFile = new TFile("test.root","RECREATE");
 
 	MyFile->cd();
 
@@ -167,7 +169,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	///////   EVENT ANALYSIS   ///////
 	//////////////////////////////////
 
-	// const float MAXP_CUT = 10.;
+	// const float MINP_CUT = 10.;
 
 	// pdg ratio
 	int kaon_dEdx_cheat_same0 = 0;
@@ -258,13 +260,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
-			// if(pfo_match[ipfo]<0) continue;
-
-			// if(sqrt(pow(pfo_px[ipfo],2)+pow(pfo_py[ipfo],2))<2) continue;
-			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
-			if(pfo_ntracks[ipfo]!=1) continue;
-
-
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float abscos = abs( pfoVec.GetCostheta() );
 			float cos    = pfoVec.GetCostheta();
@@ -273,6 +268,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 			float ThrustPz     = pfoVec.GetThrustPz(thrustVec.GetMomentum3());
 			// float pt     = pfoVec.GetPT();
 			float charge = pfo_charge[ipfo];
+
+
+			// if(pfo_match[ipfo]<0) continue;
+			// if(mom < MINP_CUT) continue;
+			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
+			if(pfo_ntracks[ipfo]!=1) continue;
 
 
 			// This compares pfo angle with MC angle -> giving which this pfo are from. 
@@ -285,7 +286,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 			qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
 
 			qq_match_count[qq_match]++;
-
 
 			// Jet Analysis
 			
@@ -348,6 +348,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 
 			for (int i = 0; i < 2; ++i){
 
+				if(lead_ipfo[i]==-1) continue;
+
 				VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
 
 				lead_kdEdx_dist[i]  = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
@@ -366,6 +368,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MAXP_CUT=10.0, TString 
 	      if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
 	      if (fabs(lead_cos[i]) > 0.75 && fabs(lead_cos[i]) < 0.9 && pfo_tpc_hits[lead_ipfo[i]] > (210 + (210 - 50) * (fabs(lead_cos[i]) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
 	      if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
+
+
+	      if(lead_mom[i] < MINP_CUT) continue;
 
 	      if(!nhits_bool) continue;
 	      if(lead_pv[i]>1.0) continue;
