@@ -32,10 +32,15 @@
 // const TString filename = "../rootfiles/maxp10/DQ_250GeV_uu.kpkm.maxp10.root";
 // const TString filename = "../rootfiles/maxp10/DQ_250GeV_uds.kpkm.maxp10.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.test2.root";
-// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.test.root";
-// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.test.root";
-const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.test2.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.root";
+const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
 
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
 
