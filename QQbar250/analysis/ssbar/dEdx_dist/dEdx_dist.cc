@@ -154,7 +154,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
 
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.root",output.Data(),minp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
 
 	// TFile *MyFile = new TFile("test.root","RECREATE");
 
@@ -377,6 +378,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pdEdx_dist[i])) continue;
 	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pidEdx_dist[i])) continue;
 
+
+	      float min_dist=-1.5;
+	      float max_dist=0.5;
+
+	      if(lead_kdEdx_dist[i]<min_dist||lead_kdEdx_dist[i]>max_dist) continue;
+
 				switch(lead_pdg_cheat[i]){
 
 					case 321:		// kaon
@@ -462,3 +469,83 @@ void dEdx_dist::printResults(){
 	std::cout << "# Events: " << nevents << "\n";
 	std::cout << "# Events after preselection: " << nevents_after_preselec << "\n";
 	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	std::cout << "LeadK_match: " << nLeadK_match << " LeadK_pass: " << nLeadK_pass << "\n";
+ 	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << "\n";
+ 	std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << " n_kmkm:" << n_kmkm << "\n";
+
+ }
+
+
+
+ void dEdx_dist::LeadingMom(TH1F* h1p = 0, TH1F* h1m = 0, TH2F* h2 = 0, int subject = 0, int iPFO0 = 0, int iPFO1 = 0, float P0 = -2, float P1 = -2) {
+
+ 	// are leading PFOs Kaons?
+ 	// if( fabs(pfo_pdgcheat[iPFO0]) == subject && fabs(pfo_pdgcheat[iPFO1]) == subject ){
+ 	if( fabs(pfo_piddedx[iPFO0]) == subject && fabs(pfo_piddedx[iPFO1]) == subject ){
+
+ 		float multchg = pfo_charge[iPFO0] * pfo_charge[iPFO1];
+ 		bool signPM = (multchg < 0) ? true : false;
+
+ 		if(signPM){
+
+ 			if(pfo_charge[iPFO0] > 0){
+
+ 				h1p->Fill(P0);
+ 				h1m->Fill(P1);
+
+ 				h2->Fill(P1,P0);
+
+ 			}else if(pfo_charge[iPFO0] < 0){
+
+ 				h1p->Fill(P1);
+ 				h1m->Fill(P0);
+
+ 				h2->Fill(P0,P1);
+
+ 			}
+
+ 		} // end sign check
+
+ 	} // end Leading Kaon check
+
+ }
+
+
+ bool dEdx_dist::PreSelection(int type=0,float Kvcut=25) {
+
+   if(jet_E[0]<0.5 || jet_E[1]<0.5) return false;
+
+   if(type == 0 ) return true;
+
+   //---------------------
+   //Radiative return cuts, photon not in the detector
+
+   double bbmass= sqrt(pow(jet_E[0]+jet_E[1],2)-pow(jet_px[0]+jet_px[1],2)-pow(jet_py[0]+jet_py[1],2)-pow(jet_pz[0]+jet_pz[1],2));
+
+   TVector3 v1(jet_px[0],jet_py[0],jet_pz[0]);
+   TVector3 v2(jet_px[1],jet_py[1],jet_pz[1]);
+   VecOP vop;
+   float acol=vop.GetSinacol(v1,v2);
+
+   double jet0_p = sqrt(pow(jet_px[0],2)+pow(jet_py[0],2)+pow(jet_pz[0],2));
+   double jet1_p = sqrt(pow(jet_px[1],2)+pow(jet_py[1],2)+pow(jet_pz[1],2));
+
+   float costheta_j0;
+   VecOP p_j0(jet_px[0],jet_py[0],jet_pz[0]);
+   costheta_j0 = fabs(p_j0.GetCostheta());
+
+   float costheta_j1;
+   VecOP p_j1(jet_px[1],jet_py[1],jet_pz[1]);
+   costheta_j1 = fabs(p_j1.GetCostheta());
+
+   float Kv=250.*acol/(acol+sqrt(1-costheta_j0*costheta_j0)+sqrt(1-costheta_j1*costheta_j1));
+   float K1=jet0_p*acol/sqrt(1-costheta_j1*costheta_j1);
+   float K2=jet1_p*acol/sqrt(1-costheta_j0*costheta_j0);
+
+   if(type == 1 )  if( Kv < Kvcut ) return true;
+   if(type == 2 )  if( Kv < Kvcut && bbmass>130 )  return true;
+
+
+
+   return false;
+ } 
