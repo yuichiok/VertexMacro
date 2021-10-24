@@ -53,10 +53,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	// TH1F
 	TH1F* mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* mc_qq_cos  = new TH1F("h_mc_quark_cos",";cos#theta; Entries",100,-1.0,1.0);
 
 	h1_mc_stable.push_back( mc_nk_evt );
-
-
+	h1_mc_stable.push_back( mc_qq_cos );
 
 	// TH2F
 
@@ -97,6 +97,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH1F * pfo_pdEdx_dist_muon     = new TH1F(name_pfo+"pdEdx_dist_muon", "pdEdx_dist_muon", 40, -10, 10);
   TH1F * pfo_pdEdx_dist_others   = new TH1F(name_pfo+"pdEdx_dist_others", "pdEdx_dist_others", 40, -10, 10);
 
+  // Kaon polar angle
+	TH1F* pfo_LeadK_qcos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+
+
   // push_back hists
   h1_pfo.push_back( pfo_pv_kaon );
   h1_pfo.push_back( pfo_pv_pion );
@@ -122,6 +126,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_pdEdx_dist_electron );
 	h1_pfo.push_back( pfo_pdEdx_dist_muon );
 	h1_pfo.push_back( pfo_pdEdx_dist_others );
+
+	h1_pfo.push_back( pfo_LeadK_qcos );
 
 	// TH2F
   TH2F * pfo_p_kdEdx_dist_kaon 			= new TH2F(name_pfo+"p_kdEdx_dist_kaon", "p_kdEdx_dist_kaon", 100, 0.5, 100.5, 40, -10, 10);
@@ -155,7 +161,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.root",output.Data(),minp_it.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
 
 	// TFile *MyFile = new TFile("test.root","RECREATE");
 
@@ -221,6 +228,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
 			qqVecs.push_back(qqVec);
+
+			float cos 	 = qqVec.GetCostheta();
+			float charge = mc_quark_charge[iqq];
+			float QQqCos = (charge < 0)? cos: -cos;
+
+			mc_qq_cos->Fill(QQqCos);
 
 		}
 
@@ -359,11 +372,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				lead_mom[i] = lead_pfoVec.GetMomentum();
 				lead_cos[i]	= lead_pfoVec.GetCostheta();
+				lead_qcos[i] = (lead_chg[i] < 0)? lead_cos[i]: -lead_cos[i];
 				lead_pv[i]  = sqrt(pfo_d0[lead_ipfo[i]]*pfo_d0[lead_ipfo[i]] + pfo_z0[lead_ipfo[i]]*pfo_z0[lead_ipfo[i]]);
 				// lead_chg[i] = pfo_charge[lead_ipfo[i]];
 
 				lead_pdg_cheat[i] = pfo_pdgcheat[lead_ipfo[i]];
-				
+
 
 	      bool nhits_bool = false;
 	      if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
@@ -378,11 +392,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pdEdx_dist[i])) continue;
 	      if(abs(lead_kdEdx_dist[i]) > abs(lead_pidEdx_dist[i])) continue;
 
-
 	      float min_dist=-1.5;
 	      float max_dist=0.5;
 
 	      if(lead_kdEdx_dist[i]<min_dist||lead_kdEdx_dist[i]>max_dist) continue;
+
+
+	      pfo_LeadK_qcos->Fill(lead_qcos[i]);
+
 
 				switch(lead_pdg_cheat[i]){
 

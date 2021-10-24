@@ -40,7 +40,12 @@
 // const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.root";
-const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.kid.root";
+const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.kid.root";
 
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
 
@@ -352,8 +357,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  EffPurity_dedxdist5();
-  // dEdxdist_k();
+  // EffPurity_dedxdist5();
+  dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }
