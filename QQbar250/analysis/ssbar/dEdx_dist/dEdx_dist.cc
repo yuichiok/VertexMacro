@@ -229,12 +229,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
 			qqVecs.push_back(qqVec);
 
-			float cos 	 = qqVec.GetCostheta();
-			float charge = mc_quark_charge[iqq];
-			float QQqCos = (charge < 0)? cos: -cos;
-
-			mc_qq_cos->Fill(QQqCos);
-
 		}
 
 		// Cut qq with qq separation
@@ -248,6 +242,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
 
 		nevents_after_preselec++;
+
+		for(int iqq=0; iqq < 2; iqq++){
+
+			float cos 	 = qqVecs.at(iqq).GetCostheta();
+			float charge = mc_quark_charge[iqq];
+			float QQqCos = (charge < 0)? cos: -cos;
+
+			mc_qq_cos->Fill(QQqCos);
+
+		}
 
 
 		////////////////////////////////
