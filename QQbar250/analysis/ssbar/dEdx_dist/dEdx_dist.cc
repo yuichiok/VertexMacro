@@ -47,6 +47,8 @@ void dEdx_dist::printProgress(double percentage) {
 void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString output="test")
 {
 
+	float MAXP_CUT=60.0;
+
 	// MC Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
@@ -162,7 +164,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.root",output.Data(),minp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.maxp60.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
 
 	// TFile *MyFile = new TFile("test.root","RECREATE");
 
@@ -390,6 +393,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	      if(lead_mom[i] < MINP_CUT) continue;
+	      if(lead_mom[i] > MAXP_CUT) continue;
 
 	      if(!nhits_bool) continue;
 	      if(lead_pv[i]>1.0) continue;

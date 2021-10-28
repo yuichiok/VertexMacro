@@ -37,7 +37,7 @@
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
+const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
@@ -45,7 +45,12 @@
 // const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.kid.root";
 // const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.kid.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.kid.root";
-const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.kid.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.polar.root";
 
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
 
