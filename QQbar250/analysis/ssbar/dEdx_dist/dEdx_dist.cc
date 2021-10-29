@@ -173,7 +173,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	MyFile->cd();
 
 
-	ofstream LeadKDataFile ("LeadPFO_par.data");
+	TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.data",output.Data(),minp_it.Data());
+	TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.data",output.Data(),minp_it.Data());
+	ofstream LeadKDataFile (tmp_str.Data());
+	ofstream TrueDataFile  (tmp_str2.Data());
 
 	if (fChain == 0) return;
 
@@ -417,6 +420,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				switch(lead_pdg_cheat[i]){
 
 					case 321:		// kaon
+
+						TrueDataFile << lead_qcos[i] << '\t' << lead_mom[i] << '\t' << lead_chg[i] << '\t' << lead_dedx[i] << '\t' << lead_kdEdx_dist[i] << '\n';
+
 						pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
 						pfo_pdEdx_dist_kaon->Fill(lead_pdEdx_dist[i]);
 						pfo_pidEdx_dist_kaon->Fill(lead_pidEdx_dist[i]);
@@ -490,6 +496,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
 
 	LeadKDataFile.close();
+	TrueDataFile.close();
 
 
 }
