@@ -7,6 +7,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TMath.h>
+#include <fstream>
 
 // see math/mathcore/src/PdfFuncMathCore.cxx in ROOT 6.x
 double crystalball_function(double x, double alpha, double n, double sigma, double mean) {
@@ -164,13 +165,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.root",output.Data(),minp_it.Data()),"RECREATE");
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.maxp60.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
+	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
+	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.maxp60.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");
 
 	// TFile *MyFile = new TFile("test.root","RECREATE");
 
 	MyFile->cd();
 
+
+	ofstream LeadKDataFile ("LeadPFO_par.data");
 
 	if (fChain == 0) return;
 
@@ -344,8 +347,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		//////   Leading PFOs ANALYSIS   //////
 		///////////////////////////////////////
 
-		float lead_kdEdx_dist[2] = {0};
-		float lead_pdEdx_dist[2] = {0};
+		float lead_dedx[2]			  = {0};
+		float lead_kdEdx_dist[2]  = {0};
+		float lead_pdEdx_dist[2]  = {0};
 		float lead_pidEdx_dist[2] = {0};
 
 		float lead_mom[2]				 = {0};
@@ -373,6 +377,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
 
+				lead_dedx[i]				= pfo_dedx[lead_ipfo[i]];
 				lead_kdEdx_dist[i]  = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
 				lead_pdEdx_dist[i]  = pfo_piddedx_p_dedxdist[lead_ipfo[i]];
 				lead_pidEdx_dist[i] = pfo_piddedx_pi_dedxdist[lead_ipfo[i]];
@@ -393,7 +398,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	      if(lead_mom[i] < MINP_CUT) continue;
-	      if(lead_mom[i] > MAXP_CUT) continue;
 
 	      if(!nhits_bool) continue;
 	      if(lead_pv[i]>1.0) continue;
@@ -407,6 +411,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	      pfo_LeadK_qcos->Fill(lead_qcos[i]);
+	      LeadKDataFile << lead_qcos[i] << '\t' << lead_mom[i] << '\t' << lead_chg[i] << '\t' << lead_dedx[i] << '\t' << lead_kdEdx_dist[i] << '\n';
 
 
 				switch(lead_pdg_cheat[i]){
@@ -483,6 +488,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	for(int h=0; h < h1_pfo.size(); h++) h1_pfo.at(h)->Write();
 	for(int h=0; h < h2_pfo.size(); h++) h2_pfo.at(h)->Write();
+
+	LeadKDataFile.close();
 
 
 }
