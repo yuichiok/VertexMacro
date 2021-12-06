@@ -102,6 +102,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
   // Kaon polar angle
 	TH1F* pfo_LeadK_qcos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_psum			= new TH1F(name_pfo+"LeadKaons_psum",";cos#theta; Events",100,-1.0,1.0);
 
 
   // push_back hists
@@ -375,7 +376,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		kchg_configs[3] = ( (lead_chg[0]<0) && (lead_chg[1]<0) ) ? true : false;
 
 
-		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
+		// bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
+		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT && maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
 
 
 		if(maxP_check){
