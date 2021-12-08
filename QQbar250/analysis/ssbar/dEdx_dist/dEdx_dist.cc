@@ -177,8 +177,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	MyFile->cd();
 
 
-	TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.data",output.Data(),minp_it.Data());
-	TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.data",output.Data(),minp_it.Data());
+	TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.txt",output.Data(),minp_it.Data());
+	TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.txt",output.Data(),minp_it.Data());
 	ofstream LeadKDataFile (tmp_str.Data());
 	ofstream TrueDataFile  (tmp_str2.Data());
 
@@ -417,20 +417,21 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		      if(abs(lead_kdEdx_dist[i]) > abs(lead_pidEdx_dist[i])) continue;
 
 		      float min_dist=-1.5;
-		      float max_dist=0.5;
+		      // float max_dist=0.5;
+		      float max_dist=2.0;
 
 		      if(lead_kdEdx_dist[i]<min_dist||lead_kdEdx_dist[i]>max_dist) continue;
 
 
 		      pfo_LeadK_qcos->Fill(lead_qcos[i]);
-		      LeadKDataFile << lead_qcos[i] << '\t' << lead_mom[i] << '\t' << lead_chg[i] << '\t' << lead_dedx[i] << '\t' << lead_kdEdx_dist[i] << '\n';
+		      LeadKDataFile << lead_qcos[i] << ',' << lead_mom[i] << ',' << lead_chg[i] << ',' << lead_dedx[i] << ',' << lead_kdEdx_dist[i] << '\n';
 
 
 					switch(lead_pdg_cheat[i]){
 
 						case 321:		// kaon
 
-							TrueDataFile << lead_qcos[i] << '\t' << lead_mom[i] << '\t' << lead_chg[i] << '\t' << lead_dedx[i] << '\t' << lead_kdEdx_dist[i] << '\n';
+							TrueDataFile << lead_qcos[i] << ',' << lead_mom[i] << ',' << lead_chg[i] << ',' << lead_dedx[i] << ',' << lead_kdEdx_dist[i] << '\n';
 
 				      // pfo_LeadK_qcos->Fill(lead_qcos[i]);
 

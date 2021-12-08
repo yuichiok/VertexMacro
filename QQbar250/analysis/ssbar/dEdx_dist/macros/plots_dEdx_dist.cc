@@ -37,7 +37,7 @@
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.root";
 
-const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
@@ -52,7 +52,7 @@ const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.polar.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.polar.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
+const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.test.root";
 
 void normalize(TH1F* h = 0){
 
@@ -165,6 +165,7 @@ void dEdxdist_k() {
   c_mom->SetGrid();
   kdEdx_dist_pion->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
   kdEdx_dist_pion->GetYaxis()->SetTitle("a.u.");
+  kdEdx_dist_pion->GetYaxis()->SetRangeUser(0,7E3);
 
   kdEdx_dist_pion->SetLineColor(4);
   kdEdx_dist_pion->SetLineWidth(3);
