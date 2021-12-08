@@ -150,10 +150,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h2_pfo.push_back( pfo_p_kdEdx_dist_others );
 
 
-	std::stringstream stream;
-	stream << std::fixed << std::setprecision(0) << MINP_CUT;
-	TString minp_it = stream.str();
-	cout << "MINP = " << MINP_CUT << endl;
+	std::stringstream stream_min;
+	std::stringstream stream_max;
+	stream_min << std::fixed << std::setprecision(0) << MINP_CUT;
+	stream_max << std::fixed << std::setprecision(0) << MAXP_CUT;
+	TString minp_it = stream_min.str();
+	TString maxp_it = stream_max.str();
+	cout << "MINP = " << minp_it << endl;
+	cout << "MAXP = " << maxp_it << endl;
+
 	process = output;
 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
@@ -169,16 +174,20 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");		// frequent use
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.true.root",output.Data(),minp_it.Data()),"RECREATE");
 
-	TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test.root",output.Data(),minp_it.Data()),"RECREATE");
 
+	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
+	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test.root",output.Data(),minp_it.Data(),maxp_it.Data());
 
-	// TFile *MyFile = new TFile("test.root","RECREATE");
+	TString filename_out_root = filename_out + ".root";
+	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
 
 	MyFile->cd();
 
 
-	TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.txt",output.Data(),minp_it.Data());
-	TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.txt",output.Data(),minp_it.Data());
+	// TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.txt",output.Data(),minp_it.Data());
+	// TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.txt",output.Data(),minp_it.Data());
+	TString tmp_str  = "data/" + filename_out + ".txt";
+	TString tmp_str2 = "data/" + filename_out + ".true.txt";
 	ofstream LeadKDataFile (tmp_str.Data());
 	ofstream TrueDataFile  (tmp_str2.Data());
 
@@ -376,8 +385,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		kchg_configs[3] = ( (lead_chg[0]<0) && (lead_chg[1]<0) ) ? true : false;
 
 
-		// bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
-		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT && maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
+		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
+		// bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT && maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
 
 
 		if(maxP_check){
