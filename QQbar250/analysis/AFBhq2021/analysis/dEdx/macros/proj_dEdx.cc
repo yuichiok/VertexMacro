@@ -66,6 +66,7 @@ void drawTGEs(TGraphErrors* TGEs[]){
     TGEs[i]->SetMarkerSize(1.0);
     
     if(i==0){
+      TGEs[i]->GetYaxis()->SetRangeUser(0.1,0.24);
       TGEs[i]->Draw("AP");
     }else{
       TGEs[i]->Draw("Psame");
@@ -87,9 +88,12 @@ void proj_dEdx() {
   gStyle->SetTitleX(0.2);
   gStyle->SetMarkerSize(0.2);
 
+  TGaxis::SetMaxDigits(3);
+
 
   // TString filename = "../rootfiles/dEdx_out.root";
-  TString filename = "../rootfiles/dEdx_test.root";
+  // TString filename = "../rootfiles/dEdx_test.root";
+  TString filename = "../rootfiles/dEdx_uds_pcut_0.root";
 
   TFile *f = new TFile(filename);
 
@@ -101,7 +105,7 @@ void proj_dEdx() {
   }
 
 
-  TFile *MyFile = new TFile("plots/proj_dEdx.root","RECREATE");
+  TFile *MyFile = new TFile("plots/proj_dEdx_uds.root","RECREATE");
   MyFile->cd();
 
   //////////// Projection Momentum dE/dx ////////////

@@ -37,10 +37,20 @@
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.root";
 
-// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
+const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.root";
-const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.kid.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.kid.root";
+
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_dd.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.polar.root";
+// const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.polar.root";
 
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp60.test2.root";
 
@@ -73,10 +83,12 @@ void EffPurity_dedxdist5() {
   int n=0;
 
   for(int i=0;i<80; i++) {
-    int iproton=16;
-    int ipion=22;
     // int iproton=16;
-    // int ipion=21;
+    // int ipion=22;
+
+    int iproton=18;
+    int ipion=21;
+    
     // if(i>16) ipion=22-(i-16);
     float n_kaons=  kdEdxdist_kaon->Integral(i, i,iproton,ipion);
     float n_pions=  kdEdxdist_pion->Integral(i, i,iproton,ipion);
@@ -350,8 +362,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  EffPurity_dedxdist5();
-  // dEdxdist_k();
+  // EffPurity_dedxdist5();
+  dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }
