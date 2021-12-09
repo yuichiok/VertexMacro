@@ -176,8 +176,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
-	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
+	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test.root",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210.root",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	TString filename_out_root = filename_out + ".root";
 	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
@@ -386,8 +387,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		kchg_configs[3] = ( (lead_chg[0]<0) && (lead_chg[1]<0) ) ? true : false;
 
 
-		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
-		// bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT && maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
+		// bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
+		bool maxP_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT && maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
 
 
 		if(maxP_check){
