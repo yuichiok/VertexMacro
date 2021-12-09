@@ -175,7 +175,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.true.root",output.Data(),minp_it.Data()),"RECREATE");
 
 
-	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
+	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
+	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test.root",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	TString filename_out_root = filename_out + ".root";
@@ -413,9 +414,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					lead_pdg_cheat[i] = pfo_pdgcheat[lead_ipfo[i]];
 
 		      bool nhits_bool = false;
-		      if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
-		      if (fabs(lead_cos[i]) > 0.75 && fabs(lead_cos[i]) < 0.9 && pfo_tpc_hits[lead_ipfo[i]] > (210 + (210 - 50) * (fabs(lead_cos[i]) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
-		      if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
+		      // if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
+		      // if (fabs(lead_cos[i]) > 0.75 && fabs(lead_cos[i]) < 0.9 && pfo_tpc_hits[lead_ipfo[i]] > (210 + (210 - 50) * (fabs(lead_cos[i]) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
+		      // if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
+
+		      if (pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
 
 
 		      // if(lead_mom[i] < MINP_CUT) continue;
