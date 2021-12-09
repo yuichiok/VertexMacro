@@ -29,6 +29,9 @@
 - kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 - -1.5 < kdEdx_dist < 2.0
 
+### Notes
+- Set this as base cut. Change from here.
+
 
 # File 2
 
@@ -45,7 +48,7 @@
 - \# PFO tracks == 1 (more than 2 tracks cannot be associated to make 1 PFO)
 
 ### Lead PFO
-- Both PFO should have momentum window 10 < Lead PFO mom
+- Both PFO should have momentum window **10 < Lead PFO mom**
 - Lead PFO charge +- or -+
 - Compensate hit numbers for different acceptance region:
   - (       cos < 0.75) 210 < Lead PFO hits
@@ -54,6 +57,9 @@
 - Offset cut > 1.0
 - kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 - -1.5 < kdEdx_dist < 2.0
+
+### Notes
+- mom windown 10\<p\<60 -> 10\<p 
 
 
 # File 3
@@ -71,12 +77,16 @@
 - \# PFO tracks == 1 (more than 2 tracks cannot be associated to make 1 PFO)
 
 ### Lead PFO
-- Both PFO should have momentum window 10 < Lead PFO mom
+- Both PFO should have momentum window **10 < Lead PFO mom**
 - Lead PFO charge +- or -+
-- \# TPC hits 210 < Lead PFO hits
+- \# TPC hits **210 < Lead PFO hits**
 - Offset cut > 1.0
 - kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 - -1.5 < kdEdx_dist < 2.0
+
+### Notes
+- mom windown 10\<p\<60 -> 10\<p
+- TPC hits -> changed from base
 
 
 # File 4
@@ -96,7 +106,11 @@
 ### Lead PFO
 - Both PFO should have momentum window 10 < Lead PFO mom < 60
 - Lead PFO charge +- or -+
-- \# TPC hits 210 < Lead PFO hits
+- \# TPC hits **210 < Lead PFO hits**
 - Offset cut > 1.0
 - kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 - -1.5 < kdEdx_dist < 2.0
+
+### Notes
+- TPC hits -> changed from base
+- Added pfo_LeadK_qcos_kaon, proton, ...

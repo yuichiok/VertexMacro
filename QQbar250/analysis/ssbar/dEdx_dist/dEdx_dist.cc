@@ -101,7 +101,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH1F * pfo_pdEdx_dist_others   = new TH1F(name_pfo+"pdEdx_dist_others", "pdEdx_dist_others", 40, -10, 10);
 
   // Kaon polar angle
-	TH1F* pfo_LeadK_qcos			= new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos			     = new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_kaon	     = new TH1F(name_pfo+"LeadKaons_cos_kaon","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_proton	   = new TH1F(name_pfo+"LeadKaons_cos_proton","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_pion	     = new TH1F(name_pfo+"LeadKaons_cos_pion","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_electron	 = new TH1F(name_pfo+"LeadKaons_cos_electron","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_muon	     = new TH1F(name_pfo+"LeadKaons_cos_muon","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_others	   = new TH1F(name_pfo+"LeadKaons_cos_others","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
+
 	TH1F* pfo_LeadK_psum			= new TH1F(name_pfo+"LeadKaons_psum",";cos#theta; Events",100,-1.0,1.0);
 
 
@@ -132,6 +139,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_pdEdx_dist_others );
 
 	h1_pfo.push_back( pfo_LeadK_qcos );
+	h1_pfo.push_back( pfo_LeadK_qcos_kaon );
+	h1_pfo.push_back( pfo_LeadK_qcos_proton );
+	h1_pfo.push_back( pfo_LeadK_qcos_pion );
+	h1_pfo.push_back( pfo_LeadK_qcos_electron );
+	h1_pfo.push_back( pfo_LeadK_qcos_muon );
+	h1_pfo.push_back( pfo_LeadK_qcos_others );
+
 
 	// TH2F
   TH2F * pfo_p_kdEdx_dist_kaon 			= new TH2F(name_pfo+"p_kdEdx_dist_kaon", "p_kdEdx_dist_kaon", 100, 0.5, 100.5, 40, -10, 10);
@@ -177,17 +191,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
-	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test.root",output.Data(),minp_it.Data(),maxp_it.Data());
-	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210.root",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	TString filename_out_root = filename_out + ".root";
 	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
 
 	MyFile->cd();
 
-
-	// TString tmp_str  = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.txt",output.Data(),minp_it.Data());
-	// TString tmp_str2 = TString::Format("data/DQ_250GeV_%s.minp%s.distcut.polar.true.txt",output.Data(),minp_it.Data());
 	TString tmp_str  = "data/" + filename_out + ".txt";
 	TString tmp_str2 = "data/" + filename_out + ".true.txt";
 	ofstream LeadKDataFile (tmp_str.Data());
@@ -452,6 +463,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_kaon->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_kaon->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_kaon->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_kaon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							pfo_pv_kaon->Fill(lead_pv[i]);
 							break;
@@ -461,6 +473,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_pion->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_pion->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_pion->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_pion->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							pfo_pv_pion->Fill(lead_pv[i]);
 							break;
@@ -470,6 +483,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_proton->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_proton->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_proton->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_proton->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							pfo_pv_proton->Fill(lead_pv[i]);
 							break;
@@ -479,6 +493,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_electron->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_electron->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_electron->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_electron->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							break;
 
@@ -487,6 +502,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_muon->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_muon->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_muon->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_muon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							break;
 
@@ -495,6 +511,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_pdEdx_dist_others->Fill(lead_pdEdx_dist[i]);
 							pfo_pidEdx_dist_others->Fill(lead_pidEdx_dist[i]);
 
+							pfo_LeadK_qcos_others->Fill(lead_qcos[i]);
 							pfo_p_kdEdx_dist_others->Fill(lead_mom[i],lead_kdEdx_dist[i]);
 							break;
 
