@@ -109,7 +109,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* pfo_LeadK_qcos_muon	     = new TH1F(name_pfo+"LeadKaons_cos_muon","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
 	TH1F* pfo_LeadK_qcos_others	   = new TH1F(name_pfo+"LeadKaons_cos_others","Polar Angle Cheat;cos#theta; Events",100,-1.0,1.0);
 
-	TH1F* pfo_LeadK_psum			= new TH1F(name_pfo+"LeadKaons_psum",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_psum					 = new TH1F(name_pfo+"LeadKaons_psum",";cos#theta; Events",100,-1.0,1.0);
+
+	TH1F* pfo_qq_qcos_wrong 		   = new TH1F(name_pfo+"QQ_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_wrong 		 = new TH1F(name_pfo+"LeadKaons_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
 
 
   // push_back hists
@@ -145,6 +148,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_LeadK_qcos_electron );
 	h1_pfo.push_back( pfo_LeadK_qcos_muon );
 	h1_pfo.push_back( pfo_LeadK_qcos_others );
+
+	h1_pfo.push_back( pfo_qq_qcos_wrong );
+	h1_pfo.push_back( pfo_LeadK_qcos_wrong );
 
 
 	// TH2F
@@ -193,7 +199,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test",output.Data(),minp_it.Data(),maxp_it.Data());
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210",output.Data(),minp_it.Data(),maxp_it.Data());
-	TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210.new",output.Data(),minp_it.Data(),maxp_it.Data());
+
+	// Double Tag
+	// TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
 
 
 	// test mode
@@ -238,7 +247,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if (debug)
 		{
 			// if(jentry>100000) break;
-			if(jentry>10000) break;
+			if(jentry>50000) break;
 		}
 
 		Long64_t ientry = LoadTree(jentry);
@@ -279,6 +288,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// Cut qq with qq separation
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
+		float qqqcos[2]={-2};
 
 
 		// ISR protection
@@ -287,15 +297,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
 
-		nevents_after_preselec++;
+		nevents_after_GENselec++;
 
 		for(int iqq=0; iqq < 2; iqq++){
 
-			float cos 	 = qqVecs.at(iqq).GetCostheta();
-			float charge = mc_quark_charge[iqq];
-			float QQqCos = (charge < 0)? cos: -cos;
+			float cos 	 			= qqVecs.at(iqq).GetCostheta();
+			float charge 			= mc_quark_charge[iqq];
+			qqqcos[iqq] 			= (charge < 0)? cos: -cos;
 
-			mc_qq_cos->Fill(QQqCos);
+			mc_qq_cos->Fill(qqqcos[iqq]);
 
 		}
 
@@ -324,18 +334,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			// float cos    = pfoVec.GetCostheta();
 			// float charge = pfo_charge[ipfo];
 			float mom    = pfoVec.GetMomentum();
-			
+
 
 			// This compares pfo angle with MC angle -> giving which this pfo are from. 
 			// 0: PFO is from q
 			// 1: PFO is from qbar
 
-			float q_pfo_sep    = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
-			float qbar_pfo_sep = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+			// float q_pfo_sep    = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+			// float qbar_pfo_sep = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
 
-			qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
+			// qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
 
-			qq_match_count[qq_match]++;
+			// qq_match_count[qq_match]++;
 
 			// Jet Analysis
 			
@@ -353,6 +363,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 		} // end of pfo
+
+		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
+		nevents_after_PFOselec++;
+
+
+
 
 
 		///////////////////////////////
@@ -387,6 +403,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		float lead_cos[2] 	     = {-2};
 		float lead_qcos[2] 	     = {-2};
 
+		float lead_q_sep[2]			= {0};
+		float lead_qbar_sep[2]	= {0};
+
 
 		for (int i = 0; i < 2; ++i){
 
@@ -408,6 +427,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			lead_cos[i]					= LeadPFOVec.GetCostheta();
 			lead_qcos[i] 				= (lead_chg[i] < 0)? lead_cos[i]: -lead_cos[i];
 
+			// This compares pfo angle with MC angle -> giving which this pfo are from. 
+			// 0: PFO is from q
+			// 1: PFO is from qbar
+
+			lead_q_sep[i]    = VecOP::getAngleBtw(LeadPFOVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
+			lead_qbar_sep[i] = VecOP::getAngleBtw(LeadPFOVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
+
+
 		}
 
 		
@@ -428,7 +455,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// TPC HIT CHECK
 		bool nhits_check = false;
-    if (lead_pfo_tpc_hits[0] > 210 && lead_pfo_tpc_hits[0] > 210) nhits_check = true;
+    if (lead_pfo_tpc_hits[0] > 210 && lead_pfo_tpc_hits[1] > 210) nhits_check = true;
 
     // OFFSET CHECK
     bool offset_check = false;
@@ -447,22 +474,51 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		float min_dist=-1.5;
 		// float max_dist=0.5;
 		float max_dist=2.0;
-    if( (lead_kdEdx_dist[0]<min_dist||lead_kdEdx_dist[0]>max_dist)
-    	&&(lead_kdEdx_dist[0]<min_dist||lead_kdEdx_dist[0]>max_dist) ) dEdx_dist_win_check = true;
+    if( (lead_kdEdx_dist[0]>min_dist&&lead_kdEdx_dist[0]<max_dist)
+    	&&(lead_kdEdx_dist[1]>min_dist&&lead_kdEdx_dist[1]<max_dist) ) dEdx_dist_win_check = true;
 
 
     bool check_all = false;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+
+		// Stats
+		if( chg_check ) n_chg_check++;
+		if( chg_check && mom_check ) n_chg_mom_check++;
+		if( chg_check && mom_check && nhits_check ) n_chg_mom_nhits_check++;
+		if( chg_check && mom_check && nhits_check && offset_check ) n_chg_mom_nhits_offset_check++;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) n_chg_mom_nhits_offset_DistMin_check++;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) n_chg_mom_nhits_offset_DistMin_DistWin_check++;
 
 
 
 		if (check_all)
 		{
+
+			// count number of when the reco is WRONG (source of migration)
+			bool flag0=false;
+			bool flag1=false;
+			if( (lead_q_sep[0]<lead_qbar_sep[0]) && (lead_chg[0]>0) ) flag0=true;
+			if( (lead_q_sep[0]>lead_qbar_sep[0]) && (lead_chg[0]<0) ) flag0=true;
+			if( (lead_q_sep[1]<lead_qbar_sep[1]) && (lead_chg[1]>0) ) flag1=true;
+			if( (lead_q_sep[1]>lead_qbar_sep[1]) && (lead_chg[1]<0) ) flag1=true;
+			if(flag0||flag1){
+				n_cos_nonconsis++;
+				continue;
+				pfo_qq_qcos_wrong->Fill(qqqcos[0]);
+				pfo_qq_qcos_wrong->Fill(qqqcos[1]);
+				pfo_LeadK_qcos_wrong->Fill(lead_qcos[0]);
+				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
+				cout << "Non consistent: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << endl;
+				if(debug) cout << "not consistent! -> " << flag0 << ", " << flag1 << endl;
+
+			}//else{cout << "consistent: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << endl;}
+
 			for (int i = 0; i < 2; ++i)
 			{
 	      if (debug)
 	      {
-	      	cout << "Lead PFO " << i << ": qqbar=" << qq_match_count[i] << "\t lead chg=" << lead_chg[i] << endl;
+	      	cout << "Lead PFO " << i << ": q sep=" << lead_q_sep[i] << "\t qqbar sep=" << lead_qbar_sep[i] << "\t lead chg=" << lead_chg[i] << endl;
 	      }
 
 				pfo_LeadK_qcos->Fill(lead_qcos[i]);
@@ -535,7 +591,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			} // Loop Lead PFO
 
-		}
+		}// check all
 
 
 
@@ -691,7 +747,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// std::cout << std::endl;
 
 
-	// printResults();
+	printResults();
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();
@@ -707,14 +763,27 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 void dEdx_dist::printResults(){
 
-	std::cout << "========= Event Results =========" << "\n";
-	std::cout << "Process: " << process << "\n";
-	std::cout << "# Events: " << nevents << "\n";
-	std::cout << "# Events after preselection: " << nevents_after_preselec << "\n";
-	// std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
-	std::cout << "LeadK_match: " << nLeadK_match << " LeadK_pass: " << nLeadK_pass << "\n";
- 	std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << "\n";
- 	std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << " n_kmkm:" << n_kmkm << "\n";
+	cout << "========= Event Results =========" << "\n";
+	cout << "Process: " << process << "\n";
+	cout << "# Events:                     " << nevents << "\n";
+	cout << "# Events after GEN selection: " << nevents_after_GENselec << "\n";
+	cout << "# Events after PFO selection: " << nevents_after_PFOselec << "\n";
+	
+	cout << "# Events after LeadK selection (Both LeadPFO should satisfy):" << "\n";
+	cout << " - Charge check:              " << n_chg_check << "\n";
+	cout << " - Momentum check:            " << n_chg_mom_check << "\n";
+	cout << " - TPC hit check:             " << n_chg_mom_nhits_check << "\n";
+	cout << " - Offset check:              " << n_chg_mom_nhits_offset_check << "\n";
+	cout << " - dEdx dist min check:       " << n_chg_mom_nhits_offset_DistMin_check << "\n";
+	cout << " - dEdx dist win check:       " << n_chg_mom_nhits_offset_DistMin_DistWin_check << "\n";
+
+	cout << endl;
+	cout << "migration: " << n_cos_nonconsis << "\n";
+
+	// // std::cout << "# Events Kaon: " << nevents_kaon_match << "\n";
+	// std::cout << "LeadK_match: " << nLeadK_match << " LeadK_pass: " << nLeadK_pass << "\n";
+	// std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << "\n";
+	// std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << " n_kmkm:" << n_kmkm << "\n";
 
  }
 

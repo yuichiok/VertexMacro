@@ -374,7 +374,19 @@ private:
    TString process="default";
 
    int nevents = 0;
-   int nevents_after_preselec = 0;
+   int nevents_after_GENselec = 0;
+   int nevents_after_PFOselec = 0;
+
+   int n_chg_check = 0;
+   int n_chg_mom_check = 0;
+   int n_chg_mom_nhits_check = 0;
+   int n_chg_mom_nhits_offset_check = 0;
+   int n_chg_mom_nhits_offset_DistMin_check = 0;
+   int n_chg_mom_nhits_offset_DistMin_DistWin_check = 0;
+
+   int n_cos_nonconsis=0;
+
+
    int nevents_kaon_match = 0;
 
    int n_kk   = 0;
