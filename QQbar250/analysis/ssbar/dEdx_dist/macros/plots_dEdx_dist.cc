@@ -52,7 +52,10 @@
 // const TString filename = "../rootfiles/DQ_250GeV_uu.minp10.distcut.polar.root";
 // const TString filename = "../rootfiles/DQ_250GeV_uds.minp10.distcut.polar.root";
 
-const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.test.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.test.root";
+// const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.hit210.root";
+
+const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp10maxp60.hit210.offset.dEdxMin.root";
 
 void normalize(TH1F* h = 0){
 
@@ -363,8 +366,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  EffPurity_dedxdist5();
-  // dEdxdist_k();
+  // EffPurity_dedxdist5();
+  dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }
