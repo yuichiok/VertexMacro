@@ -98,7 +98,8 @@ void EffPurity_dedxdist5() {
     float n_protons=  kdEdxdist_proton->Integral(i, i,iproton,ipion);
     float n_muons=  kdEdxdist_muon->Integral(i, i,iproton,ipion);
     float n_electrons=  kdEdxdist_electron->Integral(i, i,iproton,ipion);
-    float nkaons=  kdEdxdist_kaon->Integral(i, i);
+    // float nkaons=  kdEdxdist_kaon->Integral(i, i);
+    float nkaons=  kdEdxdist_kaon->ProjectionY("projK",i,i)->Integral();
     if(nkaons==0) nkaons=10000000;
     x[i]=i;
     eff[i]=100.*(n_kaons)/nkaons;       
@@ -107,7 +108,6 @@ void EffPurity_dedxdist5() {
     n++;
   }
 
- 
   TGraph* efficiency = new TGraph(n,x,eff);
   TGraph* purity = new TGraph(n,x,pur);
   TGraph* efficiency_purity = new TGraph(n,eff,pur);
@@ -366,8 +366,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  // EffPurity_dedxdist5();
-  dEdxdist_k();
+  EffPurity_dedxdist5();
+  // dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }
