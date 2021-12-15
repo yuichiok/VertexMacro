@@ -166,19 +166,19 @@ void dEdxdist_k() {
   TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
   c_mom->cd(1);
   c_mom->SetGrid();
-  kdEdx_dist_pion->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
-  kdEdx_dist_pion->GetYaxis()->SetTitle("a.u.");
-  kdEdx_dist_pion->GetYaxis()->SetRangeUser(0,7E3);
-
-  kdEdx_dist_pion->SetLineColor(4);
-  kdEdx_dist_pion->SetLineWidth(3);
-  kdEdx_dist_pion->SetLineStyle(1);
-  kdEdx_dist_pion->Draw("histo");
+  kdEdx_dist_kaon->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
+  kdEdx_dist_kaon->GetYaxis()->SetTitle("a.u.");
+  kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,1E3);
 
   kdEdx_dist_kaon->SetLineColor(2);
   kdEdx_dist_kaon->SetLineWidth(3);
   kdEdx_dist_kaon->SetLineStyle(1);
-  kdEdx_dist_kaon->Draw("histosame");
+  kdEdx_dist_kaon->Draw("histo");
+
+  kdEdx_dist_pion->SetLineColor(4);
+  kdEdx_dist_pion->SetLineWidth(3);
+  kdEdx_dist_pion->SetLineStyle(1);
+  kdEdx_dist_pion->Draw("histosame");
 
   kdEdx_dist_proton->SetLineColor(1);
   kdEdx_dist_proton->SetLineWidth(3);
@@ -202,7 +202,7 @@ void dEdxdist_k() {
   f_pi->SetLineStyle(2);
   f_pi->Draw("lsame");
   
-  TLegend *leg = new TLegend(0.2,0.7,0.5,0.85);
+  TLegend *leg = new TLegend(0.15,0.7,0.4,0.85);
   leg->SetTextSize(0.035);
   leg->SetTextFont(42);
   leg->AddEntry(kdEdx_dist_pion,"pions","l");
@@ -366,8 +366,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  EffPurity_dedxdist5();
-  // dEdxdist_k();
+  // EffPurity_dedxdist5();
+  dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }
