@@ -181,24 +181,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	process = output;
 
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.root",output.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.pISR.root",output.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.400.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.400.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
-
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.pvcut.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.kpkm.minp%s.root",output.Data(),minp_it.Data()),"RECREATE");
-
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.root",output.Data(),minp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.kid.root",output.Data(),minp_it.Data()),"RECREATE");
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.root",output.Data(),minp_it.Data()),"RECREATE");		// frequent use
-	// TFile *MyFile = new TFile(TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.true.root",output.Data(),minp_it.Data()),"RECREATE");
-
-
-	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.test",output.Data(),minp_it.Data());
-	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%s.distcut.polar.hit210",output.Data(),minp_it.Data());
-	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.test",output.Data(),minp_it.Data(),maxp_it.Data());
-	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	// Double Tag
 	// TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
@@ -330,22 +312,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
-			// float abscos = abs( pfoVec.GetCostheta() );
-			// float cos    = pfoVec.GetCostheta();
-			// float charge = pfo_charge[ipfo];
 			float mom    = pfoVec.GetMomentum();
-
-
-			// This compares pfo angle with MC angle -> giving which this pfo are from. 
-			// 0: PFO is from q
-			// 1: PFO is from qbar
-
-			// float q_pfo_sep    = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
-			// float qbar_pfo_sep = VecOP::getAngleBtw(pfoVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
-
-			// qq_match = (q_pfo_sep < qbar_pfo_sep) ? 0 : 1;
-
-			// qq_match_count[qq_match]++;
 
 			// Jet Analysis
 			
@@ -366,9 +333,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
 		nevents_after_PFOselec++;
-
-
-
 
 
 		///////////////////////////////
@@ -592,153 +556,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			} // Loop Lead PFO
 
 		}// check all
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/*
-
-		if(maxP_check){
-
-			if(kchg_configs[0] || kchg_configs[1]){
-
-				for (int i = 0; i < 2; ++i){
-
-					if(lead_ipfo[i]==-1) continue;
-
-					VecOP lead_pfoVec(pfo_px[lead_ipfo[i]],pfo_py[lead_ipfo[i]],pfo_pz[lead_ipfo[i]]);
-
-					lead_dedx[i]				= pfo_dedx[lead_ipfo[i]];
-					lead_kdEdx_dist[i]  = pfo_piddedx_k_dedxdist[lead_ipfo[i]];
-					lead_pdEdx_dist[i]  = pfo_piddedx_p_dedxdist[lead_ipfo[i]];
-					lead_pidEdx_dist[i] = pfo_piddedx_pi_dedxdist[lead_ipfo[i]];
-
-					lead_mom[i] = lead_pfoVec.GetMomentum();
-					lead_cos[i]	= lead_pfoVec.GetCostheta();
-					lead_qcos[i] = (lead_chg[i] < 0)? lead_cos[i]: -lead_cos[i];
-					lead_pv[i]  = sqrt(pfo_d0[lead_ipfo[i]]*pfo_d0[lead_ipfo[i]] + pfo_z0[lead_ipfo[i]]*pfo_z0[lead_ipfo[i]]);
-					// lead_chg[i] = pfo_charge[lead_ipfo[i]];
-
-					lead_pdg_cheat[i] = pfo_pdgcheat[lead_ipfo[i]];
-
-		      bool nhits_bool = false;
-		      // if (fabs(lead_cos[i]) < 0.75 && pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
-		      // if (fabs(lead_cos[i]) > 0.75 && fabs(lead_cos[i]) < 0.9 && pfo_tpc_hits[lead_ipfo[i]] > (210 + (210 - 50) * (fabs(lead_cos[i]) - 0.75) / (0.75 - 0.9))) nhits_bool = true;
-		      // if (fabs(lead_cos[i]) > 0.9  && pfo_tpc_hits[lead_ipfo[i]] > 50) nhits_bool = true;
-
-		      if (pfo_tpc_hits[lead_ipfo[i]] > 210) nhits_bool = true;
-
-
-		      // if(lead_mom[i] < MINP_CUT) continue;
-
-		      if(!nhits_bool) continue;
-		      if(lead_pv[i]>1.0) continue;
-		      if(abs(lead_kdEdx_dist[i]) > abs(lead_pdEdx_dist[i])) continue;
-		      if(abs(lead_kdEdx_dist[i]) > abs(lead_pidEdx_dist[i])) continue;
-
-		      float min_dist=-1.5;
-		      // float max_dist=0.5;
-		      float max_dist=2.0;
-
-		      if(lead_kdEdx_dist[i]<min_dist||lead_kdEdx_dist[i]>max_dist) continue;
-
-
-		      pfo_LeadK_qcos->Fill(lead_qcos[i]);
-		      LeadKDataFile << lead_qcos[i] << ',' << lead_mom[i] << ',' << lead_chg[i] << ',' << lead_dedx[i] << ',' << lead_kdEdx_dist[i] << '\n';
-
-		      if (debug)
-		      {
-		      	cout << "Lead PFO " << i << ": qqbar=" << qq_match_count[i] << "\t lead chg=" << lead_chg[i] << endl;
-		      }
-
-
-					switch(lead_pdg_cheat[i]){
-
-						case 321:		// kaon
-
-							TrueDataFile << lead_qcos[i] << ',' << lead_mom[i] << ',' << lead_chg[i] << ',' << lead_dedx[i] << ',' << lead_kdEdx_dist[i] << '\n';
-
-				      // pfo_LeadK_qcos->Fill(lead_qcos[i]);
-
-							pfo_kdEdx_dist_kaon->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_kaon->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_kaon->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_kaon->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_kaon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							pfo_pv_kaon->Fill(lead_pv[i]);
-							break;
-
-						case 211:		// pion
-							pfo_kdEdx_dist_pion->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_pion->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_pion->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_pion->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_pion->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							pfo_pv_pion->Fill(lead_pv[i]);
-							break;
-
-						case 2212:	// proton
-							pfo_kdEdx_dist_proton->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_proton->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_proton->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_proton->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_proton->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							pfo_pv_proton->Fill(lead_pv[i]);
-							break;
-
-						case 11:		// electron
-							pfo_kdEdx_dist_electron->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_electron->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_electron->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_electron->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_electron->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							break;
-
-						case 13:		// muon
-							pfo_kdEdx_dist_muon->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_muon->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_muon->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_muon->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_muon->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							break;
-
-						default:
-							pfo_kdEdx_dist_others->Fill(lead_kdEdx_dist[i]);
-							pfo_pdEdx_dist_others->Fill(lead_pdEdx_dist[i]);
-							pfo_pidEdx_dist_others->Fill(lead_pidEdx_dist[i]);
-
-							pfo_LeadK_qcos_others->Fill(lead_qcos[i]);
-							pfo_p_kdEdx_dist_others->Fill(lead_mom[i],lead_kdEdx_dist[i]);
-							break;
-
-					}
-
-				} // loop 2 LEADING PFOs
-
-
-			} // kpkm
-
-		} // momentum cut
-
-		*/
-
-
 
 
 	} // end of event loop
