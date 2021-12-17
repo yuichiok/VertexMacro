@@ -388,9 +388,7 @@ private:
    int n_cos_nonconsis=0;
 
    // int n_gen_kaon     = 0;
-   int n_reco_kaon_all     = 0;
-   int n_reco_kaon_jet[2]  = {0};
-
+   
    int nevents_kaon_match = 0;
 
    int n_kk   = 0;
