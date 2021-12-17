@@ -99,6 +99,10 @@ void EffPurity_dedxdist5() {
     float n_muons=  kdEdxdist_muon->Integral(i, i,iproton,ipion);
     float n_electrons=  kdEdxdist_electron->Integral(i, i,iproton,ipion);
     float nkaons=  kdEdxdist_kaon->Integral(i, i);
+		float test= kdEdxdist_kaon->ProjectionY("test",i,i)->Integral();
+
+		std::cout << "n_kaons=" << n_kaons << ", nkaons=" << nkaons << ", test=" << test << std::endl;
+
     if(nkaons==0) nkaons=10000000;
     x[i]=i;
     eff[i]=100.*(n_kaons)/nkaons;       
@@ -366,8 +370,8 @@ void pv() {
 
 void plots_dEdx_dist() {
 
-  // EffPurity_dedxdist5();
-  dEdxdist_k();
+   EffPurity_dedxdist5();
+  // dEdxdist_k();
   // dEdxdist_p();
   // pv();
 }

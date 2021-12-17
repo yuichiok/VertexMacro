@@ -357,6 +357,7 @@ public :
    virtual void     Show(Long64_t entry = -1);
    virtual bool     PreSelection(int type, float egamma);
    virtual void     LeadingMom(TH1F* h1p, TH1F* h1m, TH2F* h2, int subject, int iPFO0, int iPFO1, float P0, float P1);
+   virtual float    enumerate_pdg(const int pdg=0);
 
    virtual void     Analyze_dEdxdist(int, float, TString);
 

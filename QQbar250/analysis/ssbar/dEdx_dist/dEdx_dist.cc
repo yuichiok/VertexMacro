@@ -161,6 +161,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH2F * pfo_p_kdEdx_dist_muon 			= new TH2F(name_pfo+"p_kdEdx_dist_muon", "p_kdEdx_dist_muon", 100, 0.5, 100.5, 40, -10, 10);
   TH2F * pfo_p_kdEdx_dist_others 		= new TH2F(name_pfo+"p_kdEdx_dist_others", "p_kdEdx_dist_others", 100, 0.5, 100.5, 40, -10, 10);
 
+  TH2F * pfo_LeadK_pdg_wrong 				= new TH2F(name_pfo+"LeadK_pdg_wrong","LeadK_pdg_wrong;LPFO0;LPFO1",3,0,3,3,0,3);
+  pfo_LeadK_pdg_wrong->SetCanExtend(TH1::kAllAxes);
+
   // push_back hists
   h2_pfo.push_back( pfo_p_kdEdx_dist_kaon );
   h2_pfo.push_back( pfo_p_kdEdx_dist_proton );
@@ -168,6 +171,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h2_pfo.push_back( pfo_p_kdEdx_dist_electron );
   h2_pfo.push_back( pfo_p_kdEdx_dist_muon );
   h2_pfo.push_back( pfo_p_kdEdx_dist_others );
+
+  h2_pfo.push_back( pfo_LeadK_pdg_wrong );
 
 
 	std::stringstream stream_min;
@@ -201,8 +206,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TString filename_out = TString::Format("rootfiles/DQ_250GeV_%s.minp%smaxp%s.distcut.polar.hit210",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	// Double Tag
-	// TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
-	TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
 
 
 	// test mode
@@ -247,7 +252,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if (debug)
 		{
 			// if(jentry>100000) break;
-			if(jentry>50000) break;
+			if(jentry>90000) break;
 		}
 
 		Long64_t ientry = LoadTree(jentry);
@@ -389,6 +394,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		//////   Leading PFOs ANALYSIS   //////
 		///////////////////////////////////////
 
+		std::vector<VecOP> LeadPFOVecs;
+
 		float lead_dedx[2]			  = {0};
 		float lead_kdEdx_dist[2]  = {0};
 		float lead_pdEdx_dist[2]  = {0};
@@ -434,8 +441,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			lead_q_sep[i]    = VecOP::getAngleBtw(LeadPFOVec.GetMomentum3(),qqVecs.at(0).GetMomentum3());
 			lead_qbar_sep[i] = VecOP::getAngleBtw(LeadPFOVec.GetMomentum3(),qqVecs.at(1).GetMomentum3());
 
+			LeadPFOVecs.push_back(LeadPFOVec);
+
 
 		}
+
+		// LEAD PFO SEPARATION
+		float lead_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
 
 		
 		// CHARGE CHECK
@@ -502,23 +514,34 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			if( (lead_q_sep[0]>lead_qbar_sep[0]) && (lead_chg[0]<0) ) flag0=true;
 			if( (lead_q_sep[1]<lead_qbar_sep[1]) && (lead_chg[1]>0) ) flag1=true;
 			if( (lead_q_sep[1]>lead_qbar_sep[1]) && (lead_chg[1]<0) ) flag1=true;
+
 			if(flag0||flag1){
+
 				n_cos_nonconsis++;
-				continue;
+				// continue;
 				pfo_qq_qcos_wrong->Fill(qqqcos[0]);
 				pfo_qq_qcos_wrong->Fill(qqqcos[1]);
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[0]);
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
-				cout << "Non consistent: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << endl;
-				if(debug) cout << "not consistent! -> " << flag0 << ", " << flag1 << endl;
 
-			}//else{cout << "consistent: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << endl;}
+				float enu0 = enumerate_pdg(lead_pdg_cheat[0]);
+				float enu1 = enumerate_pdg(lead_pdg_cheat[1]);
+
+				pfo_LeadK_pdg_wrong->Fill(enu0,enu1);
+
+
+				cout << "MIGRATION: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
+				// if(debug) cout << "not consistent! -> " << lead_pdg_cheat[0] << ", " << lead_pdg_cheat[1] << endl;
+
+			}else{
+				if(debug) cout << "CONSIS: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
+			}
 
 			for (int i = 0; i < 2; ++i)
 			{
 	      if (debug)
 	      {
-	      	cout << "Lead PFO " << i << ": q sep=" << lead_q_sep[i] << "\t qqbar sep=" << lead_qbar_sep[i] << "\t lead chg=" << lead_chg[i] << endl;
+	      	cout << "Lead PFO " << i << ": q sep=" << lead_q_sep[i] << "\t qqbar sep=" << lead_qbar_sep[i] << "\t lead chg=" << lead_chg[i] << "\t lead pdg=" << lead_pdg_cheat[i] << endl;
 	      }
 
 				pfo_LeadK_qcos->Fill(lead_qcos[i]);
@@ -861,3 +884,23 @@ void dEdx_dist::printResults(){
 
    return false;
  } 
+
+ float dEdx_dist::enumerate_pdg(const int pdg=0){
+
+ 	switch(abs(pdg)){
+		
+		case 211:		// pion
+			return 0;
+			break;
+		case 321:		// kaon
+			return 1;
+			break;
+		case 2212:	// proton
+			return 2;
+			break;
+		default:
+			return 3;
+			break;
+ 	}
+
+ }
