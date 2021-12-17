@@ -193,7 +193,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// test mode
-	bool debug = 0;
+	bool debug = 1;
 	if(debug) filename_out = "rootfiles/test";
 
 
@@ -309,21 +309,28 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		int   lead_ipfo[2]	= {-1};
 		float maxP[2]				= {0};
 
+		// Count N Kaons
+		int n_reco_kaon_all     = 0;
+		int n_reco_kaon_jet[2]  = {0};
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
 			if(pfo_ntracks[ipfo]!=1) continue;
 
-
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
 
+
 			// Jet Analysis
+
+			if(abs(pfo_pdgcheat[ipfo])==321) n_reco_kaon_all++;
 			
 			for (int imatch = 0; imatch < 2; ++imatch)
 			{
 				if(pfo_match[ipfo]==imatch){
+
+					if(abs(pfo_pdgcheat[ipfo])==321) n_reco_kaon_jet[imatch]++;
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
@@ -470,6 +477,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		if (check_all)
 		{
+
+			if(debug){
+				cout << "total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
+			}
 
 			// count number of when the reco is WRONG (source of migration)
 			bool flag0=false;
