@@ -98,10 +98,7 @@ void EffPurity_dedxdist5() {
     float n_protons=  kdEdxdist_proton->Integral(i, i,iproton,ipion);
     float n_muons=  kdEdxdist_muon->Integral(i, i,iproton,ipion);
     float n_electrons=  kdEdxdist_electron->Integral(i, i,iproton,ipion);
-    float nkaons=  kdEdxdist_kaon->Integral(i, i);
-		float test= kdEdxdist_kaon->ProjectionY("test",i,i)->Integral();
-
-		std::cout << "n_kaons=" << n_kaons << ", nkaons=" << nkaons << ", test=" << test << std::endl;
+    float nkaons=  kdEdxdist_kaon->ProjectionY("projK",i,i)->Integral();
 
     if(nkaons==0) nkaons=10000000;
     x[i]=i;
@@ -111,7 +108,6 @@ void EffPurity_dedxdist5() {
     n++;
   }
 
- 
   TGraph* efficiency = new TGraph(n,x,eff);
   TGraph* purity = new TGraph(n,x,pur);
   TGraph* efficiency_purity = new TGraph(n,eff,pur);
@@ -170,19 +166,19 @@ void dEdxdist_k() {
   TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
   c_mom->cd(1);
   c_mom->SetGrid();
-  kdEdx_dist_pion->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
-  kdEdx_dist_pion->GetYaxis()->SetTitle("a.u.");
-  kdEdx_dist_pion->GetYaxis()->SetRangeUser(0,7E3);
-
-  kdEdx_dist_pion->SetLineColor(4);
-  kdEdx_dist_pion->SetLineWidth(3);
-  kdEdx_dist_pion->SetLineStyle(1);
-  kdEdx_dist_pion->Draw("histo");
+  kdEdx_dist_kaon->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
+  kdEdx_dist_kaon->GetYaxis()->SetTitle("a.u.");
+  kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,1E3);
 
   kdEdx_dist_kaon->SetLineColor(2);
   kdEdx_dist_kaon->SetLineWidth(3);
   kdEdx_dist_kaon->SetLineStyle(1);
-  kdEdx_dist_kaon->Draw("histosame");
+  kdEdx_dist_kaon->Draw("histo");
+
+  kdEdx_dist_pion->SetLineColor(4);
+  kdEdx_dist_pion->SetLineWidth(3);
+  kdEdx_dist_pion->SetLineStyle(1);
+  kdEdx_dist_pion->Draw("histosame");
 
   kdEdx_dist_proton->SetLineColor(1);
   kdEdx_dist_proton->SetLineWidth(3);
@@ -206,7 +202,7 @@ void dEdxdist_k() {
   f_pi->SetLineStyle(2);
   f_pi->Draw("lsame");
   
-  TLegend *leg = new TLegend(0.2,0.7,0.5,0.85);
+  TLegend *leg = new TLegend(0.15,0.7,0.4,0.85);
   leg->SetTextSize(0.035);
   leg->SetTextFont(42);
   leg->AddEntry(kdEdx_dist_pion,"pions","l");
