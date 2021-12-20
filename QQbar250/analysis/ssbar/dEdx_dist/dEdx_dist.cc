@@ -180,6 +180,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH2F * pfo_LeadK_pdg_wrong 		 = new TH2F(name_pfo+"LeadK_pdg_wrong","LeadK_pdg_wrong;LPFO0;LPFO1",3,0,3,3,0,3);
   pfo_LeadK_pdg_wrong->SetCanExtend(TH1::kAllAxes);
 
+  TH2F * pfo_LeadK_p_wrong 		 = new TH2F(name_pfo+"LeadK_p_wrong","LeadK_p_wrong;p LPFO0 (GeV);p LPFO1 (GeV)",100,0.5,100.5,100,0.5,100.5);
+  TH2F * pfo_LeadK_p_correct 	 = new TH2F(name_pfo+"LeadK_p_correct","LeadK_p_correct;p LPFO0 (GeV);p LPFO1 (GeV)",100,0.5,100.5,100,0.5,100.5);
+
   // push_back hists
   h2_pfo.push_back( pfo_p_kdEdx_dist_kaon );
   h2_pfo.push_back( pfo_p_kdEdx_dist_proton );
@@ -189,6 +192,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h2_pfo.push_back( pfo_p_kdEdx_dist_others );
 
   h2_pfo.push_back( pfo_LeadK_pdg_wrong );
+  h2_pfo.push_back( pfo_LeadK_p_wrong );
+  h2_pfo.push_back( pfo_LeadK_p_correct );
 
 
 	std::stringstream stream_min;
@@ -520,6 +525,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
 
 				pfo_LeadK_pdg_wrong->Fill(enu0,enu1);
+				pfo_LeadK_p_wrong->Fill(lead_mom[0],lead_mom[1]);
 
 				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
 				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_kaon_jet[1]);
@@ -527,6 +533,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				cout << "MIGRATION:";
 
 			}else{
+
+				pfo_LeadK_p_correct->Fill(lead_mom[0],lead_mom[1]);
 
 				pfo_nKaons_correct0->Fill(n_reco_kaon_jet[0]);
 				pfo_nKaons_correct1->Fill(n_reco_kaon_jet[1]);
