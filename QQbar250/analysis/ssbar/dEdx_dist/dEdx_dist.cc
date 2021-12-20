@@ -111,8 +111,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	TH1F* pfo_LeadK_psum					 = new TH1F(name_pfo+"LeadKaons_psum",";cos#theta; Events",100,-1.0,1.0);
 
+	// Migrated Events
+	// wrong
 	TH1F* pfo_qq_qcos_wrong 		   = new TH1F(name_pfo+"QQ_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
 	TH1F* pfo_LeadK_qcos_wrong 		 = new TH1F(name_pfo+"LeadKaons_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_nKaons_wrong0				 = new TH1F(name_pfo+"nKaons_wrong0","Kaon mult wrong per Jet;nKaon/Jet0; Events",10,0,10);
+	TH1F* pfo_nKaons_wrong1				 = new TH1F(name_pfo+"nKaons_wrong1","Kaon mult wrong per Jet;nKaon/Jet1; Events",10,0,10);
+
+	// right
+	TH1F* pfo_nKaons_right0				 = new TH1F(name_pfo+"nKaons_right0","Kaon mult right per Jet;nKaon/Jet0; Events",10,0,10);
+	TH1F* pfo_nKaons_right1				 = new TH1F(name_pfo+"nKaons_right1","Kaon mult right per Jet;nKaon/Jet1; Events",10,0,10);
+
 
 
   // push_back hists
@@ -152,6 +161,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_qq_qcos_wrong );
 	h1_pfo.push_back( pfo_LeadK_qcos_wrong );
 
+	h1_pfo.push_back( pfo_nKaons_wrong0 );
+	h1_pfo.push_back( pfo_nKaons_wrong1 );
+
+	h1_pfo.push_back( pfo_nKaons_right0 );
+	h1_pfo.push_back( pfo_nKaons_right1 );
+
 
 	// TH2F
   TH2F * pfo_p_kdEdx_dist_kaon 			= new TH2F(name_pfo+"p_kdEdx_dist_kaon", "p_kdEdx_dist_kaon", 100, 0.5, 100.5, 40, -10, 10);
@@ -161,7 +176,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH2F * pfo_p_kdEdx_dist_muon 			= new TH2F(name_pfo+"p_kdEdx_dist_muon", "p_kdEdx_dist_muon", 100, 0.5, 100.5, 40, -10, 10);
   TH2F * pfo_p_kdEdx_dist_others 		= new TH2F(name_pfo+"p_kdEdx_dist_others", "p_kdEdx_dist_others", 100, 0.5, 100.5, 40, -10, 10);
 
-  TH2F * pfo_LeadK_pdg_wrong 				= new TH2F(name_pfo+"LeadK_pdg_wrong","LeadK_pdg_wrong;LPFO0;LPFO1",3,0,3,3,0,3);
+  // Migrated Events
+  TH2F * pfo_LeadK_pdg_wrong 		 = new TH2F(name_pfo+"LeadK_pdg_wrong","LeadK_pdg_wrong;LPFO0;LPFO1",3,0,3,3,0,3);
   pfo_LeadK_pdg_wrong->SetCanExtend(TH1::kAllAxes);
 
   // push_back hists
@@ -490,27 +506,44 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			if( (lead_q_sep[1]<lead_qbar_sep[1]) && (lead_chg[1]>0) ) flag1=true;
 			if( (lead_q_sep[1]>lead_qbar_sep[1]) && (lead_chg[1]<0) ) flag1=true;
 
+
+			// MIGRATED EVENTS
+
 			if(flag0||flag1){
 
 				n_cos_nonconsis++;
 				// continue;
+				float enu0 = enumerate_pdg(lead_pdg_cheat[0]);
+				float enu1 = enumerate_pdg(lead_pdg_cheat[1]);
+
 				pfo_qq_qcos_wrong->Fill(qqqcos[0]);
 				pfo_qq_qcos_wrong->Fill(qqqcos[1]);
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[0]);
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
 
-				float enu0 = enumerate_pdg(lead_pdg_cheat[0]);
-				float enu1 = enumerate_pdg(lead_pdg_cheat[1]);
-
 				pfo_LeadK_pdg_wrong->Fill(enu0,enu1);
 
+				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
+				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_kaon_jet[1]);
 
-				cout << "MIGRATION: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
-				// if(debug) cout << "not consistent! -> " << lead_pdg_cheat[0] << ", " << lead_pdg_cheat[1] << endl;
+				cout << "MIGRATION:";
 
 			}else{
-				if(debug) cout << "CONSIS: qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
+
+				pfo_nKaons_right0->Fill(n_reco_kaon_jet[0]);
+				pfo_nKaons_right1->Fill(n_reco_kaon_jet[1]);
+
+				if(debug) cout << "CONSIS:";
 			}
+
+			if(debug){
+				// cout << " qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
+				cout << " mom0=" << lead_mom[0] << "\t mom1=" << lead_mom[1] << "\t |mom_diff|=" << abs(lead_mom[0]-lead_mom[1])/abs(lead_mom[0]+lead_mom[1]) << endl;
+			}
+
+
+
+			// ANALYZE RECO KAON ID EVENTS
 
 			for (int i = 0; i < 2; ++i)
 			{
