@@ -386,8 +386,9 @@ private:
 
    int n_cos_nonconsis=0;
 
+   int n_gen_kaon     = 0;
+   int n_reco_kaon[2] = {0};
 
-   int nevents_kaon_match = 0;
 
    int n_kk   = 0;
    int n_kpkm = 0;
@@ -397,11 +398,6 @@ private:
    int nLeadK_pass  = 0;
    int nLeadK_match = 0;
 
-   // TH1F* h1_mc_stable[10];
-   // TH1F* h1_pfo[10];
-
-   // TH2F* h2_mc_stable[10];
-   // TH2F* h2_pfo[10];
 
    std::vector<TH1F*> h1_mc_stable;
    std::vector<TH1F*> h1_pfo;

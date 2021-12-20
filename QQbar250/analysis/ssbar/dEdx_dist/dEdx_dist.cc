@@ -188,7 +188,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// test mode
-	bool debug = 0;
+	bool debug = 1;
 	if(debug) filename_out = "rootfiles/test";
 
 
