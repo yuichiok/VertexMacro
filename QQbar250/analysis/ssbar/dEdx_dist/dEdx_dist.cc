@@ -220,7 +220,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	bool debug = 0;
 	if(debug) filename_out = "test";
 
-
 	TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
 	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
 
