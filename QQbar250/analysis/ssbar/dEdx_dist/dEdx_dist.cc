@@ -212,16 +212,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// Double Tag
-	TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
-	// TString filename_out = TString::Format("rootfiles/double_tag/DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
 
 
 	// test mode
 	bool debug = 0;
-	if(debug) filename_out = "rootfiles/test";
+	if(debug) filename_out = "test";
 
 
-	TString filename_out_root = filename_out + ".root";
+	TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
 	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
 
 	MyFile->cd();
@@ -561,6 +561,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	      {
 	      	cout << "Lead PFO " << i << ": q sep=" << lead_q_sep[i] << "\t qqbar sep=" << lead_qbar_sep[i] << "\t lead chg=" << lead_chg[i] << "\t lead pdg=" << lead_pdg_cheat[i] << endl;
 	      }
+	      LeadKDataFile << lead_qcos[i] << ',' << lead_mom[i] << ',' << lead_chg[i] << ',' << lead_dedx[i] << ',' << lead_kdEdx_dist[i] << '\n';
 
 				pfo_LeadK_qcos->Fill(lead_qcos[i]);
 
