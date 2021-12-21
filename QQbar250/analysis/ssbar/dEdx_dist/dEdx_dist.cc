@@ -528,7 +528,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
 
 				pfo_LeadK_pdg_wrong->Fill(enu0,enu1);
-				if( lead_mom[0]>20. || lead_mom[1]>20. ) pfo_LeadK_pdg_wrong_pcut->Fill(enu0,enu1);
+				if( lead_mom[0]>20. && lead_mom[1]>20. ) pfo_LeadK_pdg_wrong_pcut->Fill(enu0,enu1);
 				pfo_LeadK_p_wrong->Fill(lead_mom[0],lead_mom[1]);
 
 				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
