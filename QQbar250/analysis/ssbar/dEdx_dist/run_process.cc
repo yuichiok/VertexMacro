@@ -9,7 +9,7 @@ int run_process(TString output="default"){
   TString pol="eL";
   TString id="15162";
 
-  float minp = 10.;
+  float minp = 20.;
 
   // TString output="uds";
   // TString output="uu";

@@ -245,7 +245,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// Double Tag
-	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+
+	// no cut on lead PFO
+	TString filename_out = TString::Format("DQ_250GeV_%s.nocut",output.Data(),minp_it.Data(),maxp_it.Data());
+
 	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
 
 
@@ -517,7 +521,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		if( 1 ) check_all = true;
 
 		// Stats
 		if( chg_check ) n_chg_check++;
@@ -569,7 +574,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
 				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_kaon_jet[1]);
 
-				cout << "MIGRATION:";
+				if(debug) cout << "MIGRATION:";
 
 			}else{
 
@@ -600,7 +605,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				pfo_LeadK_qcos->Fill(lead_qcos[i]);
 
-				switch(lead_pdg_cheat[i]){
+				switch(abs(lead_pdg_cheat[i])){
 
 					case 321:		// kaon
 
@@ -661,6 +666,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						break;
 
 					default:
+
+						if(debug) cout << "other PID = " << lead_pdg_cheat[i] << endl;
+
 						pfo_kdEdx_dist_others->Fill(lead_kdEdx_dist[i]);
 						pfo_pdEdx_dist_others->Fill(lead_pdEdx_dist[i]);
 						pfo_pidEdx_dist_others->Fill(lead_pidEdx_dist[i]);
