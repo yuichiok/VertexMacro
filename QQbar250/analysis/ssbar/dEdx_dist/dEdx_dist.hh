@@ -374,6 +374,7 @@ private:
 
    TString process="default";
 
+   int nevents_all = 0;
    int nevents = 0;
    int nevents_after_GENselec = 0;
    int nevents_after_PFOselec = 0;
