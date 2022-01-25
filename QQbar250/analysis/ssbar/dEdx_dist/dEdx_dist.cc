@@ -115,10 +115,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// wrong
 	TH1F* pfo_qq_qcos_wrong 		   = new TH1F(name_pfo+"QQ_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
 	TH1F* pfo_LeadK_qcos_wrong 		 = new TH1F(name_pfo+"LeadKaons_cos_wrong",";cos#theta; Events",100,-1.0,1.0);
+	TH1F* pfo_LeadK_qcos_sep_wrong = new TH1F(name_pfo+"LeadKaons_cos_sep_wrong",";|cos#theta_{0} - cos#theta_{1}|; Events",40,0,4.0);
+	TH1F* pfo_LeadK_pdiff_wrong		 = new TH1F(name_pfo+"LeadKaons_pdiff_wrong",";|p_{diff}| (GeV); Events", 40,0,40);
+	TH1F* pfo_LeadK_ip_wrong		   = new TH1F(name_pfo+"LeadKaons_ip_wrong",";Impact Parameter (cm); Events", 50,0,0.5);
+
 	TH1F* pfo_nKaons_wrong0				 = new TH1F(name_pfo+"nKaons_wrong0","Kaon mult wrong per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nKaons_wrong1				 = new TH1F(name_pfo+"nKaons_wrong1","Kaon mult wrong per Jet;nKaon/Jet1; Events",10,0,10);
 
 	// right
+	TH1F* pfo_LeadK_qcos_sep_correct = new TH1F(name_pfo+"LeadKaons_cos_sep_correct",";|cos#theta_{0} - cos#theta_{1}|; Events",40,0,4.0);
+	TH1F* pfo_LeadK_pdiff_correct		 = new TH1F(name_pfo+"LeadKaons_pdiff_correct",";p diff (GeV); Events", 40,0,40);
+	TH1F* pfo_LeadK_ip_correct	     = new TH1F(name_pfo+"LeadKaons_ip_correct",";Impact Parameter (cm); Events", 50,0,0.5);
+
 	TH1F* pfo_nKaons_correct0				 = new TH1F(name_pfo+"nKaons_correct0","Kaon mult correct per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nKaons_correct1				 = new TH1F(name_pfo+"nKaons_correct1","Kaon mult correct per Jet;nKaon/Jet1; Events",10,0,10);
 
@@ -161,8 +169,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_qq_qcos_wrong );
 	h1_pfo.push_back( pfo_LeadK_qcos_wrong );
 
+	h1_pfo.push_back( pfo_LeadK_qcos_sep_wrong );
+	h1_pfo.push_back( pfo_LeadK_pdiff_wrong );
+	h1_pfo.push_back( pfo_LeadK_ip_wrong );
+
 	h1_pfo.push_back( pfo_nKaons_wrong0 );
 	h1_pfo.push_back( pfo_nKaons_wrong1 );
+
+	h1_pfo.push_back( pfo_LeadK_qcos_sep_correct );
+	h1_pfo.push_back( pfo_LeadK_pdiff_correct );
+	h1_pfo.push_back( pfo_LeadK_ip_correct );
 
 	h1_pfo.push_back( pfo_nKaons_correct0 );
 	h1_pfo.push_back( pfo_nKaons_correct1 );
@@ -199,8 +215,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   // Migrated Events
   TH2F * pfo_LeadK_pdg_wrong 		 			 = new TH2F(name_pfo+"LeadK_pdg_wrong","LeadK_pdg_wrong;LPFO0;LPFO1",3,0,3,3,0,3);
   pfo_LeadK_pdg_wrong->SetCanExtend(TH1::kAllAxes);
-  TH2F * pfo_LeadK_pdg_wrong_pcut 		 = new TH2F(name_pfo+"LeadK_pdg_wrong_pcut","LeadK_pdg_wrong_pcut;LPFO0;LPFO1",3,0,3,3,0,3);
-  pfo_LeadK_pdg_wrong_pcut->SetCanExtend(TH1::kAllAxes);
 
   TH2F * pfo_LeadK_p_wrong 		 = new TH2F(name_pfo+"LeadK_p_wrong","LeadK_p_wrong;p LPFO0 (GeV);p LPFO1 (GeV)",100,0.5,100.5,100,0.5,100.5);
   TH2F * pfo_LeadK_p_correct 	 = new TH2F(name_pfo+"LeadK_p_correct","LeadK_p_correct;p LPFO0 (GeV);p LPFO1 (GeV)",100,0.5,100.5,100,0.5,100.5);
@@ -225,7 +239,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h2_pfo.push_back( pfo_p_dEdx_others );
 
   h2_pfo.push_back( pfo_LeadK_pdg_wrong );
-  h2_pfo.push_back( pfo_LeadK_pdg_wrong_pcut );
   h2_pfo.push_back( pfo_LeadK_p_wrong );
   h2_pfo.push_back( pfo_LeadK_p_correct );
 
@@ -245,7 +258,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// Double Tag
-	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+
+	// Offset Change
+	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	// no cut on lead PFO
 	// TString filename_out = TString::Format("DQ_250GeV_%s.nocut",output.Data(),minp_it.Data(),maxp_it.Data());
@@ -254,7 +270,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// test mode
-	bool debug = 1;
+	bool debug = 0;
 	if(debug) filename_out = "test";
 
 	TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
@@ -477,8 +493,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		}
 
 		// LEAD PFO SEPARATION
-		float lead_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
-
+		float lead_abs_cos_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
+		float lead_abs_pdiff   = abs(lead_mom[0]-lead_mom[1]);
 		
 		// CHARGE CHECK
     bool chg_check = false;
@@ -501,7 +517,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     // OFFSET CHECK
     bool offset_check = false;
-    if( lead_pv[0]<1.0 && lead_pv[1]<1.0 ) offset_check = true;
+    // if( lead_pv[0]<1.0 && lead_pv[1]<1.0 ) offset_check = true;
+    if( lead_pv[0]<0.25 && lead_pv[1]<0.25 ) offset_check = true;
 
     // DEDX DISTANCE MINIMUM
     bool dEdx_dist_min_check   = false;
@@ -539,7 +556,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		{
 
 			if(debug){
-				cout << "total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
+				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
 			}
 
 			// count number of when the reco is WRONG (source of migration)
@@ -554,10 +571,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			// MIGRATED EVENTS
 
 			if(flag0&&flag1){
-				// if(debug){
-					cout << "double wrong event #: " << nevents_all << endl;
-				// }
+					cout << "<< double wrong event " << nevents_all << " >>" << endl;
+					// cout << "nstable = " << mc_stable_n  << endl;
+
+					if(debug){
+						for (int i = 0; i < mc_stable_n; ++i)
+						{
+							if(!mc_stable_isoverlay[i]) cout << mc_stable_pdg[i] << ", " << sqrt(mc_stable_px[i]*mc_stable_px[i]+mc_stable_py[i]*mc_stable_py[i]+mc_stable_pz[i]*mc_stable_pz[i]) <<endl;
+						}
+					}
 			}
+
+
 
 			if(flag0||flag1){
 
@@ -572,8 +597,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_qcos_wrong->Fill(lead_qcos[1]);
 
 				pfo_LeadK_pdg_wrong->Fill(enu0,enu1);
-				if( lead_mom[0]>20. && lead_mom[1]>20. ) pfo_LeadK_pdg_wrong_pcut->Fill(enu0,enu1);
 				pfo_LeadK_p_wrong->Fill(lead_mom[0],lead_mom[1]);
+
+				pfo_LeadK_qcos_sep_wrong->Fill(lead_abs_cos_sep);
+				pfo_LeadK_pdiff_wrong->Fill(lead_abs_pdiff);
+
+				pfo_LeadK_ip_wrong->Fill(lead_pv[0]);
+				pfo_LeadK_ip_wrong->Fill(lead_pv[1]);
+
 
 				pfo_LeadK_p_dEdx_wrong->Fill(lead_mom[0],lead_dEdx[0]);
 				pfo_LeadK_p_dEdx_wrong->Fill(lead_mom[1],lead_dEdx[1]);
@@ -586,6 +617,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			}else{
 
 				pfo_LeadK_p_correct->Fill(lead_mom[0],lead_mom[1]);
+				pfo_LeadK_qcos_sep_correct->Fill(lead_abs_cos_sep);
+				pfo_LeadK_pdiff_correct->Fill(lead_abs_pdiff);
+
+				pfo_LeadK_ip_correct->Fill(lead_pv[0]);
+				pfo_LeadK_ip_correct->Fill(lead_pv[1]);
 
 				pfo_nKaons_correct0->Fill(n_reco_kaon_jet[0]);
 				pfo_nKaons_correct1->Fill(n_reco_kaon_jet[1]);
@@ -596,6 +632,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			if(debug){
 				// cout << " qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << lead_qcos[0] << "\tcos1=" << lead_qcos[1] << "\t lead_pdg0=" << lead_pdg_cheat[0] << "\t lead_pdg1=" <<  lead_pdg_cheat[1] << "\t lead_sep=" << lead_sep << endl;
 				cout << " mom0=" << lead_mom[0] << "\t mom1=" << lead_mom[1] << "\t |mom_diff|=" << abs(lead_mom[0]-lead_mom[1])/abs(lead_mom[0]+lead_mom[1]) << endl;
+				cout << " ip0=" << lead_pv[0] << "\t ip1=" << lead_pv[1] << endl;
 			}
 
 
