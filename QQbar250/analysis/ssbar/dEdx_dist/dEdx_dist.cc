@@ -258,10 +258,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// Double Tag
-	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	// Offset Change
-	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
 
 	// no cut on lead PFO
 	// TString filename_out = TString::Format("DQ_250GeV_%s.nocut",output.Data(),minp_it.Data(),maxp_it.Data());
@@ -270,7 +270,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// test mode
-	bool debug = 0;
+	bool debug = 1;
 	if(debug) filename_out = "test";
 
 	TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
@@ -517,8 +517,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     // OFFSET CHECK
     bool offset_check = false;
-    // if( lead_pv[0]<1.0 && lead_pv[1]<1.0 ) offset_check = true;
-    if( lead_pv[0]<0.25 && lead_pv[1]<0.25 ) offset_check = true;
+    if( lead_pv[0]<1.0 && lead_pv[1]<1.0 ) offset_check = true;
+    // if( lead_pv[0]<0.25 && lead_pv[1]<0.25 ) offset_check = true;
 
     // DEDX DISTANCE MINIMUM
     bool dEdx_dist_min_check   = false;
