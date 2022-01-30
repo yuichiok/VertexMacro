@@ -584,7 +584,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 
+			cout << "jet_px = " << jet_px[0] << ", " << jet_px[1] << endl;
+
 			if(flag0||flag1){
+
 
 				n_cos_nonconsis++;
 				// continue;
