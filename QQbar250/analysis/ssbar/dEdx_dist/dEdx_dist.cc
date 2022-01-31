@@ -45,7 +45,7 @@ void dEdx_dist::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString process="test")
+void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString process="test", TString fileout="out")
 {
 
 	float MAXP_CUT=60.0;
@@ -257,8 +257,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	process = process;
 
 
+
+	// Use for Merging
+
 	// Double Tag
-	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",process.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",process.Data(),minp_it.Data(),maxp_it.Data());
 
 	// Offset Change
 	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",process.Data(),minp_it.Data(),maxp_it.Data());
@@ -269,11 +272,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",process.Data(),minp_it.Data(),maxp_it.Data());
 
 
-	// test mode
-	bool debug = 1;
-	if(debug) filename_out = "test";
 
-	TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
+	// TString filename_out_root = "rootfiles/double_tag/" + filename_out + ".root";
+
+	TString filename_out_root = fileout;
+	TString filename_out = "test";
+
+	// test mode
+	bool debug = 0;
+	if(debug) filename_out_root = "rootfiles/double_tag/test.root";
+
+
+
 	TFile *MyFile = new TFile(filename_out_root,"RECREATE");
 
 	MyFile->cd();

@@ -359,7 +359,7 @@ public :
    virtual void     LeadingMom(TH1F* h1p, TH1F* h1m, TH2F* h2, int subject, int iPFO0, int iPFO1, float P0, float P1);
    virtual float    enumerate_pdg(const int pdg=0);
 
-   virtual void     Analyze_dEdxdist(int, float, TString);
+   virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
