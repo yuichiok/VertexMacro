@@ -45,7 +45,7 @@ void dEdx_dist::printProgress(double percentage) {
     fflush(stdout);
 }
 
-void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString output="test")
+void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString process="test")
 {
 
 	float MAXP_CUT=60.0;
@@ -254,19 +254,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	cout << "MINP = " << minp_it << endl;
 	cout << "MAXP = " << maxp_it << endl;
 
-	process = output;
+	process = process;
 
 
 	// Double Tag
-	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin",process.Data(),minp_it.Data(),maxp_it.Data());
 
 	// Offset Change
-	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset0.25.dEdxMin",process.Data(),minp_it.Data(),maxp_it.Data());
 
 	// no cut on lead PFO
-	// TString filename_out = TString::Format("DQ_250GeV_%s.nocut",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.nocut",process.Data(),minp_it.Data(),maxp_it.Data());
 
-	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",output.Data(),minp_it.Data(),maxp_it.Data());
+	// TString filename_out = TString::Format("DQ_250GeV_%s.minp%smaxp%s.hit210.offset.dEdxMin.cheat",process.Data(),minp_it.Data(),maxp_it.Data());
 
 
 	// test mode
@@ -323,11 +323,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		nevents_all++;
 
-		if(output=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
-		if(output=="uu"  && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
-		if(output=="ss"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
-		if(output=="dd"  && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
-		if(output=="default"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		if(process=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
+		if(process=="uu"  && fabs(mc_quark_pdg[0])!=2) continue; // ignore MC other than uu
+		if(process=="ss"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
+		if(process=="dd"  && fabs(mc_quark_pdg[0])!=1) continue; // ignore MC other than dd
+		if(process=="default"  && fabs(mc_quark_pdg[0])!=3) continue; // ignore MC other than ss
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue; 
 
