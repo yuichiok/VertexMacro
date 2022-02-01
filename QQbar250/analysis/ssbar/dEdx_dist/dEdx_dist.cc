@@ -122,6 +122,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* pfo_nKaons_wrong0				 = new TH1F(name_pfo+"nKaons_wrong0","Kaon mult wrong per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nKaons_wrong1				 = new TH1F(name_pfo+"nKaons_wrong1","Kaon mult wrong per Jet;nKaon/Jet1; Events",10,0,10);
 
+	TH1F* pfo_nSignK_wrong0				 = new TH1F(name_pfo+"nSignK_wrong0","Kaon mult wrong per Jet;nKaon/Jet0; Events",10,0,10);
+	TH1F* pfo_nSignK_wrong1				 = new TH1F(name_pfo+"nSignK_wrong1","Kaon mult wrong per Jet;nKaon/Jet1; Events",10,0,10);
+
 	// right
 	TH1F* pfo_LeadK_qcos_sep_correct = new TH1F(name_pfo+"LeadKaons_cos_sep_correct",";|cos#theta_{0} - cos#theta_{1}|; Events",40,0,4.0);
 	TH1F* pfo_LeadK_pdiff_correct		 = new TH1F(name_pfo+"LeadKaons_pdiff_correct",";p diff (GeV); Events", 40,0,40);
@@ -129,6 +132,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	TH1F* pfo_nKaons_correct0				 = new TH1F(name_pfo+"nKaons_correct0","Kaon mult correct per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nKaons_correct1				 = new TH1F(name_pfo+"nKaons_correct1","Kaon mult correct per Jet;nKaon/Jet1; Events",10,0,10);
+
+	TH1F* pfo_nSignK_correct0				 = new TH1F(name_pfo+"nSignK_correct0","Kaon mult correct per Jet;nKaon/Jet0; Events",10,0,10);
+	TH1F* pfo_nSignK_correct1				 = new TH1F(name_pfo+"nSignK_correct1","Kaon mult correct per Jet;nKaon/Jet1; Events",10,0,10);
 
 
 
@@ -176,12 +182,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_nKaons_wrong0 );
 	h1_pfo.push_back( pfo_nKaons_wrong1 );
 
+	h1_pfo.push_back( pfo_nSignK_wrong0 );
+	h1_pfo.push_back( pfo_nSignK_wrong1 );
+
 	h1_pfo.push_back( pfo_LeadK_qcos_sep_correct );
 	h1_pfo.push_back( pfo_LeadK_pdiff_correct );
 	h1_pfo.push_back( pfo_LeadK_ip_correct );
 
 	h1_pfo.push_back( pfo_nKaons_correct0 );
 	h1_pfo.push_back( pfo_nKaons_correct1 );
+
+	h1_pfo.push_back( pfo_nSignK_correct0 );
+	h1_pfo.push_back( pfo_nSignK_correct1 );
 
 
 	// TH2F
@@ -397,6 +409,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// Count N Kaons
 		int n_reco_kaon_all     = 0;
 		int n_reco_kaon_jet[2]  = {0};
+		int n_reco_signK_jet[2][2] = {0};
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -416,6 +429,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				if(pfo_match[ipfo]==imatch){
 
 					if(abs(pfo_pdgcheat[ipfo])==321) n_reco_kaon_jet[imatch]++;
+
+					if(pfo_pdgcheat[ipfo]==321){
+						n_reco_signK_jet[imatch][0]++;
+					}else if(pfo_pdgcheat[ipfo]==-321){
+						n_reco_signK_jet[imatch][1]++;
+					}
+
 
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
@@ -592,12 +612,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					}
 			}
 
-
-
-			cout << "jet_px = " << jet_px[0] << ", " << jet_px[1] << endl;
-
 			if(flag0||flag1){
-
 
 				n_cos_nonconsis++;
 				// continue;
@@ -618,12 +633,24 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_ip_wrong->Fill(lead_pv[0]);
 				pfo_LeadK_ip_wrong->Fill(lead_pv[1]);
 
-
 				pfo_LeadK_p_dEdx_wrong->Fill(lead_mom[0],lead_dEdx[0]);
 				pfo_LeadK_p_dEdx_wrong->Fill(lead_mom[1],lead_dEdx[1]);
 
 				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
 				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_kaon_jet[1]);
+
+				if(lead_chg[0]>0){
+					pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][0]);
+				}else if(lead_chg[0]<0){
+					pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][1]);
+				}
+
+				if(lead_chg[1]>0){
+					pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][0]);
+				}else if(lead_chg[1]<0){
+					pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][1]);
+				}
+
 
 				if(debug) cout << "MIGRATION:";
 
@@ -638,6 +665,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				pfo_nKaons_correct0->Fill(n_reco_kaon_jet[0]);
 				pfo_nKaons_correct1->Fill(n_reco_kaon_jet[1]);
+
+				if(lead_chg[0]>0){
+					pfo_nSignK_correct0->Fill(n_reco_signK_jet[0][0]);
+				}else if(lead_chg[0]<0){
+					pfo_nSignK_correct0->Fill(n_reco_signK_jet[0][1]);
+				}
+
+				if(lead_chg[1]>0){
+					pfo_nSignK_correct1->Fill(n_reco_signK_jet[1][0]);
+				}else if(lead_chg[1]<0){
+					pfo_nSignK_correct1->Fill(n_reco_signK_jet[1][1]);
+				}
 
 				if(debug) cout << "CONSIS:";
 			}
