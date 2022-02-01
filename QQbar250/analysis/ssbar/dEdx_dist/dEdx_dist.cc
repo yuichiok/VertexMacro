@@ -128,6 +128,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* pfo_nSignKopp_wrong0		 = new TH1F(name_pfo+"nSignKopp_wrong0","Kaon mult wrong per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nSignKopp_wrong1		 = new TH1F(name_pfo+"nSignKopp_wrong1","Kaon mult wrong per Jet;nKaon/Jet1; Events",10,0,10);
 
+	TH1F* pfo_SignKopp_p_wrong		 = new TH1F(name_pfo+"SignKopp_p_wrong",";Momentum (GeV); Events", 100, 0.5, 100.5);
+
 	// correct
 	TH1F* pfo_LeadK_qcos_sep_correct = new TH1F(name_pfo+"LeadKaons_cos_sep_correct",";|cos#theta_{0} - cos#theta_{1}|; Events",40,0,4.0);
 	TH1F* pfo_LeadK_pdiff_correct		 = new TH1F(name_pfo+"LeadKaons_pdiff_correct",";p diff (GeV); Events", 40,0,40);
@@ -141,6 +143,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	TH1F* pfo_nSignKopp_correct0		 = new TH1F(name_pfo+"nSignKopp_correct0","Kaon mult correct per Jet;nKaon/Jet0; Events",10,0,10);
 	TH1F* pfo_nSignKopp_correct1		 = new TH1F(name_pfo+"nSignKopp_correct1","Kaon mult correct per Jet;nKaon/Jet1; Events",10,0,10);
+
+	TH1F* pfo_SignKopp_p_correct		 = new TH1F(name_pfo+"SignKopp_p_correct",";Momentum (GeV); Events", 100, 0.5, 100.5);
 
 
 
@@ -184,6 +188,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_LeadK_qcos_sep_wrong );
 	h1_pfo.push_back( pfo_LeadK_pdiff_wrong );
 	h1_pfo.push_back( pfo_LeadK_ip_wrong );
+	h1_pfo.push_back( pfo_SignKopp_p_wrong );
 
 	h1_pfo.push_back( pfo_nKaons_wrong0 );
 	h1_pfo.push_back( pfo_nKaons_wrong1 );
@@ -191,21 +196,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_nSignK_wrong0 );
 	h1_pfo.push_back( pfo_nSignK_wrong1 );
 
-	h1_pfo.push_back( pfo_nSignKopp_wrong0 );
-	h1_pfo.push_back( pfo_nSignKopp_wrong1 );
-
 	h1_pfo.push_back( pfo_LeadK_qcos_sep_correct );
 	h1_pfo.push_back( pfo_LeadK_pdiff_correct );
 	h1_pfo.push_back( pfo_LeadK_ip_correct );
+	h1_pfo.push_back( pfo_SignKopp_p_correct );
 
 	h1_pfo.push_back( pfo_nKaons_correct0 );
 	h1_pfo.push_back( pfo_nKaons_correct1 );
 
 	h1_pfo.push_back( pfo_nSignK_correct0 );
 	h1_pfo.push_back( pfo_nSignK_correct1 );
-
-	h1_pfo.push_back( pfo_nSignKopp_correct0 );
-	h1_pfo.push_back( pfo_nSignKopp_correct1 );
 
 
 	// TH2F
@@ -422,6 +422,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		int n_reco_kaon_all     = 0;
 		int n_reco_kaon_jet[2]  = {0};
 		int n_reco_signK_jet[2][2] = {0};
+		vector <float> signKopp_p_jet[2][2];
+
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -444,8 +446,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 					if(pfo_pdgcheat[ipfo]==321){
 						n_reco_signK_jet[imatch][0]++;
+						signKopp_p_jet[imatch][0].push_back(mom);
 					}else if(pfo_pdgcheat[ipfo]==-321){
 						n_reco_signK_jet[imatch][1]++;
+						signKopp_p_jet[imatch][1].push_back(mom);
 					}
 
 
@@ -653,28 +657,65 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				// Number of K same chg as LPFO
 				if(lead_chg[0]>0){
+
 					pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][0]);
+
 				}else if(lead_chg[0]<0){
+
 					pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][1]);
+
 				}
 
 				if(lead_chg[1]>0){
+
 					pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][0]);
+
 				}else if(lead_chg[1]<0){
+
 					pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][1]);
+
 				}
+
 
 				// Number of K opposite chg as LPFO
 				if(lead_chg[0]>0){
+
 					pfo_nSignKopp_wrong0->Fill(n_reco_signK_jet[0][1]);
+
+					for (int i = 0; i < signKopp_p_jet[0][1].size(); ++i)
+					{
+						pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][1].at(i));
+					}
+
 				}else if(lead_chg[0]<0){
+
 					pfo_nSignKopp_wrong0->Fill(n_reco_signK_jet[0][0]);
+
+					for (int i = 0; i < signKopp_p_jet[0][0].size(); ++i)
+					{
+						pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][0].at(i));
+					}
+
 				}
 
 				if(lead_chg[1]>0){
+
 					pfo_nSignKopp_wrong1->Fill(n_reco_signK_jet[1][1]);
+
+					for (int i = 0; i < signKopp_p_jet[1][1].size(); ++i)
+					{
+						pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][1].at(i));
+					}
+
 				}else if(lead_chg[1]<0){
+
 					pfo_nSignKopp_wrong1->Fill(n_reco_signK_jet[1][0]);
+
+					for (int i = 0; i < signKopp_p_jet[1][0].size(); ++i)
+					{
+						pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][0].at(i));
+					}
+
 				}
 
 
@@ -694,28 +735,64 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 				// Number of K same chg as LPFO
 				if(lead_chg[0]>0){
+
 					pfo_nSignK_correct0->Fill(n_reco_signK_jet[0][0]);
+
 				}else if(lead_chg[0]<0){
+
 					pfo_nSignK_correct0->Fill(n_reco_signK_jet[0][1]);
+
 				}
 
 				if(lead_chg[1]>0){
+
 					pfo_nSignK_correct1->Fill(n_reco_signK_jet[1][0]);
+
 				}else if(lead_chg[1]<0){
+
 					pfo_nSignK_correct1->Fill(n_reco_signK_jet[1][1]);
+
 				}
 
 				// Number of K opposite chg as LPFO
 				if(lead_chg[0]>0){
+
 					pfo_nSignKopp_correct0->Fill(n_reco_signK_jet[0][1]);
+
+					for (int i = 0; i < signKopp_p_jet[0][1].size(); ++i)
+					{
+						pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][1].at(i));
+					}
+
 				}else if(lead_chg[0]<0){
+
 					pfo_nSignKopp_correct0->Fill(n_reco_signK_jet[0][0]);
+					
+					for (int i = 0; i < signKopp_p_jet[0][0].size(); ++i)
+					{
+						pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
+					}
+
 				}
 
 				if(lead_chg[1]>0){
+
 					pfo_nSignKopp_correct1->Fill(n_reco_signK_jet[1][1]);
+
+					for (int i = 0; i < signKopp_p_jet[1][1].size(); ++i)
+					{
+						pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][1].at(i));
+					}
+
 				}else if(lead_chg[1]<0){
+
 					pfo_nSignKopp_correct1->Fill(n_reco_signK_jet[1][0]);
+
+					for (int i = 0; i < signKopp_p_jet[1][0].size(); ++i)
+					{
+						pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][0].at(i));
+					}
+
 				}
 
 
