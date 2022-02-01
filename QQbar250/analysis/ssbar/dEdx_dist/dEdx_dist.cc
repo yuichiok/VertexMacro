@@ -196,6 +196,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	h1_pfo.push_back( pfo_nSignK_wrong0 );
 	h1_pfo.push_back( pfo_nSignK_wrong1 );
 
+	h1_pfo.push_back( pfo_nSignKopp_wrong0 );
+	h1_pfo.push_back( pfo_nSignKopp_wrong1 );	
+
 	h1_pfo.push_back( pfo_LeadK_qcos_sep_correct );
 	h1_pfo.push_back( pfo_LeadK_pdiff_correct );
 	h1_pfo.push_back( pfo_LeadK_ip_correct );
@@ -206,6 +209,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	h1_pfo.push_back( pfo_nSignK_correct0 );
 	h1_pfo.push_back( pfo_nSignK_correct1 );
+
+	h1_pfo.push_back( pfo_nSignKopp_correct0 );
+	h1_pfo.push_back( pfo_nSignKopp_correct1 );	
+
 
 
 	// TH2F
