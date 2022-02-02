@@ -453,13 +453,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 					if(pfo_pdgcheat[ipfo]==321){
 
-						n_reco_signK_jet[imatch][0]++;
+						if(mom>10.0) n_reco_signK_jet[imatch][0]++;
 
 						signKopp_p_jet[imatch][0].push_back(mom);
 
 					}else if(pfo_pdgcheat[ipfo]==-321){
 
-						n_reco_signK_jet[imatch][1]++;
+						if(mom>10.0) n_reco_signK_jet[imatch][1]++;
 
 						signKopp_p_jet[imatch][1].push_back(mom);
 
