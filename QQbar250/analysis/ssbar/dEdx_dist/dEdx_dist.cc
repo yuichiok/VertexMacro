@@ -703,6 +703,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][1].at(i));
 						}
 
+						if(signKopp_p_jet[0][1].size()==0) pfo_SignKopp_p_wrong->Fill(0);
+
 					}else if(lead_chg[0]<0){
 
 						pfo_nSignKopp_wrong0->Fill(n_reco_signK_jet[0][0]);
@@ -711,6 +713,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						{
 							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][0].at(i));
 						}
+
+						if(signKopp_p_jet[0][0].size()==0) pfo_SignKopp_p_wrong->Fill(0);						
 
 					}
 
@@ -728,6 +732,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][1].at(i));
 						}
 
+						if(signKopp_p_jet[1][1].size()==0) pfo_SignKopp_p_wrong->Fill(0);
+
 					}else if(lead_chg[1]<0){
 
 						pfo_nSignKopp_wrong1->Fill(n_reco_signK_jet[1][0]);
@@ -736,6 +742,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						{
 							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][0].at(i));
 						}
+
+						if(signKopp_p_jet[1][0].size()==0) pfo_SignKopp_p_wrong->Fill(0);
 
 					}
 
@@ -790,6 +798,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][1].at(i));
 						}
 
+						if(signKopp_p_jet[0][1].size()==0) pfo_SignKopp_p_correct->Fill(0);
+
 					}else if(lead_chg[0]<0){
 
 						pfo_nSignKopp_correct0->Fill(n_reco_signK_jet[0][0]);
@@ -798,6 +808,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						{
 							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
 						}
+
+						if(signKopp_p_jet[0][0].size()==0) pfo_SignKopp_p_correct->Fill(0);
 
 					}
 
@@ -815,6 +827,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][1].at(i));
 						}
 
+						if(signKopp_p_jet[1][1].size()==0) pfo_SignKopp_p_correct->Fill(0);
+
 					}else if(lead_chg[1]<0){
 
 						pfo_nSignKopp_correct1->Fill(n_reco_signK_jet[1][0]);
@@ -823,6 +837,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						{
 							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][0].at(i));
 						}
+
+						if(signKopp_p_jet[1][0].size()==0) pfo_SignKopp_p_correct->Fill(0);
 
 					}
 
