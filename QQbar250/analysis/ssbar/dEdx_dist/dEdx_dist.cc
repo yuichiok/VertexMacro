@@ -310,7 +310,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TString filename_out = "test";
 
 	// test mode
-	bool debug = 0;
+	bool debug = 1;
 	if(debug) filename_out_root = "rootfiles/double_tag/test.root";
 
 
@@ -433,8 +433,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		struct JetParam {
 			vector<int> id;
 			vector<float> mom;
-			vector<float> dEdx_dist;
-		}
+			vector<float> kdEdx_dist;
+			vector<float> pdEdx_dist;
+			vector<float> pidEdx_dist;
+		};
 
 		JetParam SPFOs[2];
 
@@ -456,6 +458,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			{
 				if(pfo_match[ipfo]==imatch){
 
+					// ID SPFO with Cheat
 					if(pfo_pdgcheat[ipfo]==321){
 
 						if(mom>10.0) n_reco_signK_jet[imatch][0]++;
@@ -470,12 +473,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 					}
 
+					// Classify PFOs in 2 Jets
+					SPFOs[imatch].id.push_back(ipfo);
+					SPFOs[imatch].mom.push_back(mom);
+					SPFOs[imatch].kdEdx_dist.push_back(pfo_piddedx_k_dedxdist[ipfo]);
+					SPFOs[imatch].pdEdx_dist.push_back(pfo_piddedx_p_dedxdist[ipfo]);
+					SPFOs[imatch].pidEdx_dist.push_back(pfo_piddedx_pi_dedxdist[ipfo]);
 
+
+					// ID leading particle
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
 						lead_ipfo[imatch] = ipfo;
 					}
-
 
 				} // end jet imatch
 			} // end imatch
@@ -492,12 +502,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		///////////////////////////////
 		
 		std::vector<VecOP> jetVecs;
+		int its[2];
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
 			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
 			jetVecs.push_back(jetVec);
+
+			std::vector<int>::iterator it;
+			it = std::search_n (SPFOs[ijet].id.begin(), SPFOs[ijet].id.end(), 1, lead_ipfo[ijet]);
+			its[ijet] = (it-SPFOs[ijet].id.begin());
 		
+		}
+
+		if (debug) {
+			cout << maxP[0] << ", " << maxP[1] << endl;
+			cout << its[0] << ", " << its[1] << ", mom " << SPFOs[0].mom.at(its[0]) << ", " << SPFOs[1].mom.at(its[1]) << endl;
 		}
 
 
@@ -624,7 +644,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		{
 
 			if(debug){
-				// cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
 				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1] << endl;
 			}
 
