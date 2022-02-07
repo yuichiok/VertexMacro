@@ -427,9 +427,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// Count N Kaons
 		int n_reco_kaon_all     = 0;
-		int n_reco_kaon_jet[2]  = {0};
 		int n_reco_signK_jet[2][2] = {0};
 		vector <float> signKopp_p_jet[2][2];
+
+		struct JetParam {
+			vector<int> id;
+			vector<float> mom;
+			vector<float> dEdx_dist;
+		}
+
+		JetParam SPFOs[2];
 
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
@@ -448,8 +455,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			for (int imatch = 0; imatch < 2; ++imatch)
 			{
 				if(pfo_match[ipfo]==imatch){
-
-					if(abs(pfo_pdgcheat[ipfo])==321 && mom>10.0) n_reco_kaon_jet[imatch]++;
 
 					if(pfo_pdgcheat[ipfo]==321){
 
@@ -470,6 +475,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						maxP[imatch] = mom;
 						lead_ipfo[imatch] = ipfo;
 					}
+
 
 				} // end jet imatch
 			} // end imatch
@@ -618,7 +624,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		{
 
 			if(debug){
-				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
+				// cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_kaon_jet[0] << "\t jet1 nK = " << n_reco_kaon_jet[1] << endl;
+				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1] << endl;
 			}
 
 			// count number of when the reco is WRONG (source of migration)
@@ -668,8 +675,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_p_dEdx_wrong->Fill(LPFO[0].mom,LPFO[0].dEdx);
 				pfo_LeadK_p_dEdx_wrong->Fill(LPFO[1].mom,LPFO[1].dEdx);
 
-				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_kaon_jet[0]);
-				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_kaon_jet[1]);
+				if(flag0) pfo_nKaons_wrong0->Fill(n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1]);
+				if(flag1) pfo_nKaons_wrong1->Fill(n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1]);
 
 
 				// Number of K same chg as LPFO
@@ -703,7 +710,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[0][1].size(); ++i)
 						{
-							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][1].at(i));
+							if( maxP[0]!=signKopp_p_jet[0][1].at(i) ) pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][1].at(i));
 						}
 
 						if(signKopp_p_jet[0][1].size()==0) pfo_SignKopp_p_wrong->Fill(0);
@@ -714,7 +721,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[0][0].size(); ++i)
 						{
-							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][0].at(i));
+							if( maxP[0]!=signKopp_p_jet[0][0].at(i) ) pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[0][0].at(i));
 						}
 
 						if(signKopp_p_jet[0][0].size()==0) pfo_SignKopp_p_wrong->Fill(0);						
@@ -732,7 +739,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[1][1].size(); ++i)
 						{
-							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][1].at(i));
+							if( maxP[1]!=signKopp_p_jet[1][1].at(i) ) pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][1].at(i));
 						}
 
 						if(signKopp_p_jet[1][1].size()==0) pfo_SignKopp_p_wrong->Fill(0);
@@ -743,7 +750,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[1][0].size(); ++i)
 						{
-							pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][0].at(i));
+							if( maxP[1]!=signKopp_p_jet[1][0].at(i) ) pfo_SignKopp_p_wrong->Fill(signKopp_p_jet[1][0].at(i));
 						}
 
 						if(signKopp_p_jet[1][0].size()==0) pfo_SignKopp_p_wrong->Fill(0);
@@ -764,8 +771,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				pfo_LeadK_ip_correct->Fill(LPFO[0].pv);
 				pfo_LeadK_ip_correct->Fill(LPFO[1].pv);
 
-				pfo_nKaons_correct0->Fill(n_reco_kaon_jet[0]);
-				pfo_nKaons_correct1->Fill(n_reco_kaon_jet[1]);
+				pfo_nKaons_correct0->Fill(n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1]);
+				pfo_nKaons_correct1->Fill(n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1]);
 
 				// Number of K same chg as LPFO
 				if(LPFO[0].chg>0){
@@ -798,7 +805,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[0][1].size(); ++i)
 						{
-							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][1].at(i));
+							if( maxP[0]!=signKopp_p_jet[0][1].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][1].at(i));
 						}
 
 						if(signKopp_p_jet[0][1].size()==0) pfo_SignKopp_p_correct->Fill(0);
@@ -809,7 +816,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						
 						for (int i = 0; i < signKopp_p_jet[0][0].size(); ++i)
 						{
-							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
+							if( maxP[0]!=signKopp_p_jet[0][1].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
 						}
 
 						if(signKopp_p_jet[0][0].size()==0) pfo_SignKopp_p_correct->Fill(0);
@@ -827,7 +834,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[1][1].size(); ++i)
 						{
-							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][1].at(i));
+							if( maxP[1]!=signKopp_p_jet[1][1].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][1].at(i));
 						}
 
 						if(signKopp_p_jet[1][1].size()==0) pfo_SignKopp_p_correct->Fill(0);
@@ -838,7 +845,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 						for (int i = 0; i < signKopp_p_jet[1][0].size(); ++i)
 						{
-							pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][0].at(i));
+							if( maxP[1]!=signKopp_p_jet[1][0].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[1][0].at(i));
 						}
 
 						if(signKopp_p_jet[1][0].size()==0) pfo_SignKopp_p_correct->Fill(0);
