@@ -558,7 +558,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				}
 
 			}
-		
+
 		}
 
 
@@ -621,7 +621,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					OppK_SPFO[i].mom.push_back(K_SPFOs[i].mom.at(j));
 					nOppK_SPFO[i]++;
 				}
-			
+
 			}
 
 
@@ -938,7 +938,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						
 						for (int i = 0; i < signKopp_p_jet[0][0].size(); ++i)
 						{
-							if( maxP[0]!=signKopp_p_jet[0][1].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
+							if( maxP[0]!=signKopp_p_jet[0][0].at(i) ) pfo_SignKopp_p_correct->Fill(signKopp_p_jet[0][0].at(i));
 						}
 
 						if(signKopp_p_jet[0][0].size()==0) pfo_SignKopp_p_correct->Fill(0);
