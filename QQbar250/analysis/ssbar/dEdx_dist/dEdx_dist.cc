@@ -438,7 +438,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		int qq_match_count[2] = {0};
 
 		// Leading PFO variables
-		int   lead_ipfo[2]	= {-1};
+		int   lead_ipfo[2]	= {-1,-1};
 		float maxP[2]				= {0};
 
 		// Count N Kaons
@@ -743,6 +743,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						}
 					}
 			}
+
 
 			if(flag0||flag1){
 
