@@ -433,6 +433,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		struct JetParam {
 			vector<int> id;
 			vector<float> mom;
+			vector<int> chg;
 			vector<float> kdEdx_dist;
 			vector<float> pdEdx_dist;
 			vector<float> pidEdx_dist;
@@ -476,6 +477,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					// Classify PFOs in 2 Jets
 					SPFOs[imatch].id.push_back(ipfo);
 					SPFOs[imatch].mom.push_back(mom);
+					SPFOs[imatch].chg.push_back(pfo_charge[ipfo]);
 					SPFOs[imatch].kdEdx_dist.push_back(pfo_piddedx_k_dedxdist[ipfo]);
 					SPFOs[imatch].pdEdx_dist.push_back(pfo_piddedx_p_dedxdist[ipfo]);
 					SPFOs[imatch].pidEdx_dist.push_back(pfo_piddedx_pi_dedxdist[ipfo]);
@@ -502,7 +504,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		///////////////////////////////
 		
 		std::vector<VecOP> jetVecs;
-		int its[2];
+		JetParam K_SPFOs[2];
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
@@ -511,14 +513,38 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			std::vector<int>::iterator it;
 			it = std::search_n (SPFOs[ijet].id.begin(), SPFOs[ijet].id.end(), 1, lead_ipfo[ijet]);
-			its[ijet] = (it-SPFOs[ijet].id.begin());
+			int n = (it-SPFOs[ijet].id.begin());
+
+			SPFOs[ijet].id.erase( SPFOs[ijet].id.begin() + n );
+			SPFOs[ijet].mom.erase( SPFOs[ijet].mom.begin() + n );
+			SPFOs[ijet].chg.erase( SPFOs[ijet].chg.begin() + n );
+			SPFOs[ijet].kdEdx_dist.erase( SPFOs[ijet].kdEdx_dist.begin() + n );
+			SPFOs[ijet].pdEdx_dist.erase( SPFOs[ijet].pdEdx_dist.begin() + n );
+			SPFOs[ijet].pidEdx_dist.erase( SPFOs[ijet].pidEdx_dist.begin() + n );
+
+			for (int i = 0; i < SPFOs[ijet].id.size(); ++i)
+			{
+				bool kmin=false;
+				bool pmin=false;
+				bool pimin=false;
+
+				if( abs(SPFOs[ijet].kdEdx_dist.at(i)) < abs(SPFOs[ijet].pdEdx_dist.at(i)) )  pmin  = true;
+				if( abs(SPFOs[ijet].kdEdx_dist.at(i)) < abs(SPFOs[ijet].pidEdx_dist.at(i)) ) pimin = true;
+				if( pmin && pimin ) kmin = true;
+
+				if(kmin){
+					K_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
+					K_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
+					K_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
+					K_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
+					K_SPFOs[ijet].pdEdx_dist.push_back(SPFOs[ijet].pdEdx_dist.at(i));
+					K_SPFOs[ijet].pidEdx_dist.push_back(SPFOs[ijet].pidEdx_dist.at(i));
+				}
+
+			}
 		
 		}
 
-		if (debug) {
-			cout << maxP[0] << ", " << maxP[1] << endl;
-			cout << its[0] << ", " << its[1] << ", mom " << SPFOs[0].mom.at(its[0]) << ", " << SPFOs[1].mom.at(its[1]) << endl;
-		}
 
 
 		///////////////////////////////////////
@@ -645,6 +671,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			if(debug){
 				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1] << endl;
+
+				cout << "K_SPFOs size: " << K_SPFOs[0].id.size() << ", " << K_SPFOs[1].id.size() << endl;
+				// cout << "SPFO dedxdist (k,p,pi):\n";
+				// for (int i = 0; i < SPFOs[0].id.size(); ++i)
+				// {
+				// 	cout << SPFOs[0].kdEdx_dist.at(i) << ", " << SPFOs[0].pdEdx_dist.at(i) << ", "<< SPFOs[0].pidEdx_dist.at(i) << "\n";
+				// }
+
 			}
 
 			// count number of when the reco is WRONG (source of migration)
