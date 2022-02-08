@@ -384,6 +384,9 @@ private:
    int n_chg_mom_nhits_check = 0;
    int n_chg_mom_nhits_offset_check = 0;
    int n_chg_mom_nhits_offset_DistMin_check = 0;
+   int n_chg_mom_nhits_offset_DistMin_OppKMult_check = 0;
+
+   // extra
    int n_chg_mom_nhits_offset_DistMin_DistWin_check = 0;
 
    int n_cos_nonconsis=0;

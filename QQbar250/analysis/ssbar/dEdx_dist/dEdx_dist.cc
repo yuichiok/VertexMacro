@@ -310,7 +310,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TString filename_out = "test";
 
 	// test mode
-	bool debug = 1;
+	bool debug = 0;
 	if(debug) filename_out_root = "rootfiles/double_tag/test.root";
 
 
@@ -574,6 +574,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			{0, 0, 0, 0, 0, -1, -1, 0, 0, -2, -2, 0, 0}
 		};
 
+		int nOppK_SPFO[2] = {0};
+
 		for (int i = 0; i < 2; ++i){
 
 			int lpfo = lead_ipfo[i];
@@ -593,6 +595,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			LPFO[i].mom 				= LeadPFOVec.GetMomentum();
 			LPFO[i].cos					= LeadPFOVec.GetCostheta();
 			LPFO[i].qcos 				= (LPFO[i].chg < 0)? LPFO[i].cos: -LPFO[i].cos;
+
+			for (int j = 0; j < K_SPFOs[i].id.size(); ++j)
+			{
+				// SPFO opposite charge to LPFO and above 10 GeV
+				if( (K_SPFOs[i].chg.at(j)* LPFO[i].chg < 0) && (K_SPFOs[i].mom.at(j) > 10)) nOppK_SPFO[i]++;
+			}
+
 
 			// This compares pfo angle with MC angle -> giving which this pfo are from. 
 			// 0: PFO is from q
@@ -642,6 +651,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
     if( (abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist)) ) pidEdx_dist_min_check = true;
     if( pdEdx_dist_min_check && pidEdx_dist_min_check ) dEdx_dist_min_check = true;
 
+    // OPP KAON MULTIPLICITY
+    bool OppKMult_check = false;
+    if(nOppK_SPFO[0]==0 && nOppK_SPFO[1]==0) OppKMult_check = true;
+
     // DEDX DISTANCE WINDOW
     bool dEdx_dist_win_check = false;
 		float min_dist=-1.5;
@@ -653,7 +666,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
 		// if( 1 ) check_all = true;
 
 		// Stats
@@ -662,6 +676,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( chg_check && mom_check && nhits_check ) n_chg_mom_nhits_check++;
 		if( chg_check && mom_check && nhits_check && offset_check ) n_chg_mom_nhits_offset_check++;
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) n_chg_mom_nhits_offset_DistMin_check++;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) n_chg_mom_nhits_offset_DistMin_OppKMult_check++;
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) n_chg_mom_nhits_offset_DistMin_DistWin_check++;
 
 
@@ -673,6 +688,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1] << endl;
 
 				cout << "K_SPFOs size: " << K_SPFOs[0].id.size() << ", " << K_SPFOs[1].id.size() << endl;
+				// cout << "nOppK_SPFOs: " << nOppK_SPFO[0] << ", " << nOppK_SPFO[1] << endl;
 				// cout << "SPFO dedxdist (k,p,pi):\n";
 				// for (int i = 0; i < SPFOs[0].id.size(); ++i)
 				// {
@@ -680,6 +696,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				// }
 
 			}
+
+
 
 			// count number of when the reco is WRONG (source of migration)
 			bool flag0=false;
@@ -814,6 +832,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 				if(debug) cout << "MIGRATION:";
+				// cout << "MIGRATION:\n";
+				// cout << "nOppK_SPFOs: " << nOppK_SPFO[0] << ", " << nOppK_SPFO[1] << endl;
+
 
 			}else{
 
@@ -909,6 +930,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 				if(debug) cout << "CONSIS:";
+				// cout << "CONSIS:\n";
+				// cout << "nOppK_SPFOs: " << nOppK_SPFO[0] << ", " << nOppK_SPFO[1] << endl;
+
+
 			}
 
 			if(debug){
@@ -1045,7 +1070,8 @@ void dEdx_dist::printResults(){
 	cout << " - TPC hit check:             " << n_chg_mom_nhits_check << "\n";
 	cout << " - Offset check:              " << n_chg_mom_nhits_offset_check << "\n";
 	cout << " - dEdx dist min check:       " << n_chg_mom_nhits_offset_DistMin_check << "\n";
-	cout << " - dEdx dist win check:       " << n_chg_mom_nhits_offset_DistMin_DistWin_check << "\n";
+	cout << " - Opp K mult check:          " << n_chg_mom_nhits_offset_DistMin_OppKMult_check << "\n";
+	cout << "( - dEdx dist win check:      " << n_chg_mom_nhits_offset_DistMin_DistWin_check << ")\n";
 
 	cout << endl;
 	cout << "migration: " << n_cos_nonconsis << "\n";

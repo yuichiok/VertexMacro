@@ -7,7 +7,7 @@ end=$3
 # for testing
 # flist=./list/test.list
 # start=1
-# end=3
+# end=5
 
 outputDir=./rootfiles/tmp_root
 
