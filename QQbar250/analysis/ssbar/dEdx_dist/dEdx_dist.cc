@@ -50,6 +50,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	float MAXP_CUT=60.0;
 
+
+	// Number Counting
+	TH1I* cnt_nevents 																			= new TH1I("h_cnt_nevents",";nevents;Entries",10,0,10);
+
+	h0_counter.push_back(cnt_nevents);
+
 	// MC Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
@@ -390,6 +396,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 		nevents++;
+		cnt_nevents->Fill(0);
 
 
 		////////////////////////////////
@@ -417,6 +424,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
 
 		nevents_after_GENselec++;
+		cnt_nevents->Fill(1);
 
 		for(int iqq=0; iqq < 2; iqq++){
 
@@ -513,6 +521,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
 		nevents_after_PFOselec++;
+		cnt_nevents->Fill(2);
 
 
 		///////////////////////////////
@@ -688,18 +697,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
-		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
 		// if( 1 ) check_all = true;
 
 		// Stats
-		if( chg_check ) n_chg_check++;
-		if( chg_check && mom_check ) n_chg_mom_check++;
-		if( chg_check && mom_check && nhits_check ) n_chg_mom_nhits_check++;
-		if( chg_check && mom_check && nhits_check && offset_check ) n_chg_mom_nhits_offset_check++;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) n_chg_mom_nhits_offset_DistMin_check++;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) n_chg_mom_nhits_offset_DistMin_OppKMult_check++;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) n_chg_mom_nhits_offset_DistMin_DistWin_check++;
+		if( chg_check ) {n_chg_check++; cnt_nevents->Fill(3);}
+		if( chg_check && mom_check ) {n_chg_mom_check++;cnt_nevents->Fill(4);}
+		if( chg_check && mom_check && nhits_check ) {n_chg_mom_nhits_check++;cnt_nevents->Fill(5);}
+		if( chg_check && mom_check && nhits_check && offset_check ) {n_chg_mom_nhits_offset_check++;cnt_nevents->Fill(6);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) {n_chg_mom_nhits_offset_DistMin_check++;cnt_nevents->Fill(7);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) {n_chg_mom_nhits_offset_DistMin_OppKMult_check++;cnt_nevents->Fill(8);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) {n_chg_mom_nhits_offset_DistMin_DistWin_check++;cnt_nevents->Fill(9);}
 
 
 
@@ -748,6 +757,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			if(flag0||flag1){
 
 				n_cos_nonconsis++;
+				cnt_nevents->Fill(10);
 				// continue;
 				float enu0 = enumerate_pdg(LPFO[0].pdg_cheat);
 				float enu1 = enumerate_pdg(LPFO[1].pdg_cheat);
@@ -1091,6 +1101,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	printResults();
+
+	for(int h=0; h < h0_counter.size(); h++) h0_counter.at(h)->Write();
 
 	for(int h=0; h < h1_mc_stable.size(); h++) h1_mc_stable.at(h)->Write();
 	for(int h=0; h < h2_mc_stable.size(); h++) h2_mc_stable.at(h)->Write();

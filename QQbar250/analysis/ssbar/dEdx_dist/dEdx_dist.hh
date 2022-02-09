@@ -403,6 +403,7 @@ private:
    int nLeadK_pass  = 0;
    int nLeadK_match = 0;
 
+   std::vector<TH1I*> h0_counter;
 
    std::vector<TH1F*> h1_mc_stable;
    std::vector<TH1F*> h1_pfo;
