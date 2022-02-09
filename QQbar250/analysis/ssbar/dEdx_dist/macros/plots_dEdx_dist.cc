@@ -56,7 +56,6 @@
 // const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.hit210.root";
 
 // const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp10maxp60.hit210.offset.dEdxMin.root";
-
 const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.mergeFULL.root";
 // const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.mergeFULL.root";
 
@@ -89,8 +88,11 @@ void EffPurity_dedxdist5() {
   int n=0;
 
   for(int i=0;i<80; i++) {
+    // int iproton=16;
+    // int ipion=22;
+
     int iproton=16;
-    int ipion=22;
+    int ipion=24;
 
     // int iproton=18;
     // int ipion=21;
@@ -241,18 +243,18 @@ void dEdxdist_p() {
   TCanvas* c_mom = new TCanvas("c_mom","c_mom",800,800);
   c_mom->cd(1);
   c_mom->SetGrid();
-  pdEdx_dist_pion->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
+  pdEdx_dist_kaon->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
   pdEdx_dist_pion->GetYaxis()->SetTitle("a.u.");
-
-  pdEdx_dist_pion->SetLineColor(4);
-  pdEdx_dist_pion->SetLineWidth(3);
-  pdEdx_dist_pion->SetLineStyle(1);
-  pdEdx_dist_pion->Draw("histo");
 
   pdEdx_dist_kaon->SetLineColor(2);
   pdEdx_dist_kaon->SetLineWidth(3);
   pdEdx_dist_kaon->SetLineStyle(1);
-  pdEdx_dist_kaon->Draw("histosame");
+  pdEdx_dist_kaon->Draw("histo");
+
+  pdEdx_dist_pion->SetLineColor(4);
+  pdEdx_dist_pion->SetLineWidth(3);
+  pdEdx_dist_pion->SetLineStyle(1);
+  pdEdx_dist_pion->Draw("histosame");
 
   pdEdx_dist_proton->SetLineColor(1);
   pdEdx_dist_proton->SetLineWidth(3);
