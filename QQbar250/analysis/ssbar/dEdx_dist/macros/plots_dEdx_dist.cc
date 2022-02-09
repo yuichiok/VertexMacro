@@ -56,9 +56,8 @@
 // const TString filename = "../rootfiles/DQ_250GeV_ss.minp10.distcut.polar.hit210.root";
 
 // const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp10maxp60.hit210.offset.dEdxMin.root";
-// const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp10maxp60.hit210.offset.dEdxMin.cheat.root";
-const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.root";
-// const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.nocut.root";
+const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.mergeFULL.root";
+// const TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.mergeFULL.root";
 
 void normalize(TH1F* h = 0){
 
@@ -174,9 +173,7 @@ void dEdxdist_k() {
   c_mom->SetGrid();
   kdEdx_dist_kaon->GetXaxis()->SetTitle("signed [(dEdx-dEdx_{exp-kaon})/#Delta_{dEdx}]^{2}");
   kdEdx_dist_kaon->GetYaxis()->SetTitle("a.u.");
-  // kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,2E3);
-  kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,1.1E3);
-  // kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,35E3);
+  kdEdx_dist_kaon->GetYaxis()->SetRangeUser(0,2E3);
 
   kdEdx_dist_kaon->SetLineColor(2);
   kdEdx_dist_kaon->SetLineWidth(3);

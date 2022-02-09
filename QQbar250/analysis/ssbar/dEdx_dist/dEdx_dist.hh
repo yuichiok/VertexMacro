@@ -359,7 +359,7 @@ public :
    virtual void     LeadingMom(TH1F* h1p, TH1F* h1m, TH2F* h2, int subject, int iPFO0, int iPFO1, float P0, float P1);
    virtual float    enumerate_pdg(const int pdg=0);
 
-   virtual void     Analyze_dEdxdist(int, float, TString);
+   virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
@@ -374,6 +374,33 @@ private:
 
    TString process="default";
 
+   struct PFOParam {
+      int   pdg_cheat;
+      float E;
+      float mom;
+      float chg;
+      float cos;
+      float qcos;
+      float pv;
+      float tpc_hits;
+      float q_sep;
+      float qbar_sep;
+      float dEdx;
+      float kdEdx_dist;
+      float pdEdx_dist;
+      float pidEdx_dist;
+   };
+
+   struct JetParam {
+      vector<int>   id;
+      vector<int>   chg;
+      vector<float> mom;
+      vector<float> kdEdx_dist;
+      vector<float> pdEdx_dist;
+      vector<float> pidEdx_dist;
+   };
+
+   int nevents_all = 0;
    int nevents = 0;
    int nevents_after_GENselec = 0;
    int nevents_after_PFOselec = 0;
@@ -383,12 +410,13 @@ private:
    int n_chg_mom_nhits_check = 0;
    int n_chg_mom_nhits_offset_check = 0;
    int n_chg_mom_nhits_offset_DistMin_check = 0;
+   int n_chg_mom_nhits_offset_DistMin_OppKMult_check = 0;
+
+   // extra
    int n_chg_mom_nhits_offset_DistMin_DistWin_check = 0;
 
    int n_cos_nonconsis=0;
-
    // int n_gen_kaon     = 0;
-
    int nevents_kaon_match = 0;
 
    int n_kk   = 0;
@@ -399,6 +427,9 @@ private:
    int nLeadK_pass  = 0;
    int nLeadK_match = 0;
 
+
+   // Store Histograms
+   std::vector<TH1I*> h0_counter;
 
    std::vector<TH1F*> h1_mc_stable;
    std::vector<TH1F*> h1_pfo;
