@@ -82,6 +82,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH1F * pfo_pv_pion     = new TH1F(name_pfo+"pv_pion", "pv_pion", 40, 0, 4.0);
   TH1F * pfo_pv_proton   = new TH1F(name_pfo+"pv_proton", "pv_proton", 40, 0, 4.0);
 
+  // Neutral PFO
+  TH1F * pfo_neu_E			 = new TH1F(name_pfo+"neu_E", "Neutral E;E (GeV);Entries", 100, 0, 100);
+  TH1F * pfo_neu_p			 = new TH1F(name_pfo+"neu_p", "Neutral p;p (GeV);Entries", 100, 0, 100);
+
   // dEdx distance from kaon bethe-bloch
   TH1F * pfo_kdEdx_dist_kaon     = new TH1F(name_pfo+"kdEdx_dist_kaon", "kdEdx_dist_kaon", 40, -10, 10);
   TH1F * pfo_kdEdx_dist_proton   = new TH1F(name_pfo+"kdEdx_dist_proton", "kdEdx_dist_proton", 40, -10, 10);
@@ -166,6 +170,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h1_pfo.push_back( pfo_pv_kaon );
   h1_pfo.push_back( pfo_pv_pion );
   h1_pfo.push_back( pfo_pv_proton );
+
+  h1_pfo.push_back( pfo_neu_E );
+  h1_pfo.push_back( pfo_neu_p );
 
 	h1_pfo.push_back( pfo_kdEdx_dist_kaon );
 	h1_pfo.push_back( pfo_kdEdx_dist_proton );
@@ -454,17 +461,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		int n_reco_signK_jet[2][2] = {0};
 		vector <float> signKopp_p_jet[2][2];
 
-		struct JetParam {
-			vector<int>   id;
-			vector<int>   chg;
-			vector<float> mom;
-			vector<float> kdEdx_dist;
-			vector<float> pdEdx_dist;
-			vector<float> pidEdx_dist;
-		};
-
+		vector<PFOParam> NeuPFOs;
 		JetParam SPFOs[2];
-
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
@@ -473,6 +471,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
+
+
+			// Neutral PFO
+			PFOParam NeuPFO = {0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0};
+			if(pfo_charge[ipfo]==0){
+				NeuPFO.pdg_cheat = pfo_pdgcheat[ipfo];
+				NeuPFO.E 		 		 = pfo_E[ipfo];
+				NeuPFO.mom 		 	 = mom;
+			}
+			NeuPFOs.push_back(NeuPFO);
 
 
 			// Jet Analysis
@@ -578,25 +586,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		std::vector<VecOP> LeadPFOVecs;
 
-		struct PFOParam {
-			float dEdx;
-			float kdEdx_dist;
-			float pdEdx_dist;
-			float pidEdx_dist;
-			float chg;
-			float pv;
-			float tpc_hits;
-			int   pdg_cheat;
-			float mom;
-			float cos;
-			float qcos;
-			float q_sep;
-			float qbar_sep;
-		};
-
 		PFOParam LPFO[2] = {
-			{0, 0, 0, 0, 0, -1, -1, 0, 0, -2, -2, 0, 0},
-			{0, 0, 0, 0, 0, -1, -1, 0, 0, -2, -2, 0, 0}
+			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0}
 		};
 
 		int nOppK_SPFO[2] = {0};
@@ -697,8 +689,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
 		// if( 1 ) check_all = true;
 
 		// Stats
@@ -708,7 +700,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( chg_check && mom_check && nhits_check && offset_check ) {n_chg_mom_nhits_offset_check++;cnt_nevents->Fill(6);}
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) {n_chg_mom_nhits_offset_DistMin_check++;cnt_nevents->Fill(7);}
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) {n_chg_mom_nhits_offset_DistMin_OppKMult_check++;cnt_nevents->Fill(8);}
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) {n_chg_mom_nhits_offset_DistMin_DistWin_check++;cnt_nevents->Fill(9);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) {n_chg_mom_nhits_offset_DistMin_DistWin_check++;}
 
 
 
@@ -716,19 +708,23 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		{
 
 			if(debug){
+
 				cout << "Event# " << nevents_all <<"\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0]+n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0]+n_reco_signK_jet[1][1] << endl;
 
 				cout << "K_SPFOs size: " << K_SPFOs[0].id.size() << ", " << K_SPFOs[1].id.size() << endl;
-				// cout << "nOppK_SPFOs: " << nOppK_SPFO[0] << ", " << nOppK_SPFO[1] << endl;
-				// cout << "SPFO dedxdist (k,p,pi):\n";
-				// for (int i = 0; i < SPFOs[0].id.size(); ++i)
-				// {
-				// 	cout << SPFOs[0].kdEdx_dist.at(i) << ", " << SPFOs[0].pdEdx_dist.at(i) << ", "<< SPFOs[0].pidEdx_dist.at(i) << "\n";
-				// }
 
 			}
 
+			// NEUTRAL PFO ANALYSIS
+			for (int i = 0; i < NeuPFOs.size(); ++i)
+			{
+				pfo_neu_E->Fill( NeuPFOs.at(i).E   );
+				pfo_neu_p->Fill( NeuPFOs.at(i).mom );
+			}
 
+
+
+			// MIGRATION ANLYSIS
 
 			// count number of when the reco is WRONG (source of migration)
 			bool flag0=false;
@@ -757,7 +753,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			if(flag0||flag1){
 
 				n_cos_nonconsis++;
-				cnt_nevents->Fill(10);
+				cnt_nevents->Fill(9);
 				// continue;
 				float enu0 = enumerate_pdg(LPFO[0].pdg_cheat);
 				float enu1 = enumerate_pdg(LPFO[1].pdg_cheat);

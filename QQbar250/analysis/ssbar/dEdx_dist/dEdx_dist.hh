@@ -374,6 +374,32 @@ private:
 
    TString process="default";
 
+   struct PFOParam {
+      int   pdg_cheat;
+      float E;
+      float mom;
+      float chg;
+      float cos;
+      float qcos;
+      float pv;
+      float tpc_hits;
+      float q_sep;
+      float qbar_sep;
+      float dEdx;
+      float kdEdx_dist;
+      float pdEdx_dist;
+      float pidEdx_dist;
+   };
+
+   struct JetParam {
+      vector<int>   id;
+      vector<int>   chg;
+      vector<float> mom;
+      vector<float> kdEdx_dist;
+      vector<float> pdEdx_dist;
+      vector<float> pidEdx_dist;
+   };
+
    int nevents_all = 0;
    int nevents = 0;
    int nevents_after_GENselec = 0;
@@ -390,9 +416,7 @@ private:
    int n_chg_mom_nhits_offset_DistMin_DistWin_check = 0;
 
    int n_cos_nonconsis=0;
-
    // int n_gen_kaon     = 0;
-
    int nevents_kaon_match = 0;
 
    int n_kk   = 0;
@@ -403,6 +427,8 @@ private:
    int nLeadK_pass  = 0;
    int nLeadK_match = 0;
 
+
+   // Store Histograms
    std::vector<TH1I*> h0_counter;
 
    std::vector<TH1F*> h1_mc_stable;
