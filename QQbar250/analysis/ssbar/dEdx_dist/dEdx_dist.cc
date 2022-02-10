@@ -83,8 +83,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   TH1F * h_pfo_pv_proton   = new TH1F(name_pfo+"pv_proton", "pv_proton", 40, 0, 4.0);
 
   // Neutral PFO
-  TH1F * h_pfo_neu_E			 = new TH1F(name_pfo+"neu_E", "Neutral E;E (GeV);Entries", 100, 0, 100);
-  TH1F * h_pfo_neu_p			 = new TH1F(name_pfo+"neu_p", "Neutral p;p (GeV);Entries", 100, 0, 100);
+  TH1F * h_pfo_neu_E					= new TH1F(name_pfo+"neu_E", "Neutral E;E (GeV);Entries", 100, 0, 100);
+  TH1F * h_pfo_neu_p					= new TH1F(name_pfo+"neu_p", "Neutral p;p (GeV);Entries", 100, 0, 100);
+
+  TH1F * h_pfo_neu_E_wrong		= new TH1F(name_pfo+"neu_E_wrong", "Neutral E;E (GeV);Entries", 100, 0, 100);
+  TH1F * h_pfo_neu_p_wrong		= new TH1F(name_pfo+"neu_p_wrong", "Neutral p;p (GeV);Entries", 100, 0, 100);
+  
+  TH1F * h_pfo_neu_E_correct	= new TH1F(name_pfo+"neu_E_correct", "Neutral E;E (GeV);Entries", 100, 0, 100);
+  TH1F * h_pfo_neu_p_correct	= new TH1F(name_pfo+"neu_p_correct", "Neutral p;p (GeV);Entries", 100, 0, 100);
 
   // dEdx distance from kaon bethe-bloch
   TH1F * h_pfo_kdEdx_dist_kaon     = new TH1F(name_pfo+"kdEdx_dist_kaon", "kdEdx_dist_kaon", 40, -10, 10);
@@ -781,14 +787,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				h_pfo_reco_nSignKopp_wrong0->Fill(nOppK_SPFO[0]);
 				h_pfo_reco_nSignKopp_wrong1->Fill(nOppK_SPFO[1]);
 
-				for (int i = 0; i < 2; ++i)
-				{
+				for (int i = 0; i < 2; ++i){
+
 					for (int j = 0; j < OppK_SPFO[i].mom.size(); ++j)
 					{
 						h_pfo_reco_SignKopp_p_wrong->Fill(OppK_SPFO[i].mom.at(j));
 					}
 
 				}
+
+				// NEUTRAL PFO ANALYSIS
+				for (int i = 0; i < NeuPFOs.size(); ++i)
+				{
+					h_pfo_neu_E_wrong->Fill( NeuPFOs.at(i).E   );
+					h_pfo_neu_p_wrong->Fill( NeuPFOs.at(i).mom );
+				}
+
 
 
 				// Number of K same chg as LPFO
@@ -899,6 +913,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 						h_pfo_reco_SignKopp_p_correct->Fill(OppK_SPFO[i].mom.at(j));
 					}
 
+				}
+
+				// NEUTRAL PFO ANALYSIS
+				for (int i = 0; i < NeuPFOs.size(); ++i)
+				{
+					h_pfo_neu_E_correct->Fill( NeuPFOs.at(i).E   );
+					h_pfo_neu_p_correct->Fill( NeuPFOs.at(i).mom );
 				}
 
 
