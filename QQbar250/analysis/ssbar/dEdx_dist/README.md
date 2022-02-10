@@ -16,6 +16,8 @@
 
 10. `double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.mergeFULL.root`
 11. `double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppMult.mergeFULL.root`
+12. `double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppMult.neutral.mergeFULL.root`
+13. `double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.neutral.mergeFULL.root`
 
 # File 1
 
@@ -300,6 +302,59 @@
 - Offset cut < 1.0
 - kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 - **SPFO Kaon number**
+
+### Notes
+- TPC hits -> changed from base
+- Added pfo_LeadK_qcos_kaon, proton, ...
+- Full Stats
+
+# File 12
+
+## Cut MC
+
+### ISR suppression
+- QQ cos sep > 0.95
+- 120 < QQ mom < 127
+
+## Cut PFO
+
+### General PFO
+- PFO match (It should fall into either jet0 or jet1)
+- **removed # PFO track cut** (will include neutrals)
+
+### Lead PFO (double tag)
+- Both PFO should have momentum window **20 < Lead PFO mom < 60**
+- Lead PFO charge +- or -+
+- \# TPC hits **210 < Lead PFO hits**
+- Offset cut < 1.0
+- kdEdx_dist < (pdEdx_dist & pidEdx_dist)
+- **SPFO Kaon number**
+
+### Notes
+- TPC hits -> changed from base
+- Added pfo_LeadK_qcos_kaon, proton, ...
+- Full Stats
+
+# File 13
+
+## Cut MC
+
+### ISR suppression
+- QQ cos sep > 0.95
+- 120 < QQ mom < 127
+
+## Cut PFO
+
+### General PFO
+- PFO match (It should fall into either jet0 or jet1)
+- **removed # PFO track cut** (will include neutrals)
+
+### Lead PFO (double tag)
+- Both PFO should have momentum window **20 < Lead PFO mom < 60**
+- Lead PFO charge +- or -+
+- \# TPC hits **210 < Lead PFO hits**
+- Offset cut < 1.0
+- kdEdx_dist < (pdEdx_dist & pidEdx_dist)
 
 ### Notes
 - TPC hits -> changed from base

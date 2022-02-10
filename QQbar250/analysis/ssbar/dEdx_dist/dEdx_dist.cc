@@ -180,6 +180,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   h1_pfo.push_back( h_pfo_neu_E );
   h1_pfo.push_back( h_pfo_neu_p );
 
+  h1_pfo.push_back( h_pfo_neu_E_wrong );
+  h1_pfo.push_back( h_pfo_neu_p_wrong );
+
+  h1_pfo.push_back( h_pfo_neu_E_correct );
+  h1_pfo.push_back( h_pfo_neu_p_correct );
+
 	h1_pfo.push_back( h_pfo_kdEdx_dist_kaon );
 	h1_pfo.push_back( h_pfo_kdEdx_dist_proton );
 	h1_pfo.push_back( h_pfo_kdEdx_dist_pion );
@@ -473,7 +479,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
-			if(pfo_ntracks[ipfo]!=1) continue;
+			// if(pfo_ntracks[ipfo]!=1) continue;
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
@@ -485,8 +491,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				NeuPFO.pdg_cheat = pfo_pdgcheat[ipfo];
 				NeuPFO.E 		 		 = pfo_E[ipfo];
 				NeuPFO.mom 		 	 = mom;
+
+				NeuPFOs.push_back(NeuPFO);
 			}
-			NeuPFOs.push_back(NeuPFO);
 
 
 			// Jet Analysis
@@ -724,9 +731,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			// NEUTRAL PFO ANALYSIS
 			for (int i = 0; i < NeuPFOs.size(); ++i)
 			{
+				if(NeuPFOs.size()==19) cout << NeuPFOs.at(i).pdg_cheat << ", " << NeuPFOs.at(i).E << ", " << NeuPFOs.at(i).mom << endl;
 				h_pfo_neu_E->Fill( NeuPFOs.at(i).E   );
 				h_pfo_neu_p->Fill( NeuPFOs.at(i).mom );
 			}
+			cout << "Selected Neu count: " << NeuPFOs.size() << endl;
 
 
 
