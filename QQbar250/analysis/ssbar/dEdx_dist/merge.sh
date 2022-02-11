@@ -8,7 +8,9 @@ if [[ ! -d "$indir" || ! -d "$outdir" ]]; then
 	exit 1
 else
 	echo ${indir}
-	hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.mergeFULL.root ${indir}/*.root
+	# hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.mergeFULL.root ${indir}/*.root
 	# hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.mergeFULL.root ${indir}/*.root
+	# hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.neutral.mergeFULL.root ${indir}/*.root
+	hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.neutral.mergeFULL.root ${indir}/*.root
 fi
 
