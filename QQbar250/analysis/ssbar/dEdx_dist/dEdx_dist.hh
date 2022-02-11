@@ -374,68 +374,40 @@ private:
 
    TString process="default";
 
-   struct PFOParam {
-      int   pdg_cheat;
-      float E;
-      float mom;
-      float chg;
-      float cos;
-      float qcos;
-      float pv;
-      float tpc_hits;
-      float q_sep;
-      float qbar_sep;
-      float dEdx;
-      float kdEdx_dist;
-      float pdEdx_dist;
-      float pidEdx_dist;
+   struct _PFOParam {
+      int   _pdg_cheat;
+      float _E;
+      float _mom;
+      float _chg;
+      float _cos;
+      float _qcos;
+      float _pv;
+      float _tpc_hits;
+      float _q_sep;
+      float _qbar_sep;
+      float _dEdx;
+      float _kdEdx_dist;
+      float _pdEdx_dist;
+      float _pidEdx_dist;
    };
 
-   struct JetParam {
-      vector<int>   id;
-      vector<int>   chg;
-      vector<float> mom;
-      vector<float> kdEdx_dist;
-      vector<float> pdEdx_dist;
-      vector<float> pidEdx_dist;
+   struct _JetParam {
+      vector<int>   _id;
+      vector<int>   _chg;
+      vector<float> _mom;
+      vector<float> _kdEdx_dist;
+      vector<float> _pdEdx_dist;
+      vector<float> _pidEdx_dist;
    };
-
-   int nevents_all = 0;
-   int nevents = 0;
-   int nevents_after_GENselec = 0;
-   int nevents_after_PFOselec = 0;
-
-   int n_chg_check = 0;
-   int n_chg_mom_check = 0;
-   int n_chg_mom_nhits_check = 0;
-   int n_chg_mom_nhits_offset_check = 0;
-   int n_chg_mom_nhits_offset_DistMin_check = 0;
-   int n_chg_mom_nhits_offset_DistMin_OppKMult_check = 0;
-
-   // extra
-   int n_chg_mom_nhits_offset_DistMin_DistWin_check = 0;
-
-   int n_cos_nonconsis=0;
-   // int n_gen_kaon     = 0;
-   int nevents_kaon_match = 0;
-
-   int n_kk   = 0;
-   int n_kpkm = 0;
-   int n_kpkp = 0;
-   int n_kmkm = 0;
-
-   int nLeadK_pass  = 0;
-   int nLeadK_match = 0;
-
 
    // Store Histograms
-   std::vector<TH1I*> h0_counter;
+   std::vector<TH1I*> _h0_counter;
 
-   std::vector<TH1F*> h1_mc_stable;
-   std::vector<TH1F*> h1_pfo;
+   std::vector<TH1F*> _h1_mc_stable;
+   std::vector<TH1F*> _h1_pfo;
 
-   std::vector<TH2F*> h2_mc_stable;
-   std::vector<TH2F*> h2_pfo;
+   std::vector<TH2F*> _h2_mc_stable;
+   std::vector<TH2F*> _h2_pfo;
 
 };
 
