@@ -149,6 +149,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		cnt_nevents->Fill(0);
 
 		////////////////////////////////
+		//////   MC QQ ANALYSIS   //////
+		////////////////////////////////
+
+		std::vector<VecOP> qqVecs;
+
+		for(int iqq=0; iqq < 2; iqq++){
+
+			VecOP qqVec(mc_quark_px[iqq],mc_quark_py[iqq],mc_quark_pz[iqq]);
+			qqVecs.push_back(qqVec);
+
+		}
+
+		////////////////////////////////
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
@@ -407,7 +420,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			for (int i = 0; i < 2; ++i)
 			{
 
-				h_pfo_LeadK_qcos->Fill(LPFO[i]._qcos);
+				// h_pfo_LeadK_qcos->Fill(LPFO[i]._qcos);
 
 			} // Loop Lead PFO
 
