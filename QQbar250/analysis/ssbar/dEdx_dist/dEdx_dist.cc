@@ -71,10 +71,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
+	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_LPFOsep  = new TH1F(name_pfo+"LPFOsep", ";LPFO sep;", 30, 0, M_PI);
 
 
   // push_back hists
-  // h1_pfo.push_back( h_pfo_pv_kaon );
+  _h1_pfo.push_back( h_pfo_visibleE );
+  _h1_pfo.push_back( h_pfo_LPFOsep );
 
 
 
@@ -165,6 +168,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
+		// ISR
+		float visibleE = -1;
+
 		// Compare qqbar
 		int qq_match = -1;
 		int qq_match_count[2] = {0};
@@ -181,29 +187,31 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		vector<_PFOParam> NeuPFOs;
 		_JetParam SPFOs[2];
 
+		bool gagag=false;
+
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
+			// Add visible energy
+			visibleE += pfo_E[ipfo];
+
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
-			// if(pfo_ntracks[ipfo]!=1) continue;
+			if(pfo_ntracks[ipfo]!=1) continue;
+
+	    // DEDX DISTANCE MINIMUM
+	    bool k_dist_min_check  = false;
+	    bool p_dist_min_check  = false;
+	    bool pi_dist_min_check = false;
+	    if( abs(pfo_piddedx_k_dedxdist[ipfo]) < abs(pfo_piddedx_p_dedxdist[ipfo])  ) p_dist_min_check  = true;
+	    if( abs(pfo_piddedx_k_dedxdist[ipfo]) < abs(pfo_piddedx_pi_dedxdist[ipfo]) ) pi_dist_min_check = true;
+	    if( p_dist_min_check && pi_dist_min_check ) k_dist_min_check = true;
+
+	    if(!k_dist_min_check) continue;
+
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
 
-
-			// Neutral PFO
-			_PFOParam NeuPFO = {0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0};
-			if(pfo_charge[ipfo]==0){
-				NeuPFO._pdg_cheat = pfo_pdgcheat[ipfo];
-				NeuPFO._E 		 		 = pfo_E[ipfo];
-				NeuPFO._mom 		 	 = mom;
-
-				NeuPFOs.push_back(NeuPFO);
-			}
-
-
 			// Jet Analysis
-
-			if(abs(pfo_pdgcheat[ipfo])==321) n_reco_kaon_all++;
 			
 			for (int imatch = 0; imatch < 2; ++imatch)
 			{
@@ -217,7 +225,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					SPFOs[imatch]._pdEdx_dist.push_back(pfo_piddedx_p_dedxdist[ipfo]);
 					SPFOs[imatch]._pidEdx_dist.push_back(pfo_piddedx_pi_dedxdist[ipfo]);
 
-
 					// ID leading particle
 					if(mom > maxP[imatch]){
 						maxP[imatch] = mom;
@@ -227,9 +234,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 				} // end jet imatch
 			} // end imatch
 
-
 		} // end of pfo
 
+		// LPFO not found
 		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
 		cnt_nevents->Fill(2);
 
@@ -238,14 +245,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		//////   Jet ANALYSIS   ///////
 		///////////////////////////////
 		
-		std::vector<VecOP> jetVecs;
 		_JetParam K_SPFOs[2];
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
-			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
-			jetVecs.push_back(jetVec);
-
 			std::vector<int>::iterator it;
 			it = std::search_n (SPFOs[ijet]._id.begin(), SPFOs[ijet]._id.end(), 1, lead_ipfo[ijet]);
 			int n = (it-SPFOs[ijet]._id.begin());
@@ -327,7 +330,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			}
 
-
 			// This compares pfo angle with MC angle -> giving which this pfo are from. 
 			// 0: PFO is from q
 			// 1: PFO is from qbar
@@ -337,9 +339,41 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			LeadPFOVecs.push_back(LeadPFOVec);
 
+		}
+
+
+		// LPFO MOM CHECK
+
+		bool MOM_CHK = false;
+		
+		if(LPFO[0]._mom > 10 && LPFO[1]._mom > 10){
+
+			MOM_CHK = true;
 
 		}
-		
+
+		// BACK-TO-BACK
+
+		float LPFO_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
+
+		h_pfo_LPFOsep->Fill(LPFO_sep);
+
+
+		// Visible Energy CHECK
+
+		h_pfo_visibleE->Fill(visibleE);
+
+		bool VIS_CHK = false;
+
+		if( (240 < visibleE) || (visibleE < 260) ){
+
+			VIS_CHK = true;
+
+		}
+
+		// cout << visibleE << endl;
+
+
 		// CHARGE CHECK
     bool chg_check = false;
 		bool kchg_configs[4] = {0};
@@ -350,6 +384,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     if(kchg_configs[0] || kchg_configs[1]) chg_check = true;
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*		
 		// MOMENTUM CHECK
 		bool mom_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT
 										&& maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
@@ -425,6 +472,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			} // Loop Lead PFO
 
 		}// check all
+*/
 
 
 	} // end of event loop
