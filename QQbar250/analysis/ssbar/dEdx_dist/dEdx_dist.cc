@@ -76,11 +76,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	TH1F* h_pfo_ISR_eff  = new TH1F(name_pfo+"ISR cheat", ";Cheat (0: non-ISR, 1: ISR);", 2, 0, 2);
 
+	TH1F* h_pfo_LeadK_qcos = new TH1F(name_pfo+"LeadKaons_cos",";cos#theta; Events",100,-1.0,1.0);
 
   // push_back hists
   _h1_pfo.push_back( h_pfo_visibleE );
   _h1_pfo.push_back( h_pfo_LPFOsep );
   _h1_pfo.push_back( h_pfo_ISR_eff );
+  _h1_pfo.push_back( h_pfo_LeadK_qcos );
 
 
 
@@ -169,7 +171,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// Cut qq with qq separation
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
-		float qqqcos[2]={-2};
+		float qqqcos[2]={-2,-2};
 
 		// ISR protection
 		bool cheat_isr = false;
@@ -182,10 +184,20 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		bool cheat_isr_E1  = false;
 		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) cheat_isr_E0  = true;
 		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) cheat_isr_E1  = true;
-		if( cheat_isr_E0 && cheat_isr_E1 ) cheat_isr_E = true;
+		if( cheat_isr_E0 || cheat_isr_E1 ) cheat_isr_E = true;
 
-		if( cheat_isr_sep && cheat_isr_E ) cheat_isr = true;
+		if( cheat_isr_sep || cheat_isr_E ) cheat_isr = true;
 
+		if(!cheat_isr){
+			for(int iqq=0; iqq < 2; iqq++){
+
+				float cos 	 			= qqVecs.at(iqq).GetCostheta();
+				float charge 			= mc_quark_charge[iqq];
+				qqqcos[iqq] 			= (charge < 0)? cos: -cos;
+				mc_qq_cos->Fill(qqqcos[iqq]);
+			
+			}
+		}
 
 		////////////////////////////////
 		///////   PFO ANALYSIS   ///////
@@ -230,6 +242,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	    if(!k_dist_min_check) continue;
 
+	    if(pfo_tpc_hits[ipfo]<210) continue;
+
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
@@ -261,7 +275,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// LPFO not found
 		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
-		cnt_nevents->Fill(2);
+		cnt_nevents->Fill(1);
 
 
 		///////////////////////////////
@@ -384,7 +398,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		bool ISR_LPFO_SEP_CHK = false;
 
-		if( 3.0 < LPFO_sep ){
+		if( 3.01 < LPFO_sep ){
 
 			ISR_LPFO_SEP_CHK = true;
 
@@ -396,7 +410,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		bool ISR_VIS_CHK = false;
 
-		if( 200 < visibleE ){
+		// if( 200 < visibleE ){
+		if( (240 < visibleE) || (visibleE < 260) ){
 
 			ISR_VIS_CHK = true;
 
@@ -421,9 +436,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		
 		}
 
+		cnt_nevents->Fill(2);
 
 
 
+		// LPFO SELCTION
 
 		// CHARGE CHECK
     bool chg_check = false;
@@ -436,12 +453,70 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
     if(kchg_configs[0] || kchg_configs[1]) chg_check = true;
 
 
+		// MOMENTUM CHECK
+		bool mom_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT
+										&& maxP[0]<MAXP_CUT && maxP[1]<MAXP_CUT ) ? true : false;
+
+
+    // OFFSET CHECK
+    bool offset_check = false;
+    if( LPFO[0]._pv<1.0 && LPFO[1]._pv<1.0 ) offset_check = true;
+
+
+    // OPP KAON MULTIPLICITY
+    bool OppKMult_check = false;
+    if(nOppK_SPFO[0]==0 && nOppK_SPFO[1]==0) OppKMult_check = true;
+
+
+    // CHECK ALL
+    bool check_all = false;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		if( chg_check && mom_check && offset_check && OppKMult_check ) check_all = true;
+
+		// Stats
+		if( chg_check ) {cnt_nevents->Fill(3);}
+		if( chg_check && mom_check ) {cnt_nevents->Fill(4);}
+		if( chg_check && mom_check && offset_check ) {cnt_nevents->Fill(5);}
+		if( chg_check && mom_check && offset_check && OppKMult_check ) {cnt_nevents->Fill(6);}
 
 
 
+		if (check_all)
+		{
+
+			// MIGRATION ANLYSIS
+
+			// count number of when the reco is WRONG (source of migration)
+			bool flag0=false;
+			bool flag1=false;
+			if( (LPFO[0]._q_sep<LPFO[0]._qbar_sep) && (LPFO[0]._chg>0) ) flag0=true;
+			if( (LPFO[0]._q_sep>LPFO[0]._qbar_sep) && (LPFO[0]._chg<0) ) flag0=true;
+			if( (LPFO[1]._q_sep<LPFO[1]._qbar_sep) && (LPFO[1]._chg>0) ) flag1=true;
+			if( (LPFO[1]._q_sep>LPFO[1]._qbar_sep) && (LPFO[1]._chg<0) ) flag1=true;
 
 
+			// MIGRATED EVENTS
 
+			if(flag0||flag1){
+
+				cnt_nevents->Fill(7);
+
+			}else{
+
+
+			}
+
+
+			// ANALYZE RECO KAON ID EVENTS
+
+			for (int i = 0; i < 2; ++i)
+			{
+
+				h_pfo_LeadK_qcos->Fill(LPFO[i]._qcos);
+
+			} // Loop Lead PFO
+
+		}// check all
 
 
 
