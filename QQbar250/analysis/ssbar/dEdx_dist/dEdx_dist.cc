@@ -365,44 +365,45 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		}
 
 
+		// ISR REMOVAL
+
 		// LPFO MOM CHECK
 
-		bool MOM_CHK = false;
+		bool ISR_MOM_CHK = false;
 		
 		if(LPFO[0]._mom > 10 && LPFO[1]._mom > 10){
 
-			MOM_CHK = true;
+			ISR_MOM_CHK = true;
 
 		}
 
 		// BACK-TO-BACK
 
 		float LPFO_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
-		h_pfo_LPFOsep->Fill(LPFO_sep);
+		if(ISR_MOM_CHK) h_pfo_LPFOsep->Fill(LPFO_sep);
 
-		bool LPFO_SEP_CHK = false;
+		bool ISR_LPFO_SEP_CHK = false;
 
 		if( 3.0 < LPFO_sep ){
 
-			LPFO_SEP_CHK = true;
+			ISR_LPFO_SEP_CHK = true;
 
 		}
-
 
 		// Visible Energy CHECK
 
-		h_pfo_visibleE->Fill(visibleE);
+		if(ISR_MOM_CHK) h_pfo_visibleE->Fill(visibleE);
 
-		bool VIS_CHK = false;
+		bool ISR_VIS_CHK = false;
 
 		if( 200 < visibleE ){
 
-			VIS_CHK = true;
+			ISR_VIS_CHK = true;
 
 		}
 
 
-		if( MOM_CHK && LPFO_SEP_CHK && VIS_CHK ){
+		if( ISR_MOM_CHK && ISR_LPFO_SEP_CHK && ISR_VIS_CHK ){
 
 			if(cheat_isr){
 
@@ -414,11 +415,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			}
 
+		}else{
+
+			continue;
+		
 		}
 
 
 
-		// cout << visibleE << endl;
 
 
 		// CHARGE CHECK
