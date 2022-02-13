@@ -74,10 +74,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 300, 0, 300);
 	TH1F* h_pfo_LPFOsep  = new TH1F(name_pfo+"LPFOsep", ";LPFO sep;", 30, 0, M_PI);
 
+	TH1F* h_pfo_ISR_eff  = new TH1F(name_pfo+"ISR cheat", ";Cheat (0: non-ISR, 1: ISR);", 2, 0, 2);
+
 
   // push_back hists
   _h1_pfo.push_back( h_pfo_visibleE );
   _h1_pfo.push_back( h_pfo_LPFOsep );
+  _h1_pfo.push_back( h_pfo_ISR_eff );
 
 
 
@@ -163,6 +166,26 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			qqVecs.push_back(qqVec);
 
 		}
+
+		// Cut qq with qq separation
+		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
+		float qqqcos[2]={-2};
+
+		// ISR protection
+		bool cheat_isr = false;
+
+		bool cheat_isr_sep = false;
+		if(abs(cos(qqsep)) < 0.95) cheat_isr_sep = true;
+
+		bool cheat_isr_E   = false;
+		bool cheat_isr_E0  = false;
+		bool cheat_isr_E1  = false;
+		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) cheat_isr_E0  = true;
+		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) cheat_isr_E1  = true;
+		if( cheat_isr_E0 && cheat_isr_E1 ) cheat_isr_E = true;
+
+		if( cheat_isr_sep && cheat_isr_E ) cheat_isr = true;
+
 
 		////////////////////////////////
 		///////   PFO ANALYSIS   ///////
@@ -355,8 +378,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// BACK-TO-BACK
 
 		float LPFO_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
-
 		h_pfo_LPFOsep->Fill(LPFO_sep);
+
+		bool LPFO_SEP_CHK = false;
+
+		if( 3.0 < LPFO_sep ){
+
+			LPFO_SEP_CHK = true;
+
+		}
 
 
 		// Visible Energy CHECK
@@ -365,11 +395,28 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		bool VIS_CHK = false;
 
-		if( (240 < visibleE) || (visibleE < 260) ){
+		if( 200 < visibleE ){
 
 			VIS_CHK = true;
 
 		}
+
+
+		if( MOM_CHK && LPFO_SEP_CHK && VIS_CHK ){
+
+			if(cheat_isr){
+
+				h_pfo_ISR_eff->Fill(1);
+			
+			}else{
+
+				h_pfo_ISR_eff->Fill(0);
+
+			}
+
+		}
+
+
 
 		// cout << visibleE << endl;
 
