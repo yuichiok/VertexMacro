@@ -398,7 +398,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		bool ISR_LPFO_SEP_CHK = false;
 
-		if( 3.01 < LPFO_sep ){
+		if( 3.0 < LPFO_sep ){
 
 			ISR_LPFO_SEP_CHK = true;
 
