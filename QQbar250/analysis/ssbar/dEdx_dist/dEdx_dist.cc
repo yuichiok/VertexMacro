@@ -687,13 +687,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// BACK-TO-BACK
 
 		float LPFO_sep = abs(cos(VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3())));
+		float jet_sep = abs(cos(VecOP::getAngleBtw(jetVecs.at(0).GetMomentum3(),jetVecs.at(1).GetMomentum3())));
 
-		bool NO_ISR_LPFO_SEP_CHK = false;
+		// bool NO_ISR_LPFO_SEP_CHK = false;
+		bool NO_ISR_Jet_SEP_CHK = false;
 
 		// if( 2.5 < LPFO_sep ){
-		if( 0.95 < LPFO_sep ){
+		// if( 0.95 < LPFO_sep ){
+		if( 0.95 < jet_sep ){
 
-			NO_ISR_LPFO_SEP_CHK = true;
+			// NO_ISR_LPFO_SEP_CHK = true;
+			NO_ISR_Jet_SEP_CHK = true;
 
 		}
 
@@ -711,7 +715,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// if( _is_isr ) cnt_ISRevents->Fill(1)
 		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,1);
 		
-		if( !NO_ISR_LPFO_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
+		// if( !NO_ISR_LPFO_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
+		if( !NO_ISR_Jet_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
 		
 		// cnt_nevents->Fill(2);
 		// if( _is_isr ) cnt_ISRevents->Fill(2)
