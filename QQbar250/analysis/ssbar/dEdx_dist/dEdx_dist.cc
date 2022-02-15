@@ -440,6 +440,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// ISR protection
 		// bool is_isr = false;
+		_is_isr = false;
 		bool is_isr_sep = false;
 
 		if(abs(cos(qqsep)) < 0.95) is_isr_sep = true;
