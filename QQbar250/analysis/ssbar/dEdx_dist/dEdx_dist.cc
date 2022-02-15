@@ -433,32 +433,49 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// Cut qq with qq separation
 		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
-		float qqqcos[2]={-2};
+		float qqqcos[2]={-2,-2};
 
 
 		// ISR protection
-		if(abs(cos(qqsep)) < 0.95) continue;
+		bool is_isr = false;
+		bool is_isr_sep = false;
 
-		if( qqVecs.at(0).GetMomentum() < 120 || qqVecs.at(0).GetMomentum() > 127 ) continue;
-		if( qqVecs.at(1).GetMomentum() < 120 || qqVecs.at(1).GetMomentum() > 127 ) continue;
+		if(abs(cos(qqsep)) < 0.95) is_isr_sep = true;
+
+		bool is_isr_E   = false;
+		bool is_isr_E0  = false;
+		bool is_isr_E1  = false;
+		if( (qqVecs.at(0).GetMomentum() < 120) || (127 < qqVecs.at(0).GetMomentum()) ) is_isr_E0  = true;
+		if( (qqVecs.at(1).GetMomentum() < 120) || (127 < qqVecs.at(1).GetMomentum()) ) is_isr_E1  = true;
+		if( is_isr_E0 || is_isr_E1 ) is_isr_E = true;
+
+		if( is_isr_sep || is_isr_E ) is_isr = true;
+
 
 		nevents_after_GENselec++;
-		cnt_nevents->Fill(1);
+		// cnt_nevents->Fill(1);
 
-		for(int iqq=0; iqq < 2; iqq++){
-
-			float cos 	 			= qqVecs.at(iqq).GetCostheta();
-			float charge 			= mc_quark_charge[iqq];
-			qqqcos[iqq] 			= (charge < 0)? cos: -cos;
-
-			mc_qq_cos->Fill(qqqcos[iqq]);
-
+		if(!is_isr){
+				
+				for(int iqq=0; iqq < 2; iqq++){
+		
+					float cos 	 			= qqVecs.at(iqq).GetCostheta();
+					float charge 			= mc_quark_charge[iqq];
+					qqqcos[iqq] 			= (charge < 0)? cos: -cos;
+		
+					mc_qq_cos->Fill(qqqcos[iqq]);
+		
+				}
+				
 		}
 
 
 		////////////////////////////////
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
+
+		// ISR
+		float visibleE = -1;
 
 		// Compare qqbar
 		int qq_match = -1;
@@ -478,8 +495,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
+			// Add visible energy
+			visibleE += pfo_E[ipfo];
+
 			if(pfo_match[ipfo]<0 || pfo_match[ipfo]==2) continue;
-			// if(pfo_ntracks[ipfo]!=1) continue;
+			if(pfo_ntracks[ipfo]!=1) continue;
 
 			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 			float mom    = pfoVec.GetMomentum();
@@ -542,7 +562,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		if(lead_ipfo[0]==-1 || lead_ipfo[1]==-1) continue;
 		nevents_after_PFOselec++;
-		cnt_nevents->Fill(2);
+		// cnt_nevents->Fill(2);
 
 
 		///////////////////////////////
@@ -638,7 +658,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			}
 
-
 			// This compares pfo angle with MC angle -> giving which this pfo are from. 
 			// 0: PFO is from q
 			// 1: PFO is from qbar
@@ -648,11 +667,47 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			LeadPFOVecs.push_back(LeadPFOVec);
 
+		}
+
+
+		///////////////////////////////////////
+		//////       ISR ANALYSIS       ///////
+		///////////////////////////////////////
+
+		// BACK-TO-BACK
+
+		float LPFO_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
+
+		bool NO_ISR_LPFO_SEP_CHK = false;
+
+		if( 2.5 < LPFO_sep ){
+
+			NO_ISR_LPFO_SEP_CHK = true;
 
 		}
 
+		// Visible Energy CHECK
+
+		bool NO_ISR_VIS_CHK = false;
+
+		if( 220 < visibleE ){
+
+			NO_ISR_VIS_CHK = true;
+
+		}
+
+		cnt_nevents->Fill(1);
+		if( !NO_ISR_LPFO_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
+		cnt_nevents->Fill(2);
+
+
+		///////////////////////////////////////
+		///////        SELECTION        ///////
+		///////////////////////////////////////
+
+
 		// LEAD PFO SEPARATION
-		float lead_abs_cos_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
+		float lead_abs_cos_sep = LPFO_sep;
 		float lead_abs_pdiff   = abs(LPFO[0].mom-LPFO[1].mom);
 		
 		// CHARGE CHECK
@@ -702,8 +757,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
     bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
-		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
 		// if( 1 ) check_all = true;
 
 		// Stats
@@ -731,12 +786,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			// NEUTRAL PFO ANALYSIS
 			for (int i = 0; i < NeuPFOs.size(); ++i)
 			{
-				if(NeuPFOs.size()==19) cout << NeuPFOs.at(i).pdg_cheat << ", " << NeuPFOs.at(i).E << ", " << NeuPFOs.at(i).mom << endl;
 				h_pfo_neu_E->Fill( NeuPFOs.at(i).E   );
 				h_pfo_neu_p->Fill( NeuPFOs.at(i).mom );
 			}
-			cout << "Selected Neu count: " << NeuPFOs.size() << endl;
-
 
 
 			// MIGRATION ANLYSIS
