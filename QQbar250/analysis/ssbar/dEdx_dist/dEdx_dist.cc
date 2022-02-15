@@ -52,9 +52,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 	// Number Counting
-	TH1I* cnt_nevents = new TH1I("h_cnt_nevents",";nevents;Entries",10,0,10);
+	TH1I* cnt_nevents   = new TH1I("h_cnt_nevents",";nevents;Entries",10,0,10);
+	TH1I* cnt_ISRevents = new TH1I("h_cnt_ISRevents",";isr events;Entries",10,0,10);
 
 	h0_counter.push_back(cnt_nevents);
+	h0_counter.push_back(cnt_ISRevents);
 
 	// MC Histograms
 
@@ -415,7 +417,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 		nevents++;
-		cnt_nevents->Fill(0);
+		// cnt_nevents->Fill(0);
 
 
 		////////////////////////////////
@@ -437,25 +439,32 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
 		// ISR protection
-		bool is_isr = false;
+		// bool is_isr = false;
 		bool is_isr_sep = false;
 
 		if(abs(cos(qqsep)) < 0.95) is_isr_sep = true;
 
 		bool is_isr_E   = false;
-		bool is_isr_E0  = false;
-		bool is_isr_E1  = false;
-		if( (qqVecs.at(0).GetMomentum() < 120) || (127 < qqVecs.at(0).GetMomentum()) ) is_isr_E0  = true;
-		if( (qqVecs.at(1).GetMomentum() < 120) || (127 < qqVecs.at(1).GetMomentum()) ) is_isr_E1  = true;
-		if( is_isr_E0 || is_isr_E1 ) is_isr_E = true;
+		float genTotE   = qqVecs.at(0).GetMomentum() + qqVecs.at(1).GetMomentum();
+		if( genTotE < 220 ) is_isr_E = true;
 
-		if( is_isr_sep || is_isr_E ) is_isr = true;
+		// bool is_isr_E0  = false;
+		// bool is_isr_E1  = false;
+		// if( (qqVecs.at(0).GetMomentum() < 120) || (127 < qqVecs.at(0).GetMomentum()) ) is_isr_E0  = true;
+		// if( (qqVecs.at(1).GetMomentum() < 120) || (127 < qqVecs.at(1).GetMomentum()) ) is_isr_E1  = true;
+		// if( is_isr_E0 || is_isr_E1 ) is_isr_E = true;
+
+		if( is_isr_sep || is_isr_E ) _is_isr = true;
 
 
 		nevents_after_GENselec++;
+		// if( _is_isr ) cnt_ISRevents->Fill(0);
+		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,0);
+
+
 		// cnt_nevents->Fill(1);
 
-		if(!is_isr){
+		if(!_is_isr){
 				
 				for(int iqq=0; iqq < 2; iqq++){
 		
@@ -676,11 +685,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// BACK-TO-BACK
 
-		float LPFO_sep = VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3());
+		float LPFO_sep = abs(cos(VecOP::getAngleBtw(LeadPFOVecs.at(0).GetMomentum3(),LeadPFOVecs.at(1).GetMomentum3())));
 
 		bool NO_ISR_LPFO_SEP_CHK = false;
 
-		if( 2.5 < LPFO_sep ){
+		// if( 2.5 < LPFO_sep ){
+		if( 0.95 < LPFO_sep ){
 
 			NO_ISR_LPFO_SEP_CHK = true;
 
@@ -696,9 +706,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		}
 
-		cnt_nevents->Fill(1);
+		// cnt_nevents->Fill(1);
+		// if( _is_isr ) cnt_ISRevents->Fill(1)
+		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,1);
+		
 		if( !NO_ISR_LPFO_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
-		cnt_nevents->Fill(2);
+		
+		// cnt_nevents->Fill(2);
+		// if( _is_isr ) cnt_ISRevents->Fill(2)
+		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,2);
 
 
 		///////////////////////////////////////
@@ -762,12 +778,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// if( 1 ) check_all = true;
 
 		// Stats
-		if( chg_check ) {n_chg_check++; cnt_nevents->Fill(3);}
-		if( chg_check && mom_check ) {n_chg_mom_check++;cnt_nevents->Fill(4);}
-		if( chg_check && mom_check && nhits_check ) {n_chg_mom_nhits_check++;cnt_nevents->Fill(5);}
-		if( chg_check && mom_check && nhits_check && offset_check ) {n_chg_mom_nhits_offset_check++;cnt_nevents->Fill(6);}
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) {n_chg_mom_nhits_offset_DistMin_check++;cnt_nevents->Fill(7);}
-		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) {n_chg_mom_nhits_offset_DistMin_OppKMult_check++;cnt_nevents->Fill(8);}
+		if( chg_check ) {n_chg_check++;  Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,3);}
+		if( chg_check && mom_check ) {n_chg_mom_check++; Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,4);}
+		if( chg_check && mom_check && nhits_check ) {n_chg_mom_nhits_check++; Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,5);}
+		if( chg_check && mom_check && nhits_check && offset_check ) {n_chg_mom_nhits_offset_check++; Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,6);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) {n_chg_mom_nhits_offset_DistMin_check++; Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,7);}
+		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) {n_chg_mom_nhits_offset_DistMin_OppKMult_check++; Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,8);}
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) {n_chg_mom_nhits_offset_DistMin_DistWin_check++;}
 
 
@@ -1219,7 +1235,14 @@ void dEdx_dist::printResults(){
 	// std::cout << "Kaon purity: " << (float)nLeadK_match / (float)nLeadK_pass << "\n";
 	// std::cout << "n_kk: " << n_kk << " n_kpkm: " << n_kpkm << " n_kpkp:" << n_kpkp << " n_kmkm:" << n_kmkm << "\n";
 
- }
+}
+
+void dEdx_dist::Fill_CNT_Hist(TH1I* heve = 0, TH1I* hisr = 0, int bin = -1){
+
+	heve->Fill(bin);
+	if(_is_isr) hisr->Fill(bin);
+
+}
 
 
 

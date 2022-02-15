@@ -348,6 +348,7 @@ public :
    virtual ~dEdx_dist();
 
    virtual void     printResults();
+   virtual void     Fill_CNT_Hist(TH1I* heve, TH1I* hisr, int bin);
    virtual void     printProgress(double percentage);
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -399,6 +400,8 @@ private:
       vector<float> pdEdx_dist;
       vector<float> pidEdx_dist;
    };
+
+   bool _is_isr = false;
 
    int nevents_all = 0;
    int nevents = 0;
