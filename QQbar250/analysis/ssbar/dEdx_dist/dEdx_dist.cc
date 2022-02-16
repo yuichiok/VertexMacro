@@ -61,13 +61,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	// MC Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
+	TString name_mc 			 = "h_mc_";
 
 	// TH1F
-	TH1F* mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
-	TH1F* mc_qq_cos  = new TH1F("h_mc_quark_cos",";cos#theta; Entries",100,-1.0,1.0);
+	TH1F* h_mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
+	TH1F* h_mc_qq_cos  = new TH1F(name_mc+"quark_cos",";cos#theta; Entries",100,-1.0,1.0);
 
-	h1_mc_stable.push_back( mc_nk_evt );
-	h1_mc_stable.push_back( mc_qq_cos );
+	// ISR parameters
+	TH1F* h_mc_visibleE = new TH1F(name_mc+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
+	TH1F* h_mc_QQsep  	= new TH1F(name_mc+"QQsep", ";QQ sep |cos#theta|;", 100, 0, 1);
+
+
+	h1_mc_stable.push_back( h_mc_nk_evt );
+	h1_mc_stable.push_back( h_mc_qq_cos );
+
+	h1_mc_stable.push_back( h_mc_visibleE );
+	h1_mc_stable.push_back( h_mc_QQsep );
 
 	// TH2F
 
@@ -78,6 +87,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
+
+	// ISR parameters
+	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
+	TH1F* h_pfo_Jetsep   = new TH1F(name_pfo+"Jetsep", ";Jet sep |cos#theta|;", 100, 0, 1);
 
 	// vertex position
   TH1F * h_pfo_pv_kaon     = new TH1F(name_pfo+"pv_kaon", "pv_kaon", 40, 0, 4.0);
@@ -175,6 +188,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 
   // push_back hists
+  h1_pfo.push_back( h_pfo_visibleE );
+  h1_pfo.push_back( h_pfo_Jetsep );
+
   h1_pfo.push_back( h_pfo_pv_kaon );
   h1_pfo.push_back( h_pfo_pv_pion );
   h1_pfo.push_back( h_pfo_pv_proton );
@@ -434,7 +450,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		}
 
 		// Cut qq with qq separation
-		float qqsep = VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3());
+		float qqsep = abs(cos(VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3())));
 		float qqqcos[2]={-2,-2};
 
 
@@ -443,7 +459,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		_is_isr = false;
 		bool is_isr_sep = false;
 
-		if(abs(cos(qqsep)) < 0.95) is_isr_sep = true;
+		if( qqsep < 0.95) is_isr_sep = true;
 
 		bool is_isr_E   = false;
 		float genTotE   = qqVecs.at(0).GetMomentum() + qqVecs.at(1).GetMomentum();
@@ -461,6 +477,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		nevents_after_GENselec++;
 		// if( _is_isr ) cnt_ISRevents->Fill(0);
 		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,0);
+		h_mc_QQsep->Fill(qqsep);
+		h_mc_visibleE->Fill(genTotE);
+
 
 
 		// cnt_nevents->Fill(1);
@@ -473,7 +492,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					float charge 			= mc_quark_charge[iqq];
 					qqqcos[iqq] 			= (charge < 0)? cos: -cos;
 		
-					mc_qq_cos->Fill(qqqcos[iqq]);
+					h_mc_qq_cos->Fill(qqqcos[iqq]);
 		
 				}
 				
@@ -711,15 +730,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		}
 
-		// cnt_nevents->Fill(1);
-		// if( _is_isr ) cnt_ISRevents->Fill(1)
 		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,1);
+		h_pfo_Jetsep->Fill(jet_sep);
+		h_pfo_visibleE->Fill(visibleE);
+
 		
-		// if( !NO_ISR_LPFO_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
 		if( !NO_ISR_Jet_SEP_CHK || !NO_ISR_VIS_CHK ) continue;
 		
-		// cnt_nevents->Fill(2);
-		// if( _is_isr ) cnt_ISRevents->Fill(2)
 		Fill_CNT_Hist(cnt_nevents,cnt_ISRevents,2);
 
 
