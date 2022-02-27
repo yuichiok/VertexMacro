@@ -1,0 +1,9 @@
+bkup/
+plot/
+tmp/
+log/
+sublog/
+list/
+data/
+rootfiles/
+run_*.sh
