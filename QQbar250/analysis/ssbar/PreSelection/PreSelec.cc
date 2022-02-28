@@ -119,7 +119,7 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		////////////////////////////////
 
 		std::vector<VecOP> qqVecs;
-		float mc_InvM[2];
+		float mc_InvM[2] = {-1,-1};
 
 		for(int iqq=0; iqq < 2; iqq++){
 
@@ -128,21 +128,11 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 
 		}
 
-		VecOP qqAddVec(mc_quark_px[0]+mc_quark_px[1],mc_quark_py[0]+mc_quark_py[1],mc_quark_pz[0]+mc_quark_pz[1]);
+		VecOP qqAddVec = VecOP::AddVec(qqVecs.at(0),qqVecs.at(1));
 
 		float mc_qq_E = mc_quark_E[0]+mc_quark_E[1];
 		float mc_qq_InvM = GetInvMass(mc_qq_E,qqAddVec.GetMomentum3());
-
-		cout << mc_qq_InvM << endl;
-
-		// if (mc_qq_E<200)
-		// {
-		// 	for (int i = 0; i < 2; ++i)
-		// 	{
-		// 		cout << "E" << i << " = " << mc_quark_E[0] << ", p" << i << " = " << qqVecs.at(i).GetMomentum() << endl;
-		// 	}
-		// }
-
+		
 
 		////////////////////////////////
 		///////   PFO ANALYSIS   ///////
@@ -161,6 +151,7 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		///////////////////////////////
 		
 		std::vector<VecOP> jetVecs;
+		float jet_InvM[2] = {-1,-1};
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
