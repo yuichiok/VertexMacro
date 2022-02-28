@@ -24,22 +24,18 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	// MC Histograms
 
 	TString name_mc_stable = "h_mc_stable_";
-	TString name_mc 			 = "h_mc_";
+	TString name_mc 	   = "h_mc_";
 
 	// TH1F
-	TH1F* h_mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
-	TH1F* h_mc_qq_cos  = new TH1F(name_mc+"quark_cos",";cos#theta; Entries",100,-1.0,1.0);
+	TH1F* h_mc_qq_TotE = new TH1F(name_mc+"qq_TotE", ";MC QQ Energy (GeV);", 260, 0, 260);
+	TH1F* h_mc_qq_InvM = new TH1F(name_mc+"qq_InvM", ";MC Inv. Mass (GeV);", 260, 0, 260);
 
-	// ISR parameters
-	TH1F* h_mc_visibleE = new TH1F(name_mc+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
-	TH1F* h_mc_QQsep  	= new TH1F(name_mc+"QQsep", ";QQ sep |cos#theta|;", 100, 0, 1);
+	TH1F* h_mc_ISR_TotE = new TH1F(name_mc+"ISR_TotE", ";MC ISR Energy (GeV);", 260, 0, 260);
 
+	_h1_mc_stable.push_back( h_mc_qq_TotE );
+	_h1_mc_stable.push_back( h_mc_qq_InvM );
 
-	_h1_mc_stable.push_back( h_mc_nk_evt );
-	_h1_mc_stable.push_back( h_mc_qq_cos );
-
-	_h1_mc_stable.push_back( h_mc_visibleE );
-	_h1_mc_stable.push_back( h_mc_QQsep );
+	_h1_mc_stable.push_back( h_mc_ISR_TotE );
 
 	// TH2F
 
@@ -50,17 +46,21 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
+	TH1F* h_pfo_visE = new TH1F(name_pfo+"visE", ";Total Visible Energy (GeV);", 260, 0, 260);
 
-	// ISR parameters
-	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
-	TH1F* h_pfo_Jetsep   = new TH1F(name_pfo+"Jetsep", ";Jet sep |cos#theta|;", 100, 0, 1);
+	TH1F* h_pfo_jet_TotE = new TH1F(name_pfo+"jet_TotE", ";Di-jet Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_jet_InvM = new TH1F(name_pfo+"jet_InvM", ";Di-jet Inv. Mass (GeV);", 260, 0, 260);
 
-	// push_back hists
-	_h1_pfo.push_back( h_pfo_visibleE );
-	_h1_pfo.push_back( h_pfo_Jetsep );
+	_h1_pfo.push_back( h_pfo_visE );
+
+	_h1_pfo.push_back( h_pfo_jet_TotE );
+	_h1_pfo.push_back( h_pfo_jet_InvM );
 
 
 	// TH2F
+
+
+
 
 	std::stringstream stream_min;
 	std::stringstream stream_max;
@@ -130,20 +130,31 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 
 		VecOP qqAddVec = VecOP::AddVec(qqVecs.at(0),qqVecs.at(1));
 
-		float mc_qq_E = mc_quark_E[0]+mc_quark_E[1];
+		float mc_qq_E 	 = mc_quark_E[0] + mc_quark_E[1];
 		float mc_qq_InvM = GetInvMass(mc_qq_E,qqAddVec.GetMomentum3());
-		
+
+		h_mc_qq_TotE->Fill(mc_qq_E);
+		h_mc_qq_InvM->Fill(mc_qq_InvM);
+
 
 		////////////////////////////////
-		///////   PFO ANALYSIS   ///////
+		/////   MC ISR ANALYSIS   //////
 		////////////////////////////////
 
-		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
+		std::vector<VecOP> qqISRVecs;
+		float mc_ISR_InvM[2] = {-1,-1};
 
+		for(int isr=0; isr < 2; isr++){
 
+			VecOP qqISRVec(mc_ISR_px[isr],mc_ISR_py[isr],mc_ISR_pz[isr]);
+			qqISRVecs.push_back(qqISRVec);
 
-		} // end of pfo
+		}
 
+		VecOP qqISRAddVec = VecOP::AddVec(qqISRVecs.at(0),qqISRVecs.at(1));
+
+		float gamma_E 	  = mc_ISR_E[0] + mc_ISR_E[1];
+		h_mc_ISR_TotE->Fill(gamma_E);
 
 
 		///////////////////////////////
@@ -152,18 +163,62 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		
 		std::vector<VecOP> jetVecs;
 		float jet_InvM[2] = {-1,-1};
+		bool  jet_E_check = (jet_E[0]<0.5 || jet_E[1]<0.5) ? false : true;
 
 		for (int ijet = 0; ijet < 2; ++ijet){
-		
 
+			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
+			jetVecs.push_back(jetVec);
+
+			jet_InvM[ijet] = GetInvMass(jet_E[ijet],jetVec.GetMomentum3());
+		
 		} // end of jet
 
+		VecOP dijetVec   = VecOP::AddVec(jetVecs.at(0),jetVecs.at(1));
+
+		float dijet_E 	 = jet_E[0] + jet_E[1];
+		float dijet_InvM = GetInvMass(dijet_E,dijetVec.GetMomentum3());
+
+		if(jet_E_check){
+			h_pfo_jet_TotE->Fill(dijet_E);
+			h_pfo_jet_InvM->Fill(dijet_InvM);
+		}
+
+
+		////////////////////////////////
+		///////   PFO ANALYSIS   ///////
+		////////////////////////////////
+
+		float visE = 0;
+
+		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
+
+			// visE += pfo_E[ipfo];
+
+		    if(pfo_match[ipfo]<0) continue;
+		    if(pfo_E[ipfo]<1) continue;
+		    if(pfo_match[ipfo]>1) continue;
+
+			visE += pfo_E[ipfo];
+
+
+		} // end of pfo
+
+
+		h_pfo_visE->Fill(visE);
+
+
+
+		// if(150 < dijet_InvM && dijet_InvM < 230){
+		// 	cout << jet_E[0] << ", " << jet_E[1] << endl;
+		// 	// h_mc_ISR_TotE->Fill(gamma_E);
+		// }
 
 
 
 	} // end of event loop
 
-	printResults();
+	// printResults();
 
 	for(int h=0; h < _h0_counter.size(); h++) _h0_counter.at(h)->Write();
 
