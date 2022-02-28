@@ -14,7 +14,6 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 
 	float MAXP_CUT=60.0;
 
-
 	// Number Counting
 	TH1I* cnt_nevents   = new TH1I("h_cnt_nevents",";nevents;Entries",10,0,10);
 	TH1I* cnt_ISRevents = new TH1I("h_cnt_ISRevents",";isr events;Entries",10,0,10);
@@ -56,9 +55,9 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
 	TH1F* h_pfo_Jetsep   = new TH1F(name_pfo+"Jetsep", ";Jet sep |cos#theta|;", 100, 0, 1);
 
-  // push_back hists
-  _h1_pfo.push_back( h_pfo_visibleE );
-  _h1_pfo.push_back( h_pfo_Jetsep );
+	// push_back hists
+	_h1_pfo.push_back( h_pfo_visibleE );
+	_h1_pfo.push_back( h_pfo_Jetsep );
 
 
 	// TH2F
@@ -120,6 +119,7 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		////////////////////////////////
 
 		std::vector<VecOP> qqVecs;
+		float mc_InvM[2];
 
 		for(int iqq=0; iqq < 2; iqq++){
 
@@ -127,6 +127,21 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 			qqVecs.push_back(qqVec);
 
 		}
+
+		VecOP qqAddVec(mc_quark_px[0]+mc_quark_px[1],mc_quark_py[0]+mc_quark_py[1],mc_quark_pz[0]+mc_quark_pz[1]);
+
+		float mc_qq_E = mc_quark_E[0]+mc_quark_E[1];
+		float mc_qq_InvM = GetInvMass(mc_qq_E,qqAddVec.GetMomentum3());
+
+		cout << mc_qq_InvM << endl;
+
+		// if (mc_qq_E<200)
+		// {
+		// 	for (int i = 0; i < 2; ++i)
+		// 	{
+		// 		cout << "E" << i << " = " << mc_quark_E[0] << ", p" << i << " = " << qqVecs.at(i).GetMomentum() << endl;
+		// 	}
+		// }
 
 
 		////////////////////////////////
@@ -170,6 +185,19 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	LeadKDataFile.close();
 	TrueDataFile.close();
 
+
+}
+
+float PreSelec::GetInvMass(float E=0, vector<float> p3 = {}){
+
+	float p32 = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		p32 += p3.at(i)*p3.at(i);
+	}
+
+	float InvM = sqrt( E*E - p32 );
+	return InvM;
 
 }
 

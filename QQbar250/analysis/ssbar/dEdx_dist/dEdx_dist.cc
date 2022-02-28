@@ -462,7 +462,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		if( qqsep < 0.95) is_isr_sep = true;
 
 		bool is_isr_E   = false;
-		float genTotE   = qqVecs.at(0).GetMomentum() + qqVecs.at(1).GetMomentum();
+		// float genTotE   = qqVecs.at(0).GetMomentum() + qqVecs.at(1).GetMomentum();
+		float genTotE   = mc_quark_E[0] + mc_quark_E[1];
 		if( genTotE < 220 ) is_isr_E = true;
 
 		// bool is_isr_E0  = false;
