@@ -46,12 +46,28 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
-	TH1F* h_pfo_visE = new TH1F(name_pfo+"visE", ";Total Visible Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_visE     = new TH1F(name_pfo+"visE", ";Total Visible Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_visE_all = new TH1F(name_pfo+"visE_all", ";Total Visible Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_gammaE   = new TH1F(name_pfo+"gammaE", ";Total Visible Energy (GeV);", 260, 0, 260);
+
+	TH1F* h_pfo_jet_mult = new TH1F(name_pfo+"jet_mult", ";Jet Mult;", 60,0,60);
+	TH1F* h_pfo_jet_ISR_mult = new TH1F(name_pfo+"jet_ISR_mult", ";Jet ISR Mult;", 60,0,60);
+
+	TH1F* h_pfo_phjet_E   = new TH1F(name_pfo+"phjet_E", ";Photon Jet Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_phjet_ISR_E   = new TH1F(name_pfo+"phjet_ISR_E", ";Photon Jet ISR Energy (GeV);", 260, 0, 260);
 
 	TH1F* h_pfo_jet_TotE = new TH1F(name_pfo+"jet_TotE", ";Di-jet Energy (GeV);", 260, 0, 260);
 	TH1F* h_pfo_jet_InvM = new TH1F(name_pfo+"jet_InvM", ";Di-jet Inv. Mass (GeV);", 260, 0, 260);
 
 	_h1_pfo.push_back( h_pfo_visE );
+	_h1_pfo.push_back( h_pfo_visE_all );
+	_h1_pfo.push_back( h_pfo_gammaE );
+
+	_h1_pfo.push_back( h_pfo_jet_mult );
+	_h1_pfo.push_back( h_pfo_jet_ISR_mult );
+
+	_h1_pfo.push_back( h_pfo_phjet_E );
+	_h1_pfo.push_back( h_pfo_phjet_ISR_E );
 
 	_h1_pfo.push_back( h_pfo_jet_TotE );
 	_h1_pfo.push_back( h_pfo_jet_InvM );
@@ -189,30 +205,118 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		///////   PFO ANALYSIS   ///////
 		////////////////////////////////
 
-		float visE = 0;
+		float visE     = 0;
+		float visE_all = 0;
+		std::vector<VecOP> pfoVecs;
+		int jet_mult[2] = {0};
+		float phjet_E[2] = {0};
+
+		// Leading PFO variables
+		int   lead_ipfo[2]	= {-1,-1};
+		float maxP[2]		= {0};
 
 		for(int ipfo=0; ipfo<pfo_n; ipfo++) {
 
-			// visE += pfo_E[ipfo];
+			visE_all += pfo_E[ipfo];
+
+			VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
+			float mom    = pfoVec.GetMomentum();
 
 		    if(pfo_match[ipfo]<0) continue;
-		    if(pfo_E[ipfo]<1) continue;
+		    // if(pfo_E[ipfo]<1) continue;
 		    if(pfo_match[ipfo]>1) continue;
 
 			visE += pfo_E[ipfo];
 
+			// Jet Analysis
+
+			// jet multiplicity
+			jet_mult[pfo_match[ipfo]]++;
+
+
+			// photon jet
+			if( pfo_type[ipfo]==22  || fabs(pfo_type[ipfo])==2112 ) {
+
+				phjet_E[pfo_match[ipfo]] += pfo_E[ipfo];
+
+			}
+
+
+
+
+
+
+
 
 		} // end of pfo
 
-
 		h_pfo_visE->Fill(visE);
+		h_pfo_visE_all->Fill(visE_all);
+
+		for (int i = 0; i < 2; ++i)
+		{
+			h_pfo_jet_mult->Fill(jet_mult[i]);
+			h_pfo_phjet_E->Fill(phjet_E[i]);
+		}
 
 
 
-		// if(150 < dijet_InvM && dijet_InvM < 230){
-		// 	cout << jet_E[0] << ", " << jet_E[1] << endl;
-		// 	// h_mc_ISR_TotE->Fill(gamma_E);
+		// cout << phjet_E[0] << "," << phjet_E[1] << endl;
+
+		// for true isr bothered event
+		if(35 < gamma_E){
+		
+			for (int i = 0; i < 2; ++i)
+			{
+				h_pfo_jet_ISR_mult->Fill(jet_mult[i]);
+				h_pfo_phjet_ISR_E->Fill(phjet_E[i]);
+			}
+
+			h_pfo_gammaE->Fill(visE);
+
+		}
+
+		// printf("visE_all = %4.3f, visE = %4.3f\n", visE_all, visE);
+
+
+		////////////////////////////////
+		/////   FIND ISR PHOTONS   /////
+		////////////////////////////////
+
+		// for(int ipfo=0; ipfo<pfo_n; ipfo++) {
+
+
+		// 	VecOP pfoVec(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
+		// 	float mom    = pfoVec.GetMomentum();
+
+
+
+
+
+
 		// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
