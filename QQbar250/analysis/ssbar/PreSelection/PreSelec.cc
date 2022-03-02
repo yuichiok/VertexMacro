@@ -46,10 +46,10 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	TString name_pfo = "h_pfo_";
 
 	// TH1F
-	TH1F* h_pfo_visE     = new TH1F(name_pfo+"visE", ";Total Visible Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_visE_all = new TH1F(name_pfo+"visE_all", ";Total Visible Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_gammaE   = new TH1F(name_pfo+"gammaE", ";Total Visible Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_sigE   = new TH1F(name_pfo+"sigE", ";Total Signal Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_visE     = new TH1F(name_pfo+"visE", ";Total Visible Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_visE_all = new TH1F(name_pfo+"visE_all", ";Total Visible Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_gammaE   = new TH1F(name_pfo+"gammaE", ";Total Visible Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_sigE   = new TH1F(name_pfo+"sigE", ";Total Signal Energy (GeV);", 300, 0, 300);
 
 	TH1F* h_pfo_jet_mult = new TH1F(name_pfo+"jet_mult", ";Jet Mult;", 60,0,60);
 	TH1F* h_pfo_jet_ISR_mult = new TH1F(name_pfo+"jet_ISR_mult", ";Jet ISR Mult;", 60,0,60);
@@ -69,6 +69,7 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	_h1_pfo.push_back( h_pfo_visE );
 	_h1_pfo.push_back( h_pfo_visE_all );
 	_h1_pfo.push_back( h_pfo_gammaE );
+	_h1_pfo.push_back( h_pfo_sigE );
 
 	_h1_pfo.push_back( h_pfo_jet_mult );
 	_h1_pfo.push_back( h_pfo_jet_ISR_mult );
@@ -222,6 +223,10 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		float visE_all = 0;
 		std::vector<VecOP> pfoVecs;
 		VecOP LPFOVecs[2];
+		
+		VecOP PhJetVecs[2];
+		VecOP initVec(0,0,0);
+		for (int i = 0; i < 2; ++i) PhJetVecs[i] = initVec;
 
 		int jet_mult[2] = {0};
 		float phjet_E[2] = {0};
@@ -253,6 +258,7 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 			if( pfo_type[ipfo]==22  || fabs(pfo_type[ipfo])==2112 ) {
 
 				phjet_E[pfo_match[ipfo]] += pfo_E[ipfo];
+				PhJetVecs[pfo_match[ipfo]] = VecOP::AddVec(PhJetVecs[pfo_match[ipfo]],pfoVec);
 
 			}
 
@@ -274,10 +280,12 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		// LPFO parameters
 
 		float LPFO_cos[2] = {-1,-1};
+		float phjet_cos[2] = {-1,-1};
 
 		for (int i = 0; i < 2; ++i)
 		{
-			LPFO_cos[i] = abs(cos(LPFOVecs[i].CalculateAngles().at(1)));
+			LPFO_cos[i]  = abs(cos(LPFOVecs[i].CalculateAngles().at(1)));
+			phjet_cos[i] = abs(cos(PhJetVecs[i].CalculateAngles().at(1)));
 		}
 
 
@@ -290,7 +298,8 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 		{
 			h_pfo_jet_mult->Fill(jet_mult[i]);
 			h_pfo_phjet_E->Fill(phjet_E[i]);
-			h_pfo_phjet_cos->Fill(LPFO_cos[i]);
+			// h_pfo_phjet_cos->Fill(LPFO_cos[i]);
+			h_pfo_phjet_cos->Fill(phjet_cos[i]);
 		}
 
 		// for true isr bothered event
@@ -302,7 +311,8 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 			{
 				h_pfo_jet_ISR_mult->Fill(jet_mult[i]);
 				h_pfo_phjet_ISR_E->Fill(phjet_E[i]);
-				h_pfo_phjet_ISR_cos->Fill(LPFO_cos[i]);
+				// h_pfo_phjet_ISR_cos->Fill(LPFO_cos[i]);
+				h_pfo_phjet_ISR_cos->Fill(phjet_cos[i]);
 			}
 
 		}else{ // signal
@@ -313,7 +323,8 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 			{
 				h_pfo_jet_NonISR_mult->Fill(jet_mult[i]);
 				h_pfo_phjet_NonISR_E->Fill(phjet_E[i]);
-				h_pfo_phjet_NonISR_cos->Fill(LPFO_cos[i]);
+				// h_pfo_phjet_NonISR_cos->Fill(LPFO_cos[i]);
+				h_pfo_phjet_NonISR_cos->Fill(phjet_cos[i]);
 			}
 
 		}
