@@ -8,7 +8,7 @@ for i in *.root; do
 
   filenumber=$(echo $filename| cut -d'_' -f 9)
   suffix_removed_string=${filename/%${filenumber}}
-  filenumber=$(printf "%03d" "${filenumber}")
+  filenumber=$(printf "%03d" "$(( 10#${filenumber} ))")
 
   newfilename="${suffix_removed_string}${filenumber}.root"
 

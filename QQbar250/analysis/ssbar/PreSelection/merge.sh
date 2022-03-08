@@ -8,6 +8,6 @@ if [[ ! -d "$indir" || ! -d "$outdir" ]]; then
 	exit 1
 else
 	echo ${indir}
-	hadd -f ${outdir}/DQ_250GeV_ss.PreSelec.root ${indir}/*.root
+	hadd -f ${outdir}/DQ_250GeV_ss.PreSelec.NoIsoPh.root ${indir}/*.ss.tmp.root
 fi
 
