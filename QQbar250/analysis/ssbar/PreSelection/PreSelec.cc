@@ -55,16 +55,18 @@ void PreSelec::PreSelection(int n_entries=-1, float MINP_CUT=10.0, TString proce
 	TH1F* h_pfo_jet_ISR_mult = new TH1F(name_pfo+"jet_ISR_mult", ";Jet ISR Mult;", 60,0,60);
 	TH1F* h_pfo_jet_NonISR_mult = new TH1F(name_pfo+"jet_NonISR_mult", ";Jet NonISR Mult;", 60,0,60);
 
-	TH1F* h_pfo_phjet_E   = new TH1F(name_pfo+"phjet_E", ";Photon Jet Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_phjet_ISR_E   = new TH1F(name_pfo+"phjet_ISR_E", ";Photon Jet ISR Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_phjet_NonISR_E   = new TH1F(name_pfo+"phjet_NonISR_E", ";Photon Jet NonISR Energy (GeV);", 260, 0, 260);
+	TH1F* h_pfo_phjet_E   = new TH1F(name_pfo+"phjet_E", ";Photon Jet Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_phjet_ISR_E   = new TH1F(name_pfo+"phjet_ISR_E", ";Photon Jet ISR Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_phjet_NonISR_E   = new TH1F(name_pfo+"phjet_NonISR_E", ";Photon Jet NonISR Energy (GeV);", 300, 0, 300);
 
 	TH1F* h_pfo_phjet_cos   = new TH1F(name_pfo+"phjet_cos", ";Photon Jet |cos#theta|;", 50, 0, 1);
 	TH1F* h_pfo_phjet_ISR_cos   = new TH1F(name_pfo+"phjet_ISR_cos", ";Photon Jet ISR |cos#theta|;", 50, 0, 1);
 	TH1F* h_pfo_phjet_NonISR_cos   = new TH1F(name_pfo+"phjet_NonISR_cos", ";Photon Jet NonISR |cos#theta|;", 50, 0, 1);
 
-	TH1F* h_pfo_jet_TotE = new TH1F(name_pfo+"jet_TotE", ";Di-jet Energy (GeV);", 260, 0, 260);
-	TH1F* h_pfo_jet_InvM = new TH1F(name_pfo+"jet_InvM", ";Di-jet Inv. Mass (GeV);", 260, 0, 260);
+	TH1F* h_pfo_jet_TotE = new TH1F(name_pfo+"jet_TotE", ";Di-jet Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_jet_InvM = new TH1F(name_pfo+"jet_InvM", ";Di-jet Inv. Mass (GeV);", 300, 0, 300);
+
+	TH1F* h_pfo_Lead_sep = new TH1F(name_pfo+"Lead_sep", ";|cos#theta_{LPFOsep}|;", 50, 0, 1);
 
 	_h1_pfo.push_back( h_pfo_visE );
 	_h1_pfo.push_back( h_pfo_visE_all );
