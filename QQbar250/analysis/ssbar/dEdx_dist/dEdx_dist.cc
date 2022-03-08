@@ -98,6 +98,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* h_pfo_visibleE = new TH1F(name_pfo+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
 	TH1F* h_pfo_Jetsep   = new TH1F(name_pfo+"Jetsep", ";Jet sep |cos#theta|;", 100, 0, 1);
 
+	// jet info
+	TH1F* h_pfo_jet_TotE = new TH1F(name_pfo+"jet_TotE", ";Di-jet Energy (GeV);", 300, 0, 300);
+	TH1F* h_pfo_jet_InvM = new TH1F(name_pfo+"jet_InvM", ";Di-jet Inv. Mass (GeV);", 300, 0, 300);
+
 	// vertex position
   TH1F * h_pfo_pv_kaon     = new TH1F(name_pfo+"pv_kaon", "pv_kaon", 40, 0, 4.0);
   TH1F * h_pfo_pv_pion     = new TH1F(name_pfo+"pv_pion", "pv_pion", 40, 0, 4.0);
@@ -196,6 +200,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
   // push_back hists
   h1_pfo.push_back( h_pfo_visibleE );
   h1_pfo.push_back( h_pfo_Jetsep );
+
+	h1_pfo.push_back( h_pfo_jet_TotE );
+	h1_pfo.push_back( h_pfo_jet_InvM );
 
   h1_pfo.push_back( h_pfo_pv_kaon );
   h1_pfo.push_back( h_pfo_pv_pion );
@@ -615,12 +622,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		///////////////////////////////
 		
 		std::vector<VecOP> jetVecs;
+		float jet_InvM[2] = {-1,-1};
+		bool  jet_E_check = (jet_E[0]<0.5 || jet_E[1]<0.5) ? false : true;
 		JetParam K_SPFOs[2];
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
 			VecOP jetVec(jet_px[ijet],jet_py[ijet],jet_pz[ijet]);
 			jetVecs.push_back(jetVec);
+
+			// jet invariant mass calculation
+			jet_InvM[ijet] = GetInvMass(jet_E[ijet],jetVec.GetMomentum3());
 
 			std::vector<int>::iterator it;
 			it = std::search_n (SPFOs[ijet].id.begin(), SPFOs[ijet].id.end(), 1, lead_ipfo[ijet]);
@@ -654,8 +666,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 			}
 
-		}
+		} // end jet loop
 
+		VecOP dijetVec   = VecOP::AddVec(jetVecs.at(0),jetVecs.at(1));
+
+		float dijet_E 	 = jet_E[0] + jet_E[1];
+		float dijet_InvM = GetInvMass(dijet_E,dijetVec.GetMomentum3());
+
+		if(jet_E_check){
+			h_pfo_jet_TotE->Fill(dijet_E);
+			h_pfo_jet_InvM->Fill(dijet_InvM);
+		}
 
 
 		///////////////////////////////////////
