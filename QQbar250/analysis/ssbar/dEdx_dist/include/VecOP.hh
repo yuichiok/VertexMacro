@@ -29,6 +29,8 @@ public:
 	float GetPhi();
 	float GetSinacol(TVector3 v1, TVector3 v2);
 
+	static VecOP AddVec(VecOP vo1, VecOP vo2);
+
 private:
 	std::vector<float> p;
 

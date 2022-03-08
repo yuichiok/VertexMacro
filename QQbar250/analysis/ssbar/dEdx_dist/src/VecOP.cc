@@ -143,6 +143,24 @@ float VecOP::GetSinacol(TVector3 v1, TVector3 v2){
   return sinacol;
 }
 
+VecOP VecOP::AddVec(VecOP vo1, VecOP vo2){
+
+  std::vector<float> vop1 = vo1.GetMomentum3();
+  std::vector<float> vop2 = vo2.GetMomentum3();
+  std::vector<float> padd;
+
+  for (int i = 0; i < 3; ++i)
+  {
+    // padd.push_back( vop.at(i) + p.at(i) );
+    padd.push_back( vop1.at(i) + vop2.at(i) );
+  }
+
+  VecOP voadd(padd.at(0),padd.at(1),padd.at(2));
+
+  return voadd;
+
+}
+
 // float VecOP::getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
 //   TLorentzVector v1(px1,py1,pz1,E1);
