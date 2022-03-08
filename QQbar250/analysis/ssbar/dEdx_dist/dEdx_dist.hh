@@ -362,6 +362,8 @@ public :
 
    virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
+	 virtual float  GetInvMass(float E, vector<float> p);
+
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
       TLorentzVector v1(px1,py1,pz1,E1);

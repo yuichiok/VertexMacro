@@ -1249,6 +1249,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 }
 
+float dEdx_dist::GetInvMass(float E=0, vector<float> p3 = {}){
+
+	float p32 = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		p32 += p3.at(i)*p3.at(i);
+	}
+
+	float InvM = sqrt( E*E - p32 );
+	return InvM;
+
+}
+
 void dEdx_dist::printResults(){
 
 	cout << "========= Event Results =========" << "\n";
