@@ -67,6 +67,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 	TH1F* h_mc_nk_evt  = new TH1F(name_mc_stable+"nKaons_evt",";nKaons/Evt; Events",20,0,20);
 	TH1F* h_mc_qq_cos  = new TH1F(name_mc+"quark_cos",";cos#theta; Entries",100,-1.0,1.0);
 
+	TH1F* h_mc_qq_TotE = new TH1F(name_mc+"qq_TotE", ";MC QQ Energy (GeV);", 260, 0, 260);
+	TH1F* h_mc_qq_InvM = new TH1F(name_mc+"qq_InvM", ";MC Inv. Mass (GeV);", 260, 0, 260);
+
 	// ISR parameters
 	TH1F* h_mc_visibleE = new TH1F(name_mc+"visibleE", ";Visible Energy (GeV);", 100, 0, 300);
 	TH1F* h_mc_QQsep  	= new TH1F(name_mc+"QQsep", ";QQ sep |cos#theta|;", 100, 0, 1);
@@ -74,6 +77,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 	h1_mc_stable.push_back( h_mc_nk_evt );
 	h1_mc_stable.push_back( h_mc_qq_cos );
+
+	h1_mc_stable.push_back( h_mc_qq_TotE );
+	h1_mc_stable.push_back( h_mc_qq_InvM );
 
 	h1_mc_stable.push_back( h_mc_visibleE );
 	h1_mc_stable.push_back( h_mc_QQsep );
@@ -441,6 +447,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		////////////////////////////////
 
 		std::vector<VecOP> qqVecs;
+		float mc_InvM[2] = {-1,-1};
 
 		for(int iqq=0; iqq < 2; iqq++){
 
@@ -448,6 +455,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 			qqVecs.push_back(qqVec);
 
 		}
+
+		VecOP qqAddVec = VecOP::AddVec(qqVecs.at(0),qqVecs.at(1));
+
+		float mc_qq_E 	 = mc_quark_E[0] + mc_quark_E[1];
+		float mc_qq_InvM = GetInvMass(mc_qq_E,qqAddVec.GetMomentum3());
+
+		h_mc_qq_TotE->Fill(mc_qq_E);
+		h_mc_qq_InvM->Fill(mc_qq_InvM);
 
 		// Cut qq with qq separation
 		float qqsep = abs(cos(VecOP::getAngleBtw(qqVecs.at(0).GetMomentum3(),qqVecs.at(1).GetMomentum3())));
