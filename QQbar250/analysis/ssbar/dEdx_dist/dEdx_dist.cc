@@ -434,6 +434,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		// Comment on batch mode
 		// printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
+		if(PreSelection(2,35)==false) continue;
+		// PreSelection(3,35);
+
 		nevents_all++;
 
 		if(process=="uds" && (fabs(mc_quark_pdg[0])==4 || fabs(mc_quark_pdg[0])==5) ) continue; // ignore MC b/c quarks
