@@ -628,6 +628,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		float jet_InvM[2] = {-1,-1};
 		bool  jet_E_check = (jet_E[0]<0.5 || jet_E[1]<0.5) ? false : true;
 		JetParam K_SPFOs[2];
+		JetParam pi_SPFOs[2];
 
 		for (int ijet = 0; ijet < 2; ++ijet){
 		
@@ -665,6 +666,23 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 					K_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
 					K_SPFOs[ijet].pdEdx_dist.push_back(SPFOs[ijet].pdEdx_dist.at(i));
 					K_SPFOs[ijet].pidEdx_dist.push_back(SPFOs[ijet].pidEdx_dist.at(i));
+				}
+
+				kmin=false;
+				pmin=false;
+				pimin=false;
+
+				if( abs(SPFOs[ijet].pidEdx_dist.at(i)) < abs(SPFOs[ijet].pdEdx_dist.at(i)) ) pmin  = true;
+				if( abs(SPFOs[ijet].pidEdx_dist.at(i)) < abs(SPFOs[ijet].kdEdx_dist.at(i)) ) kmin = true;
+				if( pmin && kmin ) pimin = true;
+
+				if(pimin){
+					pi_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
+					pi_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
+					pi_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
+					pi_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
+					pi_SPFOs[ijet].pdEdx_dist.push_back(SPFOs[ijet].pdEdx_dist.at(i));
+					pi_SPFOs[ijet].pidEdx_dist.push_back(SPFOs[ijet].pidEdx_dist.at(i));
 				}
 
 			}
