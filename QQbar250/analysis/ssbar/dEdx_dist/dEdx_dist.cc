@@ -808,14 +808,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 		float lead_abs_pdiff   = abs(LPFO[0].mom-LPFO[1].mom);
 		
 		// CHARGE CHECK
-    bool chg_check = false;
+    	bool chg_check = false;
 		bool kchg_configs[4] = {0};
 		kchg_configs[0] = ( (LPFO[0].chg<0) && (LPFO[1].chg>0) ) ? true : false;
 		kchg_configs[1] = ( (LPFO[0].chg>0) && (LPFO[1].chg<0) ) ? true : false;
 		kchg_configs[2] = ( (LPFO[0].chg>0) && (LPFO[1].chg>0) ) ? true : false;
 		kchg_configs[3] = ( (LPFO[0].chg<0) && (LPFO[1].chg<0) ) ? true : false;
 
-    if(kchg_configs[0] || kchg_configs[1]) chg_check = true;
+    	if(kchg_configs[0] || kchg_configs[1]) chg_check = true;
 
 		// MOMENTUM CHECK
 		// bool mom_check = ( maxP[0]>MINP_CUT && maxP[1]>MINP_CUT ) ? true : false;
@@ -824,35 +824,46 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries=-1, float MINP_CUT=10.0, TString 
 
 		// TPC HIT CHECK
 		bool nhits_check = false;
-    if (LPFO[0].tpc_hits > 210 && LPFO[1].tpc_hits > 210) nhits_check = true;
+    	if (LPFO[0].tpc_hits > 210 && LPFO[1].tpc_hits > 210) nhits_check = true;
 
-    // OFFSET CHECK
-    bool offset_check = false;
-    if( LPFO[0].pv<1.0 && LPFO[1].pv<1.0 ) offset_check = true;
-    // if( LPFO[0].pv<0.25 && LPFO[1].pv<0.25 ) offset_check = true;
+		// OFFSET CHECK
+		bool offset_check = false;
+		if( LPFO[0].pv<1.0 && LPFO[1].pv<1.0 ) offset_check = true;
+		// if( LPFO[0].pv<0.25 && LPFO[1].pv<0.25 ) offset_check = true;
 
-    // DEDX DISTANCE MINIMUM
-    bool dEdx_dist_min_check   = false;
-    bool pdEdx_dist_min_check  = false;
-    bool pidEdx_dist_min_check = false;
-    if( (abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pdEdx_dist))  && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pdEdx_dist))  ) pdEdx_dist_min_check  = true;
-    if( (abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist)) ) pidEdx_dist_min_check = true;
-    if( pdEdx_dist_min_check && pidEdx_dist_min_check ) dEdx_dist_min_check = true;
+		// DEDX DISTANCE MINIMUM
+		bool dEdx_dist_min_check   = false;
+		// bool pdEdx_dist_min_check  = false;
+		// bool pidEdx_dist_min_check = false;
+		bool pdEdx_dist_min_check[2] = {0};
+		bool pidEdx_dist_min_check[2] = {0};
 
-    // OPP KAON MULTIPLICITY
-    bool OppKMult_check = false;
-    if(nOppK_SPFO[0]==0 && nOppK_SPFO[1]==0) OppKMult_check = true;
+		if( abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pdEdx_dist) ) pdEdx_dist_min_check[0] = true;
+		if( abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pdEdx_dist) ) pdEdx_dist_min_check[1] = true;
 
-    // DEDX DISTANCE WINDOW
-    bool dEdx_dist_win_check = false;
-		float min_dist=-1.5;
-		// float max_dist=0.5;
-		float max_dist=2.0;
-    if( (LPFO[0].kdEdx_dist>min_dist&&LPFO[0].kdEdx_dist<max_dist)
-    	&&(LPFO[1].kdEdx_dist>min_dist&&LPFO[1].kdEdx_dist<max_dist) ) dEdx_dist_win_check = true;
+		if( abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist) ) pidEdx_dist_min_check[0] = true;
+		if( abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist) ) pidEdx_dist_min_check[1] = true;
+
+		if( pdEdx_dist_min_check[0] && pdEdx_dist_min_check[1] && pidEdx_dist_min_check[0] && pidEdx_dist_min_check[1] ) dEdx_dist_min_check = true;
+
+		// if( (abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pdEdx_dist))  && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pdEdx_dist))  ) pdEdx_dist_min_check  = true;
+		// if( (abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist)) ) pidEdx_dist_min_check = true;
+		// if( pdEdx_dist_min_check && pidEdx_dist_min_check ) dEdx_dist_min_check = true;
+
+		// OPP KAON MULTIPLICITY
+		bool OppKMult_check = false;
+		if(nOppK_SPFO[0]==0 && nOppK_SPFO[1]==0) OppKMult_check = true;
+
+		// DEDX DISTANCE WINDOW
+		bool dEdx_dist_win_check = false;
+			float min_dist=-1.5;
+			// float max_dist=0.5;
+			float max_dist=2.0;
+		if( (LPFO[0].kdEdx_dist>min_dist&&LPFO[0].kdEdx_dist<max_dist)
+			&&(LPFO[1].kdEdx_dist>min_dist&&LPFO[1].kdEdx_dist<max_dist) ) dEdx_dist_win_check = true;
 
 
-    bool check_all = false;
+		bool check_all = false;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
 		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
 		if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check ) check_all = true;
