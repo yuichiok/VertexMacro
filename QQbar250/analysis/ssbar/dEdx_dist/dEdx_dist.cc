@@ -457,7 +457,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		for (int iqq = 0; iqq < 2; iqq++)
 		{
-
 			VecOP qqVec(mc_quark_px[iqq], mc_quark_py[iqq], mc_quark_pz[iqq]);
 			qqVecs.push_back(qqVec);
 		}
@@ -540,6 +539,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		vector<float> signKopp_p_jet[2][2];
 
 		vector<PFOParam> NeuPFOs;
+		vector<PFOParam> KPFOs[2];
 		JetParam SPFOs[2];
 
 		for (int ipfo = 0; ipfo < pfo_n; ipfo++)
@@ -568,7 +568,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			}
 
 			// Jet Analysis
-
 			if (abs(pfo_pdgcheat[ipfo]) == 321)
 				n_reco_kaon_all++;
 
@@ -576,11 +575,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			{
 				if (pfo_match[ipfo] == imatch)
 				{
-
 					// ID SPFO with Cheat
 					if (pfo_pdgcheat[ipfo] == 321)
 					{
-
 						if (mom > 10.0)
 							n_reco_signK_jet[imatch][0]++;
 
@@ -588,7 +585,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					}
 					else if (pfo_pdgcheat[ipfo] == -321)
 					{
-
 						if (mom > 10.0)
 							n_reco_signK_jet[imatch][1]++;
 
