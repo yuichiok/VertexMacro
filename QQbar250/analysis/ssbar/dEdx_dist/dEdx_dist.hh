@@ -398,6 +398,7 @@ private:
    struct JetParam {
       vector<int>   id;
       vector<int>   chg;
+      vector<int>   E;
       vector<float> mom;
       vector<float> kdEdx_dist;
       vector<float> pdEdx_dist;

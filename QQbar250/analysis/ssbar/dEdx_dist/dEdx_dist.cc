@@ -506,7 +506,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		if (!_is_isr)
 		{
-
 			for (int iqq = 0; iqq < 2; iqq++)
 			{
 
@@ -539,7 +538,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		vector<float> signKopp_p_jet[2][2];
 
 		vector<PFOParam> NeuPFOs;
-		vector<PFOParam> KPFOs[2];
 		JetParam SPFOs[2];
 
 		for (int ipfo = 0; ipfo < pfo_n; ipfo++)
@@ -592,12 +590,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					}
 
 					// Classify PFOs in 2 Jets
+					float kdEdx_dist_para = pfo_piddedx_k_dedxdist[ipfo];
+					float pdEdx_dist_para = pfo_piddedx_p_dedxdist[ipfo];
+					float pidEdx_dist_para = pfo_piddedx_pi_dedxdist[ipfo];
+
 					SPFOs[imatch].id.push_back(ipfo);
+					SPFOs[imatch].E.push_back(pfo_E[ipfo]);
 					SPFOs[imatch].mom.push_back(mom);
 					SPFOs[imatch].chg.push_back(pfo_charge[ipfo]);
-					SPFOs[imatch].kdEdx_dist.push_back(pfo_piddedx_k_dedxdist[ipfo]);
-					SPFOs[imatch].pdEdx_dist.push_back(pfo_piddedx_p_dedxdist[ipfo]);
-					SPFOs[imatch].pidEdx_dist.push_back(pfo_piddedx_pi_dedxdist[ipfo]);
+					SPFOs[imatch].kdEdx_dist.push_back(kdEdx_dist_para);
+					SPFOs[imatch].pdEdx_dist.push_back(pdEdx_dist_para);
+					SPFOs[imatch].pidEdx_dist.push_back(pidEdx_dist_para);
 
 					// ID leading particle
 					if (mom > maxP[imatch])
@@ -640,6 +643,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			int n = (it - SPFOs[ijet].id.begin());
 
 			SPFOs[ijet].id.erase(SPFOs[ijet].id.begin() + n);
+			SPFOs[ijet].E.erase(SPFOs[ijet].E.begin() + n);
 			SPFOs[ijet].mom.erase(SPFOs[ijet].mom.begin() + n);
 			SPFOs[ijet].chg.erase(SPFOs[ijet].chg.begin() + n);
 			SPFOs[ijet].kdEdx_dist.erase(SPFOs[ijet].kdEdx_dist.begin() + n);
@@ -662,6 +666,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				if (kmin)
 				{
 					K_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
+					K_SPFOs[ijet].E.push_back(SPFOs[ijet].E.at(i));
 					K_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
 					K_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
 					K_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
@@ -683,6 +688,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				if (pimin)
 				{
 					pi_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
+					pi_SPFOs[ijet].E.push_back(SPFOs[ijet].E.at(i));
 					pi_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
 					pi_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
 					pi_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
@@ -774,7 +780,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		// if( 0.95 < LPFO_sep ){
 		if (0.95 < jet_sep)
 		{
-
 			// NO_ISR_LPFO_SEP_CHK = true;
 			NO_ISR_Jet_SEP_CHK = true;
 		}
@@ -832,16 +837,28 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			offset_check = true;
 		// if( LPFO[0].pv<0.25 && LPFO[1].pv<0.25 ) offset_check = true;
 
-		// DEDX DISTANCE MINIMUM
-		bool dEdx_dist_min_check = false;
-		bool pdEdx_dist_min_check = false;
-		bool pidEdx_dist_min_check = false;
+		// DEDX DISTANCE MINIMUM (KAON)
+		bool dEdx_dist_min_check_k = false;
+		bool pdEdx_dist_min_check_k = false;
+		bool pidEdx_dist_min_check_k = false;
 		if ((abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pdEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pdEdx_dist)))
-			pdEdx_dist_min_check = true;
+			pdEdx_dist_min_check_k = true;
 		if ((abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist)))
-			pidEdx_dist_min_check = true;
-		if (pdEdx_dist_min_check && pidEdx_dist_min_check)
-			dEdx_dist_min_check = true;
+			pidEdx_dist_min_check_k = true;
+		if (pdEdx_dist_min_check_k && pidEdx_dist_min_check_k)
+			dEdx_dist_min_check_k = true;
+
+		// DEDX DISTANCE MINIMUM (PION)
+		bool dEdx_dist_min_check_pi = false;
+		bool pdEdx_dist_min_check_pi = false;
+		bool kdEdx_dist_min_check_pi = false;
+		if ((abs(LPFO[0].pidEdx_dist) < abs(LPFO[0].pdEdx_dist)) && (abs(LPFO[1].pidEdx_dist) < abs(LPFO[1].pdEdx_dist)))
+			pdEdx_dist_min_check_pi = true;
+		if ((abs(LPFO[0].pidEdx_dist) < abs(LPFO[0].kdEdx_dist)) && (abs(LPFO[1].pidEdx_dist) < abs(LPFO[1].kdEdx_dist)))
+			kdEdx_dist_min_check_pi = true;
+		if (pdEdx_dist_min_check_pi && kdEdx_dist_min_check_pi)
+			dEdx_dist_min_check_pi = true;
+
 
 		// OPP KAON MULTIPLICITY
 		bool OppKMult_check = false;
@@ -856,12 +873,16 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		if ((LPFO[0].kdEdx_dist > min_dist && LPFO[0].kdEdx_dist < max_dist) && (LPFO[1].kdEdx_dist > min_dist && LPFO[1].kdEdx_dist < max_dist))
 			dEdx_dist_win_check = true;
 
-		bool check_all = false;
-		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check ) check_all = true;
-		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check ) check_all = true;
-		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check)
-			check_all = true;
-		// if( 1 ) check_all = true;
+		bool check_all_k = false;
+		bool check_all_pi = false;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && dEdx_dist_win_check ) check_all_k = true;
+		// if( chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k ) check_all_k = true;
+		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && OppKMult_check){
+			check_all_k = true;
+		}else if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_pi){
+			check_all_pi = true;
+		}
+		// if( 1 ) check_all_k = true;
 
 		// Stats
 		if (chg_check)
@@ -884,22 +905,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			n_chg_mom_nhits_offset_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 6);
 		}
-		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check)
+		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k)
 		{
 			n_chg_mom_nhits_offset_DistMin_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 7);
 		}
-		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && OppKMult_check)
+		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && OppKMult_check)
 		{
 			n_chg_mom_nhits_offset_DistMin_OppKMult_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 8);
 		}
-		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check && dEdx_dist_win_check)
+		if (chg_check && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && dEdx_dist_win_check)
 		{
 			n_chg_mom_nhits_offset_DistMin_DistWin_check++;
 		}
 
-		if (check_all)
+		if (check_all_k)
 		{
 
 			if (debug)
