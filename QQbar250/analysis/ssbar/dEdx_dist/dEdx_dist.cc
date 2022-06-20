@@ -154,6 +154,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 	TH1F *h_pfo_LeadK_psum = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 100, -1.0, 1.0);
 
+	// K*0 (K-Pi) mass
+	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 1500, 0., 1.5);
+
 	// Migrated Events
 	// wrong
 	TH1F *h_pfo_qq_qcos_wrong = new TH1F(name_pfo + "QQ_cos_wrong", ";cos#theta; Events", 100, -1.0, 1.0);
@@ -245,6 +248,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadK_qcos_electron);
 	h1_pfo.push_back(h_pfo_LeadK_qcos_muon);
 	h1_pfo.push_back(h_pfo_LeadK_qcos_others);
+
+	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
 
 	h1_pfo.push_back(h_pfo_qq_qcos_wrong);
 	h1_pfo.push_back(h_pfo_LeadK_qcos_wrong);
@@ -718,7 +723,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		PFOParam LPFO[2] = {
 			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0}};
+			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0}
+		};
 
 		int nOppK_SPFO[2] = {0};
 		JetParam OppK_SPFO[2];
@@ -925,7 +931,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			if (debug)
 			{
-
 				cout << "Event# " << nevents_all << "\t total PFO K = " << n_reco_kaon_all << "\t jet0 nK = " << n_reco_signK_jet[0][0] + n_reco_signK_jet[0][1] << "\t jet1 nK = " << n_reco_signK_jet[1][0] + n_reco_signK_jet[1][1] << endl;
 
 				cout << "K_SPFOs size: " << K_SPFOs[0].id.size() << ", " << K_SPFOs[1].id.size() << endl;
@@ -1339,7 +1344,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			} // Loop Lead PFO
 
-		} // check all
+		}else if (check_all_pi){
+
+			// for(int i = 0; i < 2; ++i)
+			// {
+			// 	TVector3 v_LeadPi();
+			// }
+
+			// reco K0* mass
+			// float 
+
+		} // end of check all
 
 	} // end of event loop
 
