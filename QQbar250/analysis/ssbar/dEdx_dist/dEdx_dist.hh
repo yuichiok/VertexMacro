@@ -363,7 +363,8 @@ public :
 
    virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
-	 virtual float  GetInvMass(float E, vector<float> p);
+	virtual float  GetInvMass(float E, vector<float> p);
+	virtual float  GetInvMass(float E, TVector3 p);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
@@ -398,8 +399,8 @@ private:
    struct JetParam {
       vector<int>   id;
       vector<int>   chg;
-      vector<int>   E;
       vector<TVector3> mom;
+      vector<float>   E;
       vector<float> kdEdx_dist;
       vector<float> pdEdx_dist;
       vector<float> pidEdx_dist;

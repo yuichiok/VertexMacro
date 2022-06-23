@@ -745,6 +745,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			LPFO[i].tpc_hits = pfo_tpc_hits[lpfo];
 			LPFO[i].pdg_cheat = pfo_pdgcheat[lpfo];
 
+			LPFO[i].E = pfo_E[lpfo];
 			LPFO[i].mom = LeadPFO_mom3;
 			LPFO[i].cos = LeadPFOVec.GetCostheta();
 			LPFO[i].qcos = (LPFO[i].chg < 0) ? LPFO[i].cos : -LPFO[i].cos;
@@ -1345,10 +1346,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		}else if (check_all_pi){
 
-			// for(int i = 0; i < 2; ++i)
-			// {
-			// 	TVector3 v_LeadPi();
-			// }
+			for(int i = 0; i < 2; ++i)
+			{
+				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
+				{
+					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
+					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
+					h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+				}
+			}
 
 			// reco K0* mass
 			// float 
@@ -1381,13 +1387,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 float dEdx_dist::GetInvMass(float E = 0, vector<float> p3 = {})
 {
-
 	float p32 = 0;
 	for (int i = 0; i < 3; ++i)
 	{
 		p32 += p3.at(i) * p3.at(i);
 	}
 
+	float InvM = sqrt(E * E - p32);
+	return InvM;
+}
+
+float dEdx_dist::GetInvMass(float E, TVector3 p3)
+{
+	float p32 = p3.Mag2();
 	float InvM = sqrt(E * E - p32);
 	return InvM;
 }
