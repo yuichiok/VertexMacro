@@ -379,27 +379,27 @@ private:
    TString process="default";
 
    struct PFOParam {
-      int   pdg_cheat;
-      float E;
-      float mom;
-      float chg;
-      float cos;
-      float qcos;
-      float pv;
-      float tpc_hits;
-      float q_sep;
-      float qbar_sep;
-      float dEdx;
-      float kdEdx_dist;
-      float pdEdx_dist;
-      float pidEdx_dist;
+      int   pdg_cheat = 0;
+      float E = 0;
+      float chg  = 0;
+      float cos  = -2;
+      float qcos = -2;
+      float pv = -1;
+      float tpc_hits = -1;
+      float q_sep = 0;
+      float qbar_sep = 0;
+      float dEdx = 0;
+      float kdEdx_dist = 0;
+      float pdEdx_dist = 0;
+      float pidEdx_dist = 0;
+      TVector3 mom;
    };
 
    struct JetParam {
       vector<int>   id;
       vector<int>   chg;
       vector<int>   E;
-      vector<float> mom;
+      vector<TVector3> mom;
       vector<float> kdEdx_dist;
       vector<float> pdEdx_dist;
       vector<float> pidEdx_dist;

@@ -155,7 +155,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadK_psum = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 100, -1.0, 1.0);
 
 	// K*0 (K-Pi) mass
-	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 1500, 0., 1.5);
+	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 1500, 0., 1.5);
 
 	// Migrated Events
 	// wrong
@@ -558,14 +558,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			VecOP pfoVec(pfo_px[ipfo], pfo_py[ipfo], pfo_pz[ipfo]);
 			float mom = pfoVec.GetMomentum();
+			TVector3 v_mom3(pfo_px[ipfo],pfo_py[ipfo],pfo_pz[ipfo]);
 
 			// Neutral PFO
-			PFOParam NeuPFO = {0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0};
+			PFOParam NeuPFO;
 			if (pfo_charge[ipfo] == 0)
 			{
 				NeuPFO.pdg_cheat = pfo_pdgcheat[ipfo];
 				NeuPFO.E = pfo_E[ipfo];
-				NeuPFO.mom = mom;
+				NeuPFO.mom = v_mom3;
 
 				NeuPFOs.push_back(NeuPFO);
 			}
@@ -601,7 +602,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					SPFOs[imatch].id.push_back(ipfo);
 					SPFOs[imatch].E.push_back(pfo_E[ipfo]);
-					SPFOs[imatch].mom.push_back(mom);
+					SPFOs[imatch].mom.push_back(v_mom3);
 					SPFOs[imatch].chg.push_back(pfo_charge[ipfo]);
 					SPFOs[imatch].kdEdx_dist.push_back(kdEdx_dist_para);
 					SPFOs[imatch].pdEdx_dist.push_back(pdEdx_dist_para);
@@ -721,10 +722,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		std::vector<VecOP> LeadPFOVecs;
 
-		PFOParam LPFO[2] = {
-			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0}
-		};
+		PFOParam LPFO[2];
 
 		int nOppK_SPFO[2] = {0};
 		JetParam OppK_SPFO[2];
@@ -735,6 +733,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			int lpfo = lead_ipfo[i];
 
 			VecOP LeadPFOVec(pfo_px[lpfo], pfo_py[lpfo], pfo_pz[lpfo]);
+			TVector3 LeadPFO_mom3(pfo_px[lpfo],pfo_py[lpfo],pfo_pz[lpfo]);
 
 			LPFO[i].dEdx = pfo_dedx[lpfo];
 			LPFO[i].kdEdx_dist = pfo_piddedx_k_dedxdist[lpfo];
@@ -746,14 +745,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			LPFO[i].tpc_hits = pfo_tpc_hits[lpfo];
 			LPFO[i].pdg_cheat = pfo_pdgcheat[lpfo];
 
-			LPFO[i].mom = LeadPFOVec.GetMomentum();
+			LPFO[i].mom = LeadPFO_mom3;
 			LPFO[i].cos = LeadPFOVec.GetCostheta();
 			LPFO[i].qcos = (LPFO[i].chg < 0) ? LPFO[i].cos : -LPFO[i].cos;
 
 			for (int j = 0; j < K_SPFOs[i].id.size(); ++j)
 			{
 				// SPFO opposite charge to LPFO and above 10 GeV
-				if ((K_SPFOs[i].chg.at(j) * LPFO[i].chg < 0) && (K_SPFOs[i].mom.at(j) > 10))
+				if ((K_SPFOs[i].chg.at(j) * LPFO[i].chg < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10))
 				{
 					OppK_SPFO[i].mom.push_back(K_SPFOs[i].mom.at(j));
 					nOppK_SPFO[i]++;
@@ -815,7 +814,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		// LEAD PFO SEPARATION
 		float lead_abs_cos_sep = LPFO_sep;
-		float lead_abs_pdiff = abs(LPFO[0].mom - LPFO[1].mom);
+		float lead_abs_pdiff = abs(LPFO[0].mom.Mag() - LPFO[1].mom.Mag());
 
 		// CHARGE CHECK
 		bool chg_check = false;
@@ -940,7 +939,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			for (int i = 0; i < NeuPFOs.size(); ++i)
 			{
 				h_pfo_neu_E->Fill(NeuPFOs.at(i).E);
-				h_pfo_neu_p->Fill(NeuPFOs.at(i).mom);
+				h_pfo_neu_p->Fill(NeuPFOs.at(i).mom.Mag());
 			}
 
 			// MIGRATION ANLYSIS
@@ -989,7 +988,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				h_pfo_LeadK_qcos_wrong->Fill(LPFO[1].qcos);
 
 				h_pfo_LeadK_pdg_wrong->Fill(enu0, enu1);
-				h_pfo_LeadK_p_wrong->Fill(LPFO[0].mom, LPFO[1].mom);
+				h_pfo_LeadK_p_wrong->Fill(LPFO[0].mom.Mag(), LPFO[1].mom.Mag());
 
 				h_pfo_LeadK_qcos_sep_wrong->Fill(lead_abs_cos_sep);
 				h_pfo_LeadK_pdiff_wrong->Fill(lead_abs_pdiff);
@@ -997,8 +996,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				h_pfo_LeadK_ip_wrong->Fill(LPFO[0].pv);
 				h_pfo_LeadK_ip_wrong->Fill(LPFO[1].pv);
 
-				h_pfo_LeadK_p_dEdx_wrong->Fill(LPFO[0].mom, LPFO[0].dEdx);
-				h_pfo_LeadK_p_dEdx_wrong->Fill(LPFO[1].mom, LPFO[1].dEdx);
+				h_pfo_LeadK_p_dEdx_wrong->Fill(LPFO[0].mom.Mag(), LPFO[0].dEdx);
+				h_pfo_LeadK_p_dEdx_wrong->Fill(LPFO[1].mom.Mag(), LPFO[1].dEdx);
 
 				if (flag0)
 					h_pfo_nKaons_wrong0->Fill(n_reco_signK_jet[0][0] + n_reco_signK_jet[0][1]);
@@ -1013,7 +1012,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					for (int j = 0; j < OppK_SPFO[i].mom.size(); ++j)
 					{
-						h_pfo_reco_SignKopp_p_wrong->Fill(OppK_SPFO[i].mom.at(j));
+						h_pfo_reco_SignKopp_p_wrong->Fill(OppK_SPFO[i].mom.at(j).Mag());
 					}
 				}
 
@@ -1021,7 +1020,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				for (int i = 0; i < NeuPFOs.size(); ++i)
 				{
 					h_pfo_neu_E_wrong->Fill(NeuPFOs.at(i).E);
-					h_pfo_neu_p_wrong->Fill(NeuPFOs.at(i).mom);
+					h_pfo_neu_p_wrong->Fill(NeuPFOs.at(i).mom.Mag());
 				}
 
 				// Number of K same chg as LPFO
@@ -1122,7 +1121,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			else
 			{
 
-				h_pfo_LeadK_p_correct->Fill(LPFO[0].mom, LPFO[1].mom);
+				h_pfo_LeadK_p_correct->Fill(LPFO[0].mom.Mag(), LPFO[1].mom.Mag());
 				h_pfo_LeadK_qcos_sep_correct->Fill(lead_abs_cos_sep);
 				h_pfo_LeadK_pdiff_correct->Fill(lead_abs_pdiff);
 
@@ -1139,7 +1138,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				{
 					for (int j = 0; j < OppK_SPFO[i].mom.size(); ++j)
 					{
-						h_pfo_reco_SignKopp_p_correct->Fill(OppK_SPFO[i].mom.at(j));
+						h_pfo_reco_SignKopp_p_correct->Fill(OppK_SPFO[i].mom.at(j).Mag());
 					}
 				}
 
@@ -1147,7 +1146,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				for (int i = 0; i < NeuPFOs.size(); ++i)
 				{
 					h_pfo_neu_E_correct->Fill(NeuPFOs.at(i).E);
-					h_pfo_neu_p_correct->Fill(NeuPFOs.at(i).mom);
+					h_pfo_neu_p_correct->Fill(NeuPFOs.at(i).mom.Mag());
 				}
 
 				// Number of K same chg as LPFO
@@ -1249,7 +1248,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			if (debug)
 			{
 				// cout << " qcos=" << qqqcos[0] << "\tqbarcos=" << qqqcos[1] << "\tcos0=" << LPFO[0].qcos << "\tcos1=" << LPFO[1].qcos << "\t lead_pdg0=" << LPFO[0].pdg_cheat << "\t lead_pdg1=" <<  LPFO[1].pdg_cheat << "\t lead_sep=" << lead_sep << endl;
-				cout << " mom0=" << LPFO[0].mom << "\t mom1=" << LPFO[1].mom << "\t |mom_diff|=" << abs(LPFO[0].mom - LPFO[1].mom) / abs(LPFO[0].mom + LPFO[1].mom) << endl;
+				cout << " mom0=" << LPFO[0].mom.Mag() << "\t mom1=" << LPFO[1].mom.Mag() << "\t |mom_diff|=" << abs(LPFO[0].mom.Mag() - LPFO[1].mom.Mag()) / abs(LPFO[0].mom.Mag() + LPFO[1].mom.Mag()) << endl;
 				cout << " ip0=" << LPFO[0].pv << "\t ip1=" << LPFO[1].pv << endl;
 			}
 
@@ -1261,7 +1260,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				{
 					cout << "Lead PFO " << i << ": q sep=" << LPFO[i].q_sep << "\t qqbar sep=" << LPFO[i].qbar_sep << "\t lead chg=" << LPFO[i].chg << "\t lead pdg=" << LPFO[i].pdg_cheat << endl;
 				}
-				LeadKDataFile << LPFO[i].qcos << ',' << LPFO[i].mom << ',' << LPFO[i].chg << ',' << LPFO[i].dEdx << ',' << LPFO[i].kdEdx_dist << '\n';
+				LeadKDataFile << LPFO[i].qcos << ',' << LPFO[i].mom.Mag() << ',' << LPFO[i].chg << ',' << LPFO[i].dEdx << ',' << LPFO[i].kdEdx_dist << '\n';
 
 				h_pfo_LeadK_qcos->Fill(LPFO[i].qcos);
 
@@ -1270,7 +1269,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 				case 321: // kaon
 
-					TrueDataFile << LPFO[i].qcos << ',' << LPFO[i].mom << ',' << LPFO[i].chg << ',' << LPFO[i].dEdx << ',' << LPFO[i].kdEdx_dist << '\n';
+					TrueDataFile << LPFO[i].qcos << ',' << LPFO[i].mom.Mag() << ',' << LPFO[i].chg << ',' << LPFO[i].dEdx << ',' << LPFO[i].kdEdx_dist << '\n';
 
 					// h_pfo_LeadK_qcos->Fill(LPFO[i].qcos);
 
@@ -1279,8 +1278,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_kaon->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_kaon->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_kaon->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_kaon->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_kaon->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_kaon->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					h_pfo_pv_kaon->Fill(LPFO[i].pv);
 					break;
 
@@ -1290,8 +1289,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_pion->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_pion->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_pion->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_pion->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_pion->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_pion->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					h_pfo_pv_pion->Fill(LPFO[i].pv);
 					break;
 
@@ -1301,8 +1300,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_proton->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_proton->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_proton->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_proton->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_proton->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_proton->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					h_pfo_pv_proton->Fill(LPFO[i].pv);
 					break;
 
@@ -1312,8 +1311,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_electron->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_electron->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_electron->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_electron->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_electron->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_electron->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					break;
 
 				case 13: // muon
@@ -1322,8 +1321,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_muon->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_muon->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_muon->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_muon->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_muon->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_muon->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					break;
 
 				default:
@@ -1336,8 +1335,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					h_pfo_pidEdx_dist_others->Fill(LPFO[i].pidEdx_dist);
 
 					h_pfo_LeadK_qcos_others->Fill(LPFO[i].qcos);
-					h_pfo_p_kdEdx_dist_others->Fill(LPFO[i].mom, LPFO[i].kdEdx_dist);
-					h_pfo_p_dEdx_others->Fill(LPFO[i].mom, LPFO[i].dEdx);
+					h_pfo_p_kdEdx_dist_others->Fill(LPFO[i].mom.Mag(), LPFO[i].kdEdx_dist);
+					h_pfo_p_dEdx_others->Fill(LPFO[i].mom.Mag(), LPFO[i].dEdx);
 					break;
 
 				} // switch
