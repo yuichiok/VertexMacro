@@ -155,7 +155,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadK_psum = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 100, -1.0, 1.0);
 
 	// K*0 (K-Pi) mass
-	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 1500, 0., 1.5);
+	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 5.0);
 
 	// Migrated Events
 	// wrong
@@ -755,7 +755,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			for (int j = 0; j < K_SPFOs[i].id.size(); ++j)
 			{
 				// SPFO opposite charge to LPFO and above 10 GeV
-				if ((K_SPFOs[i].chg.at(j) * LPFO[i].chg < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10))
+				if ( (K_SPFOs[i].chg.at(j) * LPFO[i].chg < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
 				{
 					OppK_SPFO[i].mom.push_back(K_SPFOs[i].mom.at(j));
 					nOppK_SPFO[i]++;
@@ -1354,7 +1354,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				{
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
-					h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+
+					if ( (LPFO[i].chg * K_SPFOs[i].chg.at(j) < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
+						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 				}
 			}
 

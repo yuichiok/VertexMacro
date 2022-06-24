@@ -15,6 +15,6 @@ else
 
 	# hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.ISRcut.mergeFULL.root ${indir}/*.root
 	# hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.ISRcut.mergeFULL.root ${indir}/*.root
-	hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.AdrianISRcut.mergeFULL.root ${indir}/*.root
+	hadd -f ${outdir}/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPimom.mergeFULL.root ${indir}/*.root
 fi
 
