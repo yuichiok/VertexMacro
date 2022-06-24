@@ -548,8 +548,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			// Add visible energy
 			visibleE += pfo_E[ipfo];
 
+			// Make sure PFO belongs to either jet0 or jet 1
 			if (pfo_match[ipfo] < 0 || pfo_match[ipfo] == 2)
 				continue;
+			// Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
 			if (pfo_ntracks[ipfo] != 1)
 				continue;
 
@@ -576,11 +578,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			{
 				if (pfo_match[ipfo] == imatch)
 				{
-
 					// ID SPFO with Cheat
 					if (pfo_pdgcheat[ipfo] == 321)
 					{
-
 						if (mom > 10.0)
 							n_reco_signK_jet[imatch][0]++;
 
@@ -588,7 +588,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					}
 					else if (pfo_pdgcheat[ipfo] == -321)
 					{
-
 						if (mom > 10.0)
 							n_reco_signK_jet[imatch][1]++;
 
