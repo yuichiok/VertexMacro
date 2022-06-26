@@ -1353,7 +1353,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					{
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 						cout << jentry << endl;
-						cout << "cheat : " << LPFO[i].pdg_cheat << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]] << endl;
+						// cout << "cheat : " << LPFO[i].pdg_cheat << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]] << endl;
+						cout << "cheat : " << LPFO[i].pdg_cheat << ", momX = " << LPFO[i].mom.X() << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]][0] << endl;
 					}
 				}
 			}
