@@ -12,9 +12,9 @@ for i in *.root; do
 
   newfilename="${suffix_removed_string}${filenumber}.root"
 
-  echo "mv" ${i} ${newfilename}
+  echo "mv -f" ${i} ${newfilename}
 
-  mv $i ${newfilename}
+  mv -f $i ${newfilename}
 
 done
 

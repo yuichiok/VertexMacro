@@ -6,6 +6,8 @@ sublog/
 list/
 data/
 rootfiles/
+myclass/*.C
+myclass/*.h
 run_*.sh
 *.out
 *.log
