@@ -513,7 +513,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		{
 			for (int iqq = 0; iqq < 2; iqq++)
 			{
-
 				float cos = qqVecs.at(iqq).GetCostheta();
 				float charge = mc_quark_charge[iqq];
 				qqqcos[iqq] = (charge < 0) ? cos : -cos;
@@ -978,7 +977,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			if (flag0 || flag1)
 			{
-
 				n_cos_nonconsis++;
 				cnt_nevents->Fill(9);
 				// continue;
@@ -1029,23 +1027,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				// Number of K same chg as LPFO
 				if (LPFO[0].chg > 0)
 				{
-
 					h_pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][0]);
 				}
 				else if (LPFO[0].chg < 0)
 				{
-
 					h_pfo_nSignK_wrong0->Fill(n_reco_signK_jet[0][1]);
 				}
 
 				if (LPFO[1].chg > 0)
 				{
-
 					h_pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][0]);
 				}
 				else if (LPFO[1].chg < 0)
 				{
-
 					h_pfo_nSignK_wrong1->Fill(n_reco_signK_jet[1][1]);
 				}
 
@@ -1356,7 +1350,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
 
 					if ( (LPFO[i].chg * K_SPFOs[i].chg.at(j) < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
+					{
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+						cout << jentry << endl;
+						cout << "cheat : " << LPFO[i].pdg_cheat << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]] << endl;
+					}
 				}
 			}
 
