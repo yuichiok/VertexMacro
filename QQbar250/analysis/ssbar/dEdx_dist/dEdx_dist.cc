@@ -58,9 +58,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 	// Number Counting
 	TH1I *cnt_nevents = new TH1I("h_cnt_nevents", ";nevents;Entries", 10, 0, 10);
+	TH1I *cnt_nevents_KPi = new TH1I("h_cnt_nevents_KPi", ";nevents;Entries", 10, 0, 10);
 	TH1I *cnt_ISRevents = new TH1I("h_cnt_ISRevents", ";isr events;Entries", 10, 0, 10);
 
 	h0_counter.push_back(cnt_nevents);
+	h0_counter.push_back(cnt_nevents_KPi);
 	h0_counter.push_back(cnt_ISRevents);
 
 	// MC Histograms
@@ -156,6 +158,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 	// K*0 (K-Pi) mass
 	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 5.0);
+	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 5.0);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
 	TH1F *h_pfo_pPi_parent_other = new TH1F(name_pfo + "pPi_parent_other", ";Pi momentum with other parent (GeV);Entries", 100, 0, 100);
@@ -253,6 +256,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadK_qcos_others);
 
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
+	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
 	h1_pfo.push_back(h_pfo_pPi_parent_K0star);
 	h1_pfo.push_back(h_pfo_pPi_parent_other);
@@ -437,27 +441,42 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		// Comment on batch mode
 		// printProgress( static_cast<double>(jentry) / (double)(1.0 * nentries) );
 
-		if (PreSelection(2, 35) == false)
-			continue;
-		// PreSelection(3,35);
-
 		nevents_all++;
+		cnt_nevents_KPi->Fill(0);
 
 		if (process == "uds" && (fabs(mc_quark_pdg[0]) == 4 || fabs(mc_quark_pdg[0]) == 5))
 			continue; // ignore MC b/c quarks
-		if (process == "uu" && fabs(mc_quark_pdg[0]) != 2)
-			continue; // ignore MC other than uu
-		if (process == "ss" && fabs(mc_quark_pdg[0]) != 3)
-			continue; // ignore MC other than ss
-		if (process == "dd" && fabs(mc_quark_pdg[0]) != 1)
+		if (process == "dd" && fabs(mc_quark_pdg[0]) != 1){
+			cnt_nevents_KPi->Fill(1);
 			continue; // ignore MC other than dd
-		if (process == "default" && fabs(mc_quark_pdg[0]) != 3)
+		}
+		if (process == "uu" && fabs(mc_quark_pdg[0]) != 2){
+			cnt_nevents_KPi->Fill(2);
+			continue; // ignore MC other than uu
+		}
+		if (process == "cc" && fabs(mc_quark_pdg[0]) != 4){
+			cnt_nevents_KPi->Fill(3);
+			continue; // ignore MC other than uu
+		}
+		if (process == "bb" && fabs(mc_quark_pdg[0]) != 5){
+			cnt_nevents_KPi->Fill(4);
+			continue; // ignore MC other than uu
+		}
+		if (process == "ss" && fabs(mc_quark_pdg[0]) != 3){
+			cnt_nevents_KPi->Fill(5);
 			continue; // ignore MC other than ss
+		}
+		if (process == "default" && fabs(mc_quark_pdg[0]) != 3){
+			continue; // ignore MC other than ss
+		}
+
+		if (PreSelection(2, 35) == false)
+			continue;
 
 		// if(mc_ISR_E[0] + mc_ISR_E[1]>35) continue;
 
 		nevents++;
-		// cnt_nevents->Fill(0);
+		cnt_nevents_KPi->Fill(6);
 
 		////////////////////////////////
 		//////   MC QQ ANALYSIS   //////
@@ -855,26 +874,21 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		// if( LPFO[0].pv<0.25 && LPFO[1].pv<0.25 ) offset_check = true;
 
 		// DEDX DISTANCE MINIMUM (KAON)
-		bool dEdx_dist_min_check_k = false;
-		bool pdEdx_dist_min_check_k = false;
-		bool pidEdx_dist_min_check_k = false;
-		if ((abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pdEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pdEdx_dist)))
-			pdEdx_dist_min_check_k = true;
-		if ((abs(LPFO[0].kdEdx_dist) < abs(LPFO[0].pidEdx_dist)) && (abs(LPFO[1].kdEdx_dist) < abs(LPFO[1].pidEdx_dist)))
-			pidEdx_dist_min_check_k = true;
-		if (pdEdx_dist_min_check_k && pidEdx_dist_min_check_k)
-			dEdx_dist_min_check_k = true;
+		bool dEdx_dist_min_check_k[2] = {0};
+		bool dEdx_dist_min_check_k_double = false;
+		for (int ilpfo=0; ilpfo<2; ilpfo++){
+			if ( (abs(LPFO[ilpfo].kdEdx_dist) < abs(LPFO[ilpfo].pdEdx_dist)) && (abs(LPFO[ilpfo].kdEdx_dist) < abs(LPFO[ilpfo].pidEdx_dist)) )
+				dEdx_dist_min_check_k[ilpfo] = true;
+		}
+		if( dEdx_dist_min_check_k[0] && dEdx_dist_min_check_k[1] )
+			dEdx_dist_min_check_k_double = true;
 
 		// DEDX DISTANCE MINIMUM (PION)
-		bool dEdx_dist_min_check_pi = false;
-		bool pdEdx_dist_min_check_pi = false;
-		bool kdEdx_dist_min_check_pi = false;
-		if ((abs(LPFO[0].pidEdx_dist) < abs(LPFO[0].pdEdx_dist)) && (abs(LPFO[1].pidEdx_dist) < abs(LPFO[1].pdEdx_dist)))
-			pdEdx_dist_min_check_pi = true;
-		if ((abs(LPFO[0].pidEdx_dist) < abs(LPFO[0].kdEdx_dist)) && (abs(LPFO[1].pidEdx_dist) < abs(LPFO[1].kdEdx_dist)))
-			kdEdx_dist_min_check_pi = true;
-		if (pdEdx_dist_min_check_pi && kdEdx_dist_min_check_pi)
-			dEdx_dist_min_check_pi = true;
+		bool dEdx_dist_min_check_pi[2] = {0};
+		for (int ilpfo=0; ilpfo<2; ilpfo++){
+			if ( (abs(LPFO[ilpfo].pidEdx_dist) < abs(LPFO[ilpfo].pdEdx_dist)) && (abs(LPFO[ilpfo].pidEdx_dist) < abs(LPFO[ilpfo].kdEdx_dist)) )
+				dEdx_dist_min_check_pi[ilpfo] = true;
+		}
 
 		// OPP KAON MULTIPLICITY
 		bool OppKMult_check = false;
@@ -890,13 +904,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			dEdx_dist_win_check = true;
 
 		bool check_all_k = false;
-		bool check_all_pi = false;
-		// if( chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && dEdx_dist_win_check ) check_all_k = true;
-		// if( chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k ) check_all_k = true;
-		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && OppKMult_check){
+		bool check_all_kpi[3] = {false};
+		// if( chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double && dEdx_dist_win_check ) check_all_k = true;
+		// if( chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double ) check_all_k = true;
+		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double && OppKMult_check){
 			check_all_k = true;
-		}else if (chg_check_pi && mom_check && nhits_check && offset_check && dEdx_dist_min_check_pi){
-			check_all_pi = true;
+		}else if (chg_check_pi && mom_check && nhits_check && offset_check && dEdx_dist_min_check_pi[0] && dEdx_dist_min_check_k[1]){
+			check_all_kpi[0] = true;
+		}else if (chg_check_pi && mom_check && nhits_check && offset_check && dEdx_dist_min_check_pi[1] && dEdx_dist_min_check_k[0]){
+			check_all_kpi[1] = true;
+		}else if (chg_check_pi && mom_check && nhits_check && offset_check && dEdx_dist_min_check_pi[0] && dEdx_dist_min_check_pi[1]){
+			check_all_kpi[2] = true;
 		}
 		// if( 1 ) check_all_k = true;
 
@@ -921,17 +939,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			n_chg_mom_nhits_offset_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 6);
 		}
-		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k)
+		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double)
 		{
 			n_chg_mom_nhits_offset_DistMin_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 7);
 		}
-		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && OppKMult_check)
+		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double && OppKMult_check)
 		{
 			n_chg_mom_nhits_offset_DistMin_OppKMult_check++;
 			Fill_CNT_Hist(cnt_nevents, cnt_ISRevents, 8);
 		}
-		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k && dEdx_dist_win_check)
+		if (chg_check_k && mom_check && nhits_check && offset_check && dEdx_dist_min_check_k_double && dEdx_dist_win_check)
 		{
 			n_chg_mom_nhits_offset_DistMin_DistWin_check++;
 		}
@@ -943,6 +961,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 		if (check_all_k)
 		{
+			cnt_nevents_KPi->Fill(7);
 
 			if (debug)
 			{
@@ -1353,7 +1372,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			} // Loop Lead PFO
 
-		}else if (check_all_pi){
+		}else if (check_all_kpi[0] || check_all_kpi[1]){
+
+			cnt_nevents_KPi->Fill(8);
 
 			for(int i = 0; i < 2; ++i)
 			{
@@ -1362,15 +1383,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
 
+					bool isK0star = false;
+
 					if ( (LPFO[i].chg * K_SPFOs[i].chg.at(j) < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
 					{
 						for (int iparent=0; iparent<pfo_nparents[lead_ipfo[i]]; iparent++){
 
 							int parent = abs(pfo_pdgcheat_parent[lead_ipfo[i]][iparent]);
 							h_pfo_pdgcheat_parent->Fill(parent);
-							h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 							
 							if ( parent==313 ){
+								isK0star = true;
 								h_pfo_pPi_parent_K0star->Fill(LPFO[i].mom.Mag());
 							}else{
 								h_pfo_pPi_parent_other->Fill(LPFO[i].mom.Mag());
@@ -1378,14 +1401,19 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						}
 
-						// cout << "cheat : " << LPFO[i].pdg_cheat << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]] << endl;
-						// cout << "cheat : " << LPFO[i].pdg_cheat << ", momX = " << LPFO[i].mom.X() << ", cheat parent : " << pfo_pdgcheat_parent[lead_ipfo[i]][0] << endl;
+						if(isK0star) h_pfo_LeadPi_K_mass_cheat->Fill(pi_K_invM);
+						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+
 					}
 				}
 			}
 
 			// reco K0* mass
 			// float 
+
+		}else if (check_all_kpi[2]){
+
+			cnt_nevents_KPi->Fill(9);
 
 		} // end of check all
 
