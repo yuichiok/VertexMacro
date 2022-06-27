@@ -1252,8 +1252,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 				if (debug)
 					cout << "CONSIS:";
-				// cout << "CONSIS:\n";
-				// cout << "nOppK_SPFOs: " << nOppK_SPFO[0] << ", " << nOppK_SPFO[1] << endl;
+
 			}
 
 			if (debug)
@@ -1365,12 +1364,11 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					if ( (LPFO[i].chg * K_SPFOs[i].chg.at(j) < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
 					{
-						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
-
 						for (int iparent=0; iparent<pfo_nparents[lead_ipfo[i]]; iparent++){
 
 							int parent = abs(pfo_pdgcheat_parent[lead_ipfo[i]][iparent]);
 							h_pfo_pdgcheat_parent->Fill(parent);
+							h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 							
 							if ( parent==313 ){
 								h_pfo_pPi_parent_K0star->Fill(LPFO[i].mom.Mag());
