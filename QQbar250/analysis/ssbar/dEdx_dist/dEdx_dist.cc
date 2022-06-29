@@ -157,8 +157,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadK_psum = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 100, -1.0, 1.0);
 
 	// K*0 (K-Pi) mass
-	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 5.0);
-	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 5.0);
+	TH1F *h_pfo_LeadPi_mass = new TH1F(name_pfo + "LeadPi_mass", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 1.0);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
 	TH1F *h_pfo_pPi_parent_other = new TH1F(name_pfo + "pPi_parent_other", ";Pi momentum with other parent (GeV);Entries", 100, 0, 100);
@@ -255,6 +257,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadK_qcos_muon);
 	h1_pfo.push_back(h_pfo_LeadK_qcos_others);
 
+
+	h1_pfo.push_back(h_pfo_LeadPi_mass);
+	h1_pfo.push_back(h_pfo_SPFOK_mass);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
@@ -444,26 +449,26 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 		nevents_all++;
 		cnt_nevents_KPi->Fill(0);
 
+		for (int i=1; i<=5; i++){
+			if(fabs(mc_quark_pdg[0]) == i)
+				cnt_nevents_KPi->Fill(i);
+		}
+
 		if (process == "uds" && (fabs(mc_quark_pdg[0]) == 4 || fabs(mc_quark_pdg[0]) == 5))
 			continue; // ignore MC b/c quarks
 		if (process == "dd" && fabs(mc_quark_pdg[0]) != 1){
-			cnt_nevents_KPi->Fill(1);
 			continue; // ignore MC other than dd
 		}
 		if (process == "uu" && fabs(mc_quark_pdg[0]) != 2){
-			cnt_nevents_KPi->Fill(2);
 			continue; // ignore MC other than uu
 		}
 		if (process == "cc" && fabs(mc_quark_pdg[0]) != 4){
-			cnt_nevents_KPi->Fill(3);
 			continue; // ignore MC other than uu
 		}
 		if (process == "bb" && fabs(mc_quark_pdg[0]) != 5){
-			cnt_nevents_KPi->Fill(4);
 			continue; // ignore MC other than uu
 		}
 		if (process == "ss" && fabs(mc_quark_pdg[0]) != 3){
-			cnt_nevents_KPi->Fill(5);
 			continue; // ignore MC other than ss
 		}
 		if (process == "default" && fabs(mc_quark_pdg[0]) != 3){
@@ -1378,10 +1383,17 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			for(int i = 0; i < 2; ++i)
 			{
+
+				float pi_invM   = GetInvMass(LPFO[i].E, LPFO[i].mom);
+				h_pfo_LeadPi_mass->Fill(pi_invM);
+
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
+					float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
+
+					h_pfo_SPFOK_mass->Fill(K_invM);
 
 					bool isK0star = false;
 
@@ -1401,8 +1413,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						}
 
-						if(isK0star) h_pfo_LeadPi_K_mass_cheat->Fill(pi_K_invM);
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+						if(isK0star) h_pfo_LeadPi_K_mass_cheat->Fill(pi_K_invM);
 
 					}
 				}
