@@ -1403,8 +1403,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
-					float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
-					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
+					float kaonMass = 0.493667;
+					TVector3 kaonMomentum = K_SPFOs[i].mom.at(j);
+					float kaonEnergy = sqrt(kaonMass*kaonMass + kaonMomentum*kaonMomentum);
+					// float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
+					float K_invM    = GetInvMass( kaonEnergy , K_SPFOs[i].mom.at(j));
+
+					// float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
+					float pi_K_invM = GetInvMass(LPFO[i].E + kaonEnergy, pi_K_mom);
 					float K_invM_calo    = GetInvMass(K_SPFOs[i].E_calo.at(j), K_SPFOs[i].mom.at(j));
 					float pi_K_invM_calo = GetInvMass(LPFO[i].E_calo + K_SPFOs[i].E_calo.at(j), pi_K_mom);
 
