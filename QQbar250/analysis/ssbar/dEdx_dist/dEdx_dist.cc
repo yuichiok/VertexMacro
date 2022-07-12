@@ -157,13 +157,13 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadK_psum = new TH1F(name_pfo + "LeadKaons_psum", ";cos#theta; Events", 100, -1.0, 1.0);
 
 	// K*0 (K-Pi) mass
-	TH1F *h_pfo_LeadPi_mass = new TH1F(name_pfo + "LeadPi_mass", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_LeadPi_mass_calo = new TH1F(name_pfo + "LeadPi_mass_calo", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_SPFOK_mass_calo = new TH1F(name_pfo + "SPFOK_mass_calo", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_LeadPi_K_mass_calo = new TH1F(name_pfo + "LeadPi_K_mass_calo", ";GeV; Events", 500, 0., 1.0);
-	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_LeadPi_mass = new TH1F(name_pfo + "LeadPi_mass", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_LeadPi_mass_calo = new TH1F(name_pfo + "LeadPi_mass_calo", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_SPFOK_mass_calo = new TH1F(name_pfo + "SPFOK_mass_calo", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_LeadPi_K_mass_calo = new TH1F(name_pfo + "LeadPi_K_mass_calo", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
 	TH1F *h_pfo_pPi_parent_other = new TH1F(name_pfo + "pPi_parent_other", ";Pi momentum with other parent (GeV);Entries", 100, 0, 100);
