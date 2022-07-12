@@ -120,6 +120,7 @@ public :
    Int_t           pfo_nparents[1000];   //[pfo_n]
    Int_t           pfo_pdgcheat_parent[1000][1000];   //[pfo_n]
    Float_t         pfo_E[1000];   //[pfo_n]
+   Float_t         pfo_E_calo[1000];   //[pfo_n]
    Float_t         pfo_px[1000];   //[pfo_n]
    Float_t         pfo_py[1000];   //[pfo_n]
    Float_t         pfo_pz[1000];   //[pfo_n]
@@ -277,6 +278,7 @@ public :
    TBranch        *b_pfo_nparents;   //!
    TBranch        *b_pfo_pdgcheat_parent;   //!
    TBranch        *b_pfo_E;   //!
+   TBranch        *b_pfo_E_calo;   //!
    TBranch        *b_pfo_px;   //!
    TBranch        *b_pfo_py;   //!
    TBranch        *b_pfo_pz;   //!
@@ -365,8 +367,8 @@ public :
 
    virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
-	virtual float  GetInvMass(float E, vector<float> p);
-	virtual float  GetInvMass(float E, TVector3 p);
+	virtual double  GetInvMass(float E, vector<float> p);
+	virtual double  GetInvMass(float E, TVector3 p);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
@@ -384,6 +386,7 @@ private:
    struct PFOParam {
       int   pdg_cheat = 0;
       float E = 0;
+      float E_calo = 0;
       float chg  = 0;
       float cos  = -2;
       float qcos = -2;
@@ -403,6 +406,7 @@ private:
       vector<int>   chg;
       vector<TVector3> mom;
       vector<float>   E;
+      vector<float>   E_calo;
       vector<float> kdEdx_dist;
       vector<float> pdEdx_dist;
       vector<float> pidEdx_dist;
@@ -604,6 +608,7 @@ void dEdx_dist::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_nparents", pfo_nparents, &b_pfo_nparents);
    fChain->SetBranchAddress("pfo_pdgcheat_parent", pfo_pdgcheat_parent, &b_pfo_pdgcheat_parent);
    fChain->SetBranchAddress("pfo_E", pfo_E, &b_pfo_E);
+   fChain->SetBranchAddress("pfo_E_calo", pfo_E_calo, &b_pfo_E_calo);
    fChain->SetBranchAddress("pfo_px", pfo_px, &b_pfo_px);
    fChain->SetBranchAddress("pfo_py", pfo_py, &b_pfo_py);
    fChain->SetBranchAddress("pfo_pz", pfo_pz, &b_pfo_pz);

@@ -5,7 +5,8 @@ data_input=/group/ilc/users/yokugawa/QQbar250/l5/eLpR/15162/dEdx_corr/QQbarProce
 
 nfirst=1
 nlast=-1
-nrun=200
+#nrun=200
+nrun=3
 
 flist=list/15162.list
 

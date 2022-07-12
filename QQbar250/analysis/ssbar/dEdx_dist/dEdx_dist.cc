@@ -159,7 +159,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	// K*0 (K-Pi) mass
 	TH1F *h_pfo_LeadPi_mass = new TH1F(name_pfo + "LeadPi_mass", ";GeV; Events", 500, 0., 1.0);
 	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_LeadPi_mass_calo = new TH1F(name_pfo + "LeadPi_mass_calo", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_SPFOK_mass_calo = new TH1F(name_pfo + "SPFOK_mass_calo", ";GeV; Events", 500, 0., 1.0);
 	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 1.0);
+	TH1F *h_pfo_LeadPi_K_mass_calo = new TH1F(name_pfo + "LeadPi_K_mass_calo", ";GeV; Events", 500, 0., 1.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat = new TH1F(name_pfo + "LeadPi_K_mass_cheat", ";GeV; Events", 500, 0., 1.0);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
@@ -260,7 +263,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 	h1_pfo.push_back(h_pfo_LeadPi_mass);
 	h1_pfo.push_back(h_pfo_SPFOK_mass);
+	h1_pfo.push_back(h_pfo_LeadPi_mass_calo);
+	h1_pfo.push_back(h_pfo_SPFOK_mass_calo);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
+	h1_pfo.push_back(h_pfo_LeadPi_K_mass_calo);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
 	h1_pfo.push_back(h_pfo_pPi_parent_K0star);
@@ -633,6 +639,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					SPFOs[imatch].id.push_back(ipfo);
 					SPFOs[imatch].E.push_back(pfo_E[ipfo]);
+					SPFOs[imatch].E_calo.push_back(pfo_E_calo[ipfo]);
 					SPFOs[imatch].mom.push_back(v_mom3);
 					SPFOs[imatch].chg.push_back(pfo_charge[ipfo]);
 					SPFOs[imatch].kdEdx_dist.push_back(kdEdx_dist_para);
@@ -681,6 +688,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 			SPFOs[ijet].id.erase(SPFOs[ijet].id.begin() + n);
 			SPFOs[ijet].E.erase(SPFOs[ijet].E.begin() + n);
+			SPFOs[ijet].E_calo.erase(SPFOs[ijet].E_calo.begin() + n);
 			SPFOs[ijet].mom.erase(SPFOs[ijet].mom.begin() + n);
 			SPFOs[ijet].chg.erase(SPFOs[ijet].chg.begin() + n);
 			SPFOs[ijet].kdEdx_dist.erase(SPFOs[ijet].kdEdx_dist.begin() + n);
@@ -704,6 +712,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				{
 					K_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
 					K_SPFOs[ijet].E.push_back(SPFOs[ijet].E.at(i));
+					K_SPFOs[ijet].E_calo.push_back(SPFOs[ijet].E_calo.at(i));
 					K_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
 					K_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
 					K_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
@@ -726,6 +735,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				{
 					pi_SPFOs[ijet].id.push_back(SPFOs[ijet].id.at(i));
 					pi_SPFOs[ijet].E.push_back(SPFOs[ijet].E.at(i));
+					pi_SPFOs[ijet].E_calo.push_back(SPFOs[ijet].E_calo.at(i));
 					pi_SPFOs[ijet].mom.push_back(SPFOs[ijet].mom.at(i));
 					pi_SPFOs[ijet].chg.push_back(SPFOs[ijet].chg.at(i));
 					pi_SPFOs[ijet].kdEdx_dist.push_back(SPFOs[ijet].kdEdx_dist.at(i));
@@ -777,6 +787,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			LPFO[i].pdg_cheat = pfo_pdgcheat[lpfo];
 
 			LPFO[i].E = pfo_E[lpfo];
+			LPFO[i].E_calo = pfo_E_calo[lpfo];
 			LPFO[i].mom = LeadPFO_mom3;
 			LPFO[i].cos = LeadPFOVec.GetCostheta();
 			LPFO[i].qcos = (LPFO[i].chg < 0) ? LPFO[i].cos : -LPFO[i].cos;
@@ -1384,16 +1395,23 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 			for(int i = 0; i < 2; ++i)
 			{
 
-				float pi_invM   = GetInvMass(LPFO[i].E, LPFO[i].mom);
+				float pi_invM        = GetInvMass(LPFO[i].E, LPFO[i].mom);
+				float pi_invM_calo   = GetInvMass(LPFO[i].E_calo, LPFO[i].mom);
 				h_pfo_LeadPi_mass->Fill(pi_invM);
+				if(pi_invM_calo) h_pfo_LeadPi_mass_calo->Fill(pi_invM_calo);
 
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
 					float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
+					float K_invM_calo    = GetInvMass(K_SPFOs[i].E_calo.at(j), K_SPFOs[i].mom.at(j));
+					float pi_K_invM_calo = GetInvMass(LPFO[i].E_calo + K_SPFOs[i].E_calo.at(j), pi_K_mom);
 
-					h_pfo_SPFOK_mass->Fill(K_invM);
+					// h_pfo_SPFOK_mass->Fill(K_invM);
+					// K_SPFOs[i].mom.at(j).Print();
+					// cout << "E=" << K_SPFOs[i].E.at(j) << " Mag2=" << K_SPFOs[i].mom.at(j).Mag2() << endl;
+					// cout << "M=" << sqrt(K_SPFOs[i].E.at(j) * K_SPFOs[i].E.at(j) + K_SPFOs[i].mom.at(j).Mag2()) << endl;
 
 					bool isK0star = false;
 
@@ -1405,6 +1423,23 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 							h_pfo_pdgcheat_parent->Fill(parent);
 							
 							if ( parent==313 ){
+	
+								cout << "### jentry= " << jentry << " ###" << endl;
+								cout << "### PION ###" << endl;
+								LPFO[i].mom.Print();
+								cout << "p^2=" << LPFO[i].mom.Mag2() << endl;
+								cout << "PiE=" << LPFO[i].E << endl;
+								cout << "PiE_calo=" << LPFO[i].E_calo << endl;
+								cout << "PiinvM=" << pi_invM << endl;
+								cout << "PiinvM_calo=" << pi_invM_calo << endl;
+								cout << "### KAON ###" << endl;
+								K_SPFOs[i].mom.at(j).Print();
+								cout << "p^2=" << K_SPFOs[i].mom.at(j).Mag2() << endl;
+								cout << "KE=" << K_SPFOs[i].E.at(j) << endl;
+								cout << "KE_calo=" << K_SPFOs[i].E_calo.at(j) << endl;
+								cout << "KinvM=" << K_invM << endl;
+								cout << "KinvM_calo=" << K_invM_calo << endl;
+
 								isK0star = true;
 								h_pfo_pPi_parent_K0star->Fill(LPFO[i].mom.Mag());
 							}else{
@@ -1413,7 +1448,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						}
 
+						h_pfo_SPFOK_mass->Fill(K_invM);
+						if(K_invM_calo) h_pfo_SPFOK_mass_calo->Fill(K_invM_calo);
+
+
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+						if(pi_K_invM_calo) h_pfo_LeadPi_K_mass_calo->Fill(pi_K_invM_calo);
 						if(isK0star) h_pfo_LeadPi_K_mass_cheat->Fill(pi_K_invM);
 
 					}
@@ -1453,22 +1493,22 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TrueDataFile.close();
 }
 
-float dEdx_dist::GetInvMass(float E = 0, vector<float> p3 = {})
+double dEdx_dist::GetInvMass(float E = 0, vector<float> p3 = {})
 {
-	float p32 = 0;
+	double p32 = 0;
 	for (int i = 0; i < 3; ++i)
 	{
 		p32 += p3.at(i) * p3.at(i);
 	}
 
-	float InvM = sqrt(E * E - p32);
+	double InvM = sqrt(E * E - p32);
 	return InvM;
 }
 
-float dEdx_dist::GetInvMass(float E, TVector3 p3)
+double dEdx_dist::GetInvMass(float E, TVector3 p3)
 {
-	float p32 = p3.Mag2();
-	float InvM = sqrt(E * E - p32);
+	double p32 = p3.Mag2();
+	double InvM = sqrt(E * E - p32);
 	return InvM;
 }
 
