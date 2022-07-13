@@ -170,6 +170,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadPi_K_mass_cheat213 = new TH1F(name_pfo + "LeadPi_K_mass_cheat213", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat92 = new TH1F(name_pfo + "LeadPi_K_mass_cheat92", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat_other = new TH1F(name_pfo + "LeadPi_K_mass_cheat_other", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_pdgcheat_parent_mod1000 = new TH1F(name_pfo + "pdgcheat_parent_mod1000", ";PDG cheat parent MOD 1000; Entries", 500, 0, 500);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
 	TH1F *h_pfo_pPi_parent_other = new TH1F(name_pfo + "pPi_parent_other", ";Pi momentum with other parent (GeV);Entries", 100, 0, 100);
@@ -280,6 +281,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat213);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat92);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat_other);
+	h1_pfo.push_back(h_pfo_pdgcheat_parent_mod1000);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
 	h1_pfo.push_back(h_pfo_pPi_parent_K0star);
 	h1_pfo.push_back(h_pfo_pPi_parent_other);
@@ -1487,6 +1489,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 								default:
 									cout << "other parents: " << parent << endl;
+
+									if(pi_K_invM<1.2) h_pfo_pdgcheat_parent_mod1000->Fill(parent%1000);
+
 									h_pfo_pPi_parent_other->Fill(LPFO[i].mom.Mag());
 									h_pfo_LeadPi_K_mass_cheat_other->Fill(pi_K_invM);
 									break;
