@@ -1420,11 +1420,18 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
+					float pi_chg = LPFO[i].chg;
+
 					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
 					float pi_K_cos = pi_K_mom.CosTheta();
 					float K_mass_true = 0.493667;
 					TVector3 K_mom = K_SPFOs[i].mom.at(j);
+					float K_chg = K_SPFOs[i].chg.at(j);
 					float K_cos = K_mom.CosTheta();
+
+					float K_qcos = (K_chg < 0) ? K_cos : -K_cos;
+					float pi_K_qcos = (K_chg < 0) ? pi_K_cos : -pi_K_cos;
+					
 					float K_E_corr = sqrt(K_mass_true*K_mass_true + K_mom*K_mom);
 					// float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
 					float K_invM    = GetInvMass( K_E_corr , K_SPFOs[i].mom.at(j));
@@ -1432,7 +1439,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					// float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_E_corr, pi_K_mom);
 
-					if ( (LPFO[i].chg * K_SPFOs[i].chg.at(j) < 0) && (K_SPFOs[i].mom.at(j).Mag() > 10) )
+					if ( (pi_chg * K_chg < 0) && (K_mom.Mag() > 10) )
 					{
 						for (int iparent=0; iparent<pfo_nparents[lead_ipfo[i]]; iparent++){
 
@@ -1514,8 +1521,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 
 						if(0.85<pi_K_invM && pi_K_invM<0.95){
-							h_pfo_LeadPi_K_cos->Fill(pi_K_cos);
-							h_pfo_SPFOK_cos->Fill(K_cos);
+							//(LPFO[i].chg < 0) ? LPFO[i].cos : -LPFO[i].cos;
+							h_pfo_LeadPi_K_cos->Fill(pi_K_qcos);
+							h_pfo_SPFOK_cos->Fill(K_qcos);
 							break;
 						}
 
