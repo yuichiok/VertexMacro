@@ -106,22 +106,15 @@ void Kstar0_fit(){
 
 
     TCanvas *c2 = new TCanvas("c2","c2",700,700);
-    // fsum->Draw();
     hs[0]->Rebin(4);
     hs[0]->Scale(1/hs[0]->GetEntries());
 
-    // TF1 *fsum = new TF1("fsum","[0]*TMath::Landau(x,[1],[2],0) + [3]*TMath::Landau(x,[4],[5],0) + [6]*TMath::Landau(x,[7],[8],0)",0.7,2.0);
-    // cout << "p0[1]=" << p0[1] << ", p0[2]=" << p0[2] << ", p1[1]=" << p1[1] << ", p1[2]=" << p1[2] << endl;
-    // fsum->SetParameters(0.035, p1[1]-0.1,p1[2]/10.0, 0.055 ,p0[1],p0[2]/10.0, 0.015,1.4,0.02);
-
     TF1 *fsum = new TF1("fsum","[0]*TMath::Landau(x,[1],[2],0) + [3]*TMath::Landau(x,[4],[5],0) + [6]*TMath::Landau(x,[7],[8],0) + [9]*TMath::Landau(x,[10],[11],0)",0.7,2.0);
     cout << "p0[1]=" << p0[1] << ", p0[2]=" << p0[2] << ", p1[1]=" << p1[1] << ", p1[2]=" << p1[2] << endl;
-    // fsum->SetParameters(0.035, p1[1]-0.1, p1[2]/10.0, 0.055, p0[1], p0[2]/10.0, 0.05, 1.19, 0.12, 0.015, 1.4, 0.02);
     fsum->SetParameters(0.035, p1[1]-0.1, p1[2]/10.0, 0.055, p0[1], p0[2]/10.0, 0.05, 1.19, 0.12);
     fsum->SetParameter(9,0.015);
     fsum->SetParameter(10,1.4);
     fsum->SetParameter(11,0.12);
-
 
     hs[0]->Fit(fsum,"SR");
     hs[0]->Draw("hsame");
