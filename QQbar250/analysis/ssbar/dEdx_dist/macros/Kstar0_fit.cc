@@ -7,44 +7,6 @@
 #include <TMath.h>
 #include <fstream>
 
-// see math/mathcore/src/PdfFuncMathCore.cxx in ROOT 6.x
-double crystalball_function(double x, double alpha, double n, double sigma, double mean)
-{
-	// evaluate the crystal ball function
-	if (sigma < 0.)
-		return 0.;
-	double z = (x - mean) / sigma;
-	if (alpha < 0)
-		z = -z;
-	double abs_alpha = std::abs(alpha);
-	// double C = n/abs_alpha * 1./(n-1.) * std::exp(-alpha*alpha/2.);
-	// double D = std::sqrt(M_PI/2.)*(1.+ROOT::Math::erf(abs_alpha/std::sqrt(2.)));
-	// double N = 1./(sigma*(C+D));
-	if (z > -abs_alpha)
-		return std::exp(-0.5 * z * z);
-	else
-	{
-		// double A = std::pow(n/abs_alpha,n) * std::exp(-0.5*abs_alpha*abs_alpha);
-		double nDivAlpha = n / abs_alpha;
-		double AA = std::exp(-0.5 * abs_alpha * abs_alpha);
-		double B = nDivAlpha - abs_alpha;
-		double arg = nDivAlpha / (B - z);
-		return AA * std::pow(arg, n);
-	}
-}
-
-double crystalball_function(const double *x, const double *p)
-{
-	// if ((!x) || (!p)) return 0.; // just a precaution
-	// [Constant] * ROOT::Math::crystalball_function(x, [Alpha], [N], [Sigma], [Mean])
-	return (p[0] * crystalball_function(x[0], p[3], p[4], p[2], p[1]));
-}
-
-double f_mult(const double *x, const double *p)
-{
-	return (p[0]*TMath::Landau(x[0],p[1],p[2],0) + p[3]*TMath::Landau(x[0],p[4],p[5],0) + p[6]*TMath::Landau(x[0],p[7],p[8],0) + p[9]*TMath::Landau(x[0],p[10],p[11],0));
-}
-
 void Kstar0_fit(){
 
     gStyle->SetOptStat(0);
@@ -163,13 +125,16 @@ void Kstar0_fit(){
     landau0->Draw("same");
     // landau1->Draw("same");
 
-    Double_t par_Ks[12];
-    fsum->GetParameters(&par_Ks[0]);
+    TLegend *leg1 = new TLegend(0.65,0.85,0.9,0.65,"","brNDC");
+    leg1->SetFillStyle(0);
+    leg1->SetBorderSize(0);
+    leg1->SetTextSize(0.025);
+    leg1->AddEntry(hs[0],"All","le");
+    leg1->AddEntry(gaus1,"#phi(1020)","l");
+    leg1->AddEntry(landau0,"K*_{0}(892)^{0}","l");
+    leg1->AddEntry(gaus2,"K*_{2}(1430)^{0}","l");
+    // for (int ih = 0; ih < 10; ih++) leg1->AddEntry(hs[ih],labels[ih],"lf");
+    leg1->Draw("same");
 
-    TF1 *bk = new TF1("bk","TMath::Landau(x,[0],[1],0)*[2]",0.7,2);
-    bk->SetParameters(par_Ks[7],par_Ks[8],par_Ks[6]);
-    bk->SetLineColor(kGray+2);
-    bk->SetLineStyle(2);
-    // bk->Draw("same");
 
 }
