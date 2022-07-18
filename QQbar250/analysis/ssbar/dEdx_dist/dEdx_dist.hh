@@ -403,7 +403,7 @@ private:
 
    struct JetParam {
       vector<int>   id;
-      vector<int>   chg;
+      vector<float>   chg;
       vector<TVector3> mom;
       vector<float>   E;
       vector<float>   E_calo;
