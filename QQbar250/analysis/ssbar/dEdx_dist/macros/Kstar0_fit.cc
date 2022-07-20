@@ -45,6 +45,7 @@ void Kstar0_fit(){
 
     TF1 *landau0 = new TF1("landau0","TMath::Landau(x,[0],[1],0)*[2]",0.7,2);
     landau0->SetLineColor(kGreen+2);
+    landau0->SetLineWidth(2);
     landau0->SetParameters(p0[1],p0[2]/10.0,p0[0]);
 
     hs[1]->Fit(landau0,"SR");
@@ -63,6 +64,7 @@ void Kstar0_fit(){
     cout << p1[0] << "," << p1[1] << "," << p1[2] << endl;
 
     TF1 *gaus1 = new TF1("gaus1","[2]*TMath::Gaus(x,[0],[1])",0.7,2);
+    gaus1->SetLineWidth(2);
     gaus1->SetParameters(0.8,0.018,0.017);
 
     hs[5]->Fit(gaus1,"SR");
@@ -79,6 +81,7 @@ void Kstar0_fit(){
     
     TF1 *gaus2 = new TF1("gaus1","[2]*TMath::Gaus(x,[0],[1])",0.7,2);
     gaus2->SetLineColor(kBlue+1);
+    gaus2->SetLineWidth(2);
     gaus2->SetParameters(1.44,0.018,0.007);
 
     hs[3]->Fit(gaus2,"SR");
@@ -112,6 +115,7 @@ void Kstar0_fit(){
     TF1 *fsum = new TF1("fsum","[0]*TMath::Gaus(x,[1],[2]) + [3]*TMath::Landau(x,[4],[5],0) + [6]*TMath::Landau(x,[7],[8],0) + [9]*TMath::Gaus(x,[10],[11])",0.7,2.0);
     cout << "p0[1]=" << p0[1] << ", p0[2]=" << p0[2] << ", p1[1]=" << p1[1] << ", p1[2]=" << p1[2] << endl;
     fsum->SetLineColor(kBlack);
+    fsum->SetLineWidth(3);
     fsum->SetParameters(0.035, p1[1]-0.1, p1[2]/10.0, 0.055, p0[1], p0[2]/10.0, 0.05, 1.19, 0.12);
     fsum->SetParameter(9,0.015);
     fsum->SetParameter(10,1.4);
