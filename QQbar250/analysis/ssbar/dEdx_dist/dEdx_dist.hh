@@ -146,6 +146,8 @@ public :
    Float_t         pfo_tanlambdaerror[1000];   //[pfo_n]
    Float_t         pfo_chi2[1000];   //[pfo_n]
    Float_t         pfo_ndf[1000];   //[pfo_n]
+   Float_t         pfo_vtxpt[1000][3];   //[pfo_n]
+   Float_t         pfo_endpt[1000][3];   //[pfo_n]
    Int_t           pfo_pid[1000];   //[pfo_n]
    Float_t         pfo_pid_likelihood[1000];   //[pfo_n]
    Float_t         pfo_pid_eprob[1000];   //[pfo_n]
@@ -304,6 +306,8 @@ public :
    TBranch        *b_pfo_tanlambdaerror;   //!
    TBranch        *b_pfo_chi2;   //!
    TBranch        *b_pfo_ndf;   //!
+   TBranch        *b_pfo_vtxpt;   //!
+   TBranch        *b_pfo_endpt;   //!
    TBranch        *b_pfo_pid;   //!
    TBranch        *b_pfo_pid_likelihood;   //!
    TBranch        *b_pfo_pid_eprob;   //!
@@ -634,6 +638,8 @@ void dEdx_dist::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_tanlambdaerror", pfo_tanlambdaerror, &b_pfo_tanlambdaerror);
    fChain->SetBranchAddress("pfo_chi2", pfo_chi2, &b_pfo_chi2);
    fChain->SetBranchAddress("pfo_ndf", pfo_ndf, &b_pfo_ndf);
+   fChain->SetBranchAddress("pfo_vtxpt", pfo_vtxpt, &b_pfo_vtxpt);
+   fChain->SetBranchAddress("pfo_endpt", pfo_endpt, &b_pfo_endpt);
    fChain->SetBranchAddress("pfo_pid", pfo_pid, &b_pfo_pid);
    fChain->SetBranchAddress("pfo_pid_likelihood", pfo_pid_likelihood, &b_pfo_pid_likelihood);
    fChain->SetBranchAddress("pfo_pid_eprob", pfo_pid_eprob, &b_pfo_pid_eprob);
