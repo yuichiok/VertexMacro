@@ -159,6 +159,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	// K*0 (K-Pi) mass
 	TH1F *h_pfo_LeadPi_mass = new TH1F(name_pfo + "LeadPi_mass", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_SPFOK_E = new TH1F(name_pfo + "SPFOK_E", ";GeV; Events", 100, 0., 5.0);
+	TH1F *h_pfo_SPFOK_E_corr = new TH1F(name_pfo + "SPFOK_E_corr", ";GeV; Events", 100, 0., 5.0);
 	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat313 = new TH1F(name_pfo + "LeadPi_K_mass_cheat313", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheatMOD313 = new TH1F(name_pfo + "LeadPi_K_mass_cheatMOD313", ";GeV; Events", 500, 0., 2.0);
@@ -174,6 +176,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
 	TH1F *h_pfo_pPi_parent_other = new TH1F(name_pfo + "pPi_parent_other", ";Pi momentum with other parent (GeV);Entries", 100, 0, 100);
+
+	// LeadPi is from Phi analysis
+	TH1F *h_pfo_LeadPi333_pdgcheat = new TH1F(name_pfo + "LeadPi333_pdgcheat", ";LeadPi PDG cheat (if parent = #Phi);Entries", 500, 0, 500);
+	TH1F *h_pfo_LeadPi333_kdEdx_dist = new TH1F(name_pfo + "LeadPi333_kdEdx_dist", ";LeadPi kdE/dx (if parent = #Phi);Entries", 40, -10, 10);
+	TH1F *h_pfo_LeadPi333_pdEdx_dist = new TH1F(name_pfo + "LeadPi333_pdEdx_dist", ";LeadPi pdE/dx (if parent = #Phi);Entries", 40, -10, 10);
+	TH1F *h_pfo_LeadPi333_pidEdx_dist = new TH1F(name_pfo + "LeadPi333_pidEdx_dist", ";LeadPi pdE/dx (if parent = #Phi);Entries", 40, -10, 10);
 
 	// K*0 (K-Pi) cos
 	TH1F *h_pfo_LeadPi_K_cos = new TH1F(name_pfo + "LeadPi_K_cos",";cos#theta; Events", 100, -1.0, 1.0);
@@ -274,6 +282,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 	h1_pfo.push_back(h_pfo_LeadPi_mass);
 	h1_pfo.push_back(h_pfo_SPFOK_mass);
+	h1_pfo.push_back(h_pfo_SPFOK_E);
+	h1_pfo.push_back(h_pfo_SPFOK_E_corr);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat313);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheatMOD313);
@@ -287,6 +297,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat_other);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent_mod1000);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
+
+	h1_pfo.push_back(h_pfo_LeadPi333_pdgcheat);
+	h1_pfo.push_back(h_pfo_LeadPi333_kdEdx_dist);
+	h1_pfo.push_back(h_pfo_LeadPi333_pdEdx_dist);
+	h1_pfo.push_back(h_pfo_LeadPi333_pidEdx_dist);
+
 	h1_pfo.push_back(h_pfo_pPi_parent_K0star);
 	h1_pfo.push_back(h_pfo_pPi_parent_other);
 
@@ -1433,6 +1449,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					float pi_K_qcos = (K_chg < 0) ? pi_K_cos : -pi_K_cos;
 					
 					float K_E_corr = sqrt(K_mass_true*K_mass_true + K_mom*K_mom);
+					h_pfo_SPFOK_E->Fill(K_SPFOs[i].E.at(j));
+					h_pfo_SPFOK_E_corr->Fill(K_E_corr);
+
 					// float K_invM    = GetInvMass(K_SPFOs[i].E.at(j), K_SPFOs[i].mom.at(j));
 					float K_invM    = GetInvMass( K_E_corr , K_SPFOs[i].mom.at(j));
 
@@ -1481,6 +1500,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 								
 								case 333:
 									h_pfo_LeadPi_K_mass_cheat333->Fill(pi_K_invM);
+									h_pfo_LeadPi333_pdgcheat->Fill(LPFO[i].pdg_cheat);
+									h_pfo_LeadPi333_kdEdx_dist->Fill(LPFO[i].kdEdx_dist);
+									h_pfo_LeadPi333_pdEdx_dist->Fill(LPFO[i].pdEdx_dist);
+									h_pfo_LeadPi333_pidEdx_dist->Fill(LPFO[i].pidEdx_dist);
 									break;
 
 								case 335:
@@ -1521,7 +1544,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
 
 						if(0.85<pi_K_invM && pi_K_invM<0.95){
-							//(LPFO[i].chg < 0) ? LPFO[i].cos : -LPFO[i].cos;
 							h_pfo_LeadPi_K_cos->Fill(pi_K_qcos);
 							h_pfo_SPFOK_cos->Fill(K_qcos);
 							break;
