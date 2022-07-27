@@ -161,6 +161,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_SPFOK_mass = new TH1F(name_pfo + "SPFOK_mass", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_SPFOK_E = new TH1F(name_pfo + "SPFOK_E", ";GeV; Events", 100, 0., 5.0);
 	TH1F *h_pfo_SPFOK_E_corr = new TH1F(name_pfo + "SPFOK_E_corr", ";GeV; Events", 100, 0., 5.0);
+
+	TH1F *h_pfo_LeadPi_trk_length = new TH1F(name_pfo + "LeadPi_trk_length", ";Track Length (mm); Entries", 200, 2000., 4000.);
+	TH1F *h_pfo_SPFOK_trk_length = new TH1F(name_pfo + "SPFOK_trk_length", ";Track Length (mm); Entries", 200, 2000., 4000.);
+	TH1F *h_pfo_LeadPi333_trk_length = new TH1F(name_pfo + "LeadPi333_trk_length", ";Track Length (mm); Entries", 200, 2000., 4000.);
+	TH1F *h_pfo_SPFOK333_trk_length = new TH1F(name_pfo + "SPFOK333_trk_length", ";Track Length (mm); Entries", 200, 2000., 4000.);
+	TH1F *h_pfo_LeadPi_SPFOK_trk_diff = new TH1F(name_pfo + "LeadPi_SPFOK_trk_diff", ";Track Length Diff (mm); Entries", 100, 0., 500.);
+	TH1F *h_pfo_LeadPi333_SPFOK_trk_diff = new TH1F(name_pfo + "LeadPi333_SPFOK_trk_diff", ";Track Length Diff (mm); Entries", 100, 0., 500.);
+
 	TH1F *h_pfo_LeadPi_K_mass = new TH1F(name_pfo + "LeadPi_K_mass", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat313 = new TH1F(name_pfo + "LeadPi_K_mass_cheat313", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheatMOD313 = new TH1F(name_pfo + "LeadPi_K_mass_cheatMOD313", ";GeV; Events", 500, 0., 2.0);
@@ -183,9 +191,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadPi333_pdEdx_dist = new TH1F(name_pfo + "LeadPi333_pdEdx_dist", ";LeadPi pdE/dx (if parent = #Phi);Entries", 40, -10, 10);
 	TH1F *h_pfo_LeadPi333_pidEdx_dist = new TH1F(name_pfo + "LeadPi333_pidEdx_dist", ";LeadPi pdE/dx (if parent = #Phi);Entries", 40, -10, 10);
 
+	TH1F *h_pfo_LeadPi333_K_sep = new TH1F(name_pfo + "LeadPi333_K_sep",";cos#theta; Events", 50, 0.0, 1.0);
+
 	// K*0 (K-Pi) cos
 	TH1F *h_pfo_LeadPi_K_cos = new TH1F(name_pfo + "LeadPi_K_cos",";cos#theta; Events", 100, -1.0, 1.0);
 	TH1F *h_pfo_SPFOK_cos = new TH1F(name_pfo + "SPFOK_cos",";cos#theta; Events", 100, -1.0, 1.0);
+
+	TH1F *h_pfo_LeadPi_K_sep = new TH1F(name_pfo + "LeadPi_K_sep",";cos#theta; Events", 50, 0.0, 1.0);
+
 
 	// Migrated Events
 	// wrong
@@ -284,6 +297,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_SPFOK_mass);
 	h1_pfo.push_back(h_pfo_SPFOK_E);
 	h1_pfo.push_back(h_pfo_SPFOK_E_corr);
+
+	h1_pfo.push_back(h_pfo_LeadPi_trk_length);
+	h1_pfo.push_back(h_pfo_SPFOK_trk_length);
+	h1_pfo.push_back(h_pfo_LeadPi333_trk_length);
+	h1_pfo.push_back(h_pfo_SPFOK333_trk_length);
+	h1_pfo.push_back(h_pfo_LeadPi_SPFOK_trk_diff);
+	h1_pfo.push_back(h_pfo_LeadPi333_SPFOK_trk_diff);
+
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat313);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheatMOD313);
@@ -302,12 +323,14 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadPi333_kdEdx_dist);
 	h1_pfo.push_back(h_pfo_LeadPi333_pdEdx_dist);
 	h1_pfo.push_back(h_pfo_LeadPi333_pidEdx_dist);
+	h1_pfo.push_back(h_pfo_LeadPi333_K_sep);
 
 	h1_pfo.push_back(h_pfo_pPi_parent_K0star);
 	h1_pfo.push_back(h_pfo_pPi_parent_other);
 
 	h1_pfo.push_back(h_pfo_LeadPi_K_cos);
 	h1_pfo.push_back(h_pfo_SPFOK_cos);
+	h1_pfo.push_back(h_pfo_LeadPi_K_sep);
 
 	h1_pfo.push_back(h_pfo_qq_qcos_wrong);
 	h1_pfo.push_back(h_pfo_LeadK_qcos_wrong);
@@ -1434,16 +1457,25 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				float pi_invM = GetInvMass(LPFO[i].E, LPFO[i].mom);
 				h_pfo_LeadPi_mass->Fill(pi_invM);
 
+				TVector3 pi_mom = LPFO[i].mom;
+
+				TVector3 pi_vtx = pfo_vtxpt[lead_ipfo[i]];
+				TVector3 pi_end = pfo_endpt[lead_ipfo[i]];
+				TVector3 pi_trk = pi_end - pi_vtx;
+				float pi_trk_length = pi_trk.Mag();
+				
+				float pi_chg = LPFO[i].chg;
+
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
-					float pi_chg = LPFO[i].chg;
-
-					TVector3 pi_K_mom = LPFO[i].mom + K_SPFOs[i].mom.at(j);
-					float pi_K_cos = pi_K_mom.CosTheta();
-					float K_mass_true = 0.493667;
 					TVector3 K_mom = K_SPFOs[i].mom.at(j);
+					float K_mass_true = 0.493667;
 					float K_chg = K_SPFOs[i].chg.at(j);
 					float K_cos = K_mom.CosTheta();
+
+					TVector3 pi_K_mom = pi_mom + K_mom;
+					float pi_K_cos = pi_K_mom.CosTheta();
+					float pi_K_sep = abs(cos(pi_mom.Angle(K_mom)));
 
 					float K_qcos = (K_chg < 0) ? K_cos : -K_cos;
 					float pi_K_qcos = (K_chg < 0) ? pi_K_cos : -pi_K_cos;
@@ -1457,6 +1489,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					// float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_E_corr, pi_K_mom);
+
+					TVector3 K_vtx = pfo_vtxpt[K_SPFOs[i].id.at(j)];
+					TVector3 K_end = pfo_endpt[K_SPFOs[i].id.at(j)];
+					TVector3 K_trk = K_end - K_vtx;
+					float K_trk_length = K_trk.Mag();
+					float pi_K_trk_diff = abs(pi_trk_length - K_trk_length);
 
 					if ( (pi_chg * K_chg < 0) && (K_mom.Mag() > 10) )
 					{
@@ -1472,18 +1510,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 									cout << "### PION ###" << endl;
 									LPFO[i].mom.Print();
-									cout << "p^2=" << LPFO[i].mom.Mag2() << endl;
-									cout << "PiE=" << LPFO[i].E << endl;
-									cout << "PiinvM=" << pi_invM << endl;
-
 									cout << "### KAON ###" << endl;
 									K_SPFOs[i].mom.at(j).Print();
-									cout << "p^2=" << K_SPFOs[i].mom.at(j).Mag2() << endl;
-									cout << "K_E_corr=" << K_E_corr << endl;
-									cout << "KinvM=" << K_invM << endl;
-
-									cout << "### Pi-K ###" << endl;
-									cout << "Pi-K mass = " << pi_K_invM << endl;
 
 									h_pfo_pPi_parent_K0star->Fill(LPFO[i].mom.Mag());
 									h_pfo_LeadPi_K_mass_cheat313->Fill(pi_K_invM);
@@ -1504,6 +1532,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 									h_pfo_LeadPi333_kdEdx_dist->Fill(LPFO[i].kdEdx_dist);
 									h_pfo_LeadPi333_pdEdx_dist->Fill(LPFO[i].pdEdx_dist);
 									h_pfo_LeadPi333_pidEdx_dist->Fill(LPFO[i].pidEdx_dist);
+									h_pfo_LeadPi333_K_sep->Fill(pi_K_sep);
+									h_pfo_LeadPi333_trk_length->Fill(pi_trk_length);
+									h_pfo_SPFOK333_trk_length->Fill(K_trk_length);
+									h_pfo_LeadPi333_SPFOK_trk_diff->Fill(pi_K_trk_diff);
 									break;
 
 								case 335:
@@ -1540,8 +1572,15 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						}
 
+						cout << K_trk_length << ", " << pi_trk_length << endl;
+
 						h_pfo_SPFOK_mass->Fill(K_invM);
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+
+						h_pfo_LeadPi_K_sep->Fill(pi_K_sep);
+						h_pfo_LeadPi_trk_length->Fill(pi_trk_length);
+						h_pfo_SPFOK_trk_length->Fill(K_trk_length);
+						h_pfo_LeadPi_SPFOK_trk_diff->Fill(pi_K_trk_diff);
 
 						if(0.85<pi_K_invM && pi_K_invM<0.95){
 							h_pfo_LeadPi_K_cos->Fill(pi_K_qcos);
