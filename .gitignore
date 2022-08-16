@@ -3,4 +3,5 @@ semi_leptonic/external/*.pcm
 semi_leptonic/external/*.so
 semi_leptonic/external/*.o
 semi_leptonic/external/FileSelectorDict.cc
+/.vscode
 *.json
