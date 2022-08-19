@@ -7,7 +7,7 @@ void LeadPi333_dEdx_dist(){
 
     gStyle->SetOptStat(0);
 
-    TFile *f = TFile::Open("../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPicross.K_cos.mergeFULL.root","READ");
+    TFile *f = TFile::Open("../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPicross.K_cos.AllEvents.root","READ");
     if (f == 0) {
         std::cout << "Error: File not found." << std::endl;
         return;
