@@ -5,14 +5,14 @@ processIDs=(15162 15271 15273 15315 15319 15351 15353 15355 15357 15463 15465 15
 
 nfirst=1
 nlast=-1
-nrun=5
+nrun=100
 
 for processID in ${processIDs[*]};
 do
     data_input=/group/ilc/users/yokugawa/QQbar250/l5/eLpR/${processID}/dEdx_corr/QQbarProcessor_out/
 
     flist=list/${processID}.list
-    `find ${data_input} -maxdepth 1 -name '*15162*.root' | sort > ${flist}`
+    `find ${data_input} -maxdepth 1 -name *${processID}*.root | sort > ${flist}`
 
     nf=`more ${flist} | wc -l`
     echo "number of files for process : " ${nf}
@@ -35,7 +35,7 @@ do
         
         echo ${processID} $nrun0 $nrun1 $nrun $njobs
 
-        if [ $processID -eq 15162 ]
+        if [ $processID -eq 15271 ]
         then
             log=./sublog/${processID}"_"`printf %03d $seq`.log
             bsub -q s -J "ana_"${processID}"_"`printf %03d $seq` -o $log "./runROOT ${flist} $nrun0 $nrun1"
