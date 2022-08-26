@@ -7,7 +7,7 @@ void LeadPi_K_polar(){
 
     gStyle->SetOptStat(0);
 
-    TFile *f = TFile::Open("../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPicross.K_cos.mergeFULL.root","READ");
+    TFile *f = TFile::Open("../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPicross.K_cos.AllEvents.root","READ");
     if (f == 0) {
         std::cout << "Error: File not found." << std::endl;
         return;
@@ -32,12 +32,13 @@ void LeadPi_K_polar(){
     {
         hs[ih].hist->SetLineColor(hs[ih].color);
         hs[ih].hist->SetLineWidth(3);
-        hs[ih].hist->Scale(1/hs[ih].hist->GetEntries());
-        hs[ih].hist->GetYaxis()->SetRangeUser(0,0.03);
+        // hs[ih].hist->Scale(1/hs[ih].hist->GetEntries());
+        hs[ih].hist->Scale(1/hs[ih].hist->Integral(12,88));
+        hs[ih].hist->GetYaxis()->SetRangeUser(0,0.04);
         hs[ih].hist->Draw("hsame");
     }
     
-    TLegend *leg0 = new TLegend(0.65,0.85,0.9,0.5,"","brNDC");
+    TLegend *leg0 = new TLegend(0.15,0.75,0.4,0.85,"","brNDC");
     leg0->SetFillStyle(0);
     leg0->SetBorderSize(0);
     leg0->SetTextSize(0.03);
