@@ -21,8 +21,8 @@
 #include "TStyle.h"
 #include "TMath.h"
 #include "TSystemFile.h"
-#include "../../../style/Style.C"
-#include "../../../style/Labels.C"
+// #include "../../../style/Style.C"
+// #include "../../../style/Labels.C"
 
 double BetheBloch(const double *x, const double *pars){
   double mass=pars[5];
@@ -33,17 +33,17 @@ double BetheBloch(const double *x, const double *pars){
   return 1.350e-1*(0.5*pars[0]*TMath::Log(pars[1]*TMath::Power(bg,2.0)*tmax)-pars[3]*b*b-pars[4]*bg/2.0)/(b*b);
 }
 
-void Labels(){
+// void Labels(){
 
-  QQBARLabel(0.1,0.952,"Work In Progress");
-  QQBARLabel2(0.6,0.965, "e^{-}e^{+} #rightarrow s#bar{s}",kGray+2);
+//   QQBARLabel(0.1,0.952,"Work In Progress");
+//   QQBARLabel2(0.6,0.965, "e^{-}e^{+} #rightarrow s#bar{s}",kGray+2);
 
-}
+// }
 
 void dEdxplots() {
 
   
-  SetQQbarStyle();
+  // SetQQbarStyle();
   gStyle->SetOptFit(0);
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
@@ -55,7 +55,8 @@ void dEdxplots() {
   gStyle->SetPadLeftMargin(0.2);
 
  
-  TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.root";
+  // TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.minp20maxp60.hit210.offset.dEdxMin.root";
+  TString filename = "../rootfiles/double_tag/DQ_250GeV_ss_eRpL.minp20maxp60.hit210.offset.dEdxMin.OppKMult.KPicross.K_cos.mergeFULL.root";
   // TString filename = "../rootfiles/double_tag/DQ_250GeV_ss.nocut.root";
   TFile *f = new TFile(filename);
 
