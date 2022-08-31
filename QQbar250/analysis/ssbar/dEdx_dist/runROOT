@@ -25,7 +25,7 @@ for count in $(seq $start $end)
   
   rootout=${outputDir}/${filename}.ss.tmp.root
 
-  srun -lN1 root -l -q run_process.cc\(\"ss\",\"${input}\",\"${rootout}\"\) > $log 2>&1 &
+  srun -lN1 root -l -q run_process.cc\(\"ss\",\"${input}\",\"${rootout}\"\) > $log 2>&1
 
   echo "$count event finished"
   
