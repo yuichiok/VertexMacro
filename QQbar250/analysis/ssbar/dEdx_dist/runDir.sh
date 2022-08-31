@@ -34,5 +34,5 @@ for seq in $seqlist; do
 
     log=./sublog/`printf %03d $seq`.log
     # bsub -q s -J "ana"`printf %03d $seq` -o $log "./runROOT ${flist} $nrun0 $nrun1"
-    sbatch -J "ana"`printf %03d $seq` ./runROOT ${flist} $nrun0 $nrun1 -o $log
+    srun -J "ana"`printf %03d $seq` ./runROOT ${flist} $nrun0 $nrun1 -o $log
 done
