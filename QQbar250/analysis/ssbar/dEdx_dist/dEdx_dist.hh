@@ -48,13 +48,13 @@ public :
    Float_t         mc_ISR_pdg[2];
    Float_t         mc_ISR_charge[2];
    Int_t           mc_quark_ps_n;
-   Float_t         mc_quark_ps_E[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_px[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_py[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_pz[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_m[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_pdg[27];   //[mc_quark_ps_n]
-   Float_t         mc_quark_ps_charge[27];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_E[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_px[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_py[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_pz[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_m[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_pdg[1000];   //[mc_quark_ps_n]
+   Float_t         mc_quark_ps_charge[1000];   //[mc_quark_ps_n]
    Float_t         mc_quark_ps_y12;
    Float_t         mc_quark_ps_y23;
    Float_t         mc_quark_ps_d12;
@@ -64,15 +64,15 @@ public :
    Float_t         mc_quark_ps_jet_py[2];
    Float_t         mc_quark_ps_jet_pz[2];
    Int_t           mc_stable_n;
-   Float_t         mc_stable_E[805];   //[mc_stable_n]
-   Float_t         mc_stable_px[805];   //[mc_stable_n]
-   Float_t         mc_stable_py[805];   //[mc_stable_n]
-   Float_t         mc_stable_pz[805];   //[mc_stable_n]
-   Float_t         mc_stable_m[805];   //[mc_stable_n]
-   Int_t           mc_stable_pdg[805];   //[mc_stable_n]
-   Float_t         mc_stable_charge[805];   //[mc_stable_n]
-   Int_t           mc_stable_isoverlay[805];   //[mc_stable_n]
-   Int_t           mc_stable_isisr[805];   //[mc_stable_n]
+   Float_t         mc_stable_E[1000];   //[mc_stable_n]
+   Float_t         mc_stable_px[1000];   //[mc_stable_n]
+   Float_t         mc_stable_py[1000];   //[mc_stable_n]
+   Float_t         mc_stable_pz[1000];   //[mc_stable_n]
+   Float_t         mc_stable_m[1000];   //[mc_stable_n]
+   Int_t           mc_stable_pdg[1000];   //[mc_stable_n]
+   Float_t         mc_stable_charge[1000];   //[mc_stable_n]
+   Int_t           mc_stable_isoverlay[1000];   //[mc_stable_n]
+   Int_t           mc_stable_isisr[1000];   //[mc_stable_n]
    Float_t         mc_stable_y12;
    Float_t         mc_stable_y23;
    Float_t         mc_stable_d12;
@@ -113,80 +113,84 @@ public :
    Int_t           jet_nvtx_j1;
    Int_t           pfo_n_j2;
    Int_t           jet_nvtx_j2;
-   Int_t           pfo_match[207];   //[pfo_n]
-   Int_t           pfo_truejet_pdg[207];   //[pfo_n]
-   Int_t           pfo_truejet_type[207];   //[pfo_n]
-   Int_t           pfo_pdgcheat[207];   //[pfo_n]
-   Int_t           pfo_pdgcheat_parent[207];   //[pfo_n]
-   Float_t         pfo_E[207];   //[pfo_n]
-   Float_t         pfo_px[207];   //[pfo_n]
-   Float_t         pfo_py[207];   //[pfo_n]
-   Float_t         pfo_pz[207];   //[pfo_n]
-   Float_t         pfo_m[207];   //[pfo_n]
-   Int_t           pfo_type[207];   //[pfo_n]
-   Int_t           pfo_isoverlay[207];   //[pfo_n]
-   Int_t           pfo_isisr[207];   //[pfo_n]
-   Int_t           pfo_vtx[207];   //[pfo_n]
-   Int_t           pfo_charge[207];   //[pfo_n]
-   Int_t           pfo_ntracks[207];   //[pfo_n]
-   Int_t           pfo_tpc_hits[207];   //[pfo_n]
-   Float_t         pfo_dedx[207];   //[pfo_n]
-   Float_t         pfo_dedxerror[207];   //[pfo_n]
-   Float_t         pfo_d0[207];   //[pfo_n]
-   Float_t         pfo_d0error[207];   //[pfo_n]
-   Float_t         pfo_z0[207];   //[pfo_n]
-   Float_t         pfo_z0error[207];   //[pfo_n]
-   Float_t         pfo_phi[207];   //[pfo_n]
-   Float_t         pfo_phierror[207];   //[pfo_n]
-   Float_t         pfo_omega[207];   //[pfo_n]
-   Float_t         pfo_omegaerror[207];   //[pfo_n]
-   Float_t         pfo_tanlambda[207];   //[pfo_n]
-   Float_t         pfo_tanlambdaerror[207];   //[pfo_n]
-   Float_t         pfo_chi2[207];   //[pfo_n]
-   Float_t         pfo_ndf[207];   //[pfo_n]
-   Int_t           pfo_pid[207];   //[pfo_n]
-   Float_t         pfo_pid_likelihood[207];   //[pfo_n]
-   Float_t         pfo_pid_eprob[207];   //[pfo_n]
-   Float_t         pfo_pid_muprob[207];   //[pfo_n]
-   Float_t         pfo_pid_piprob[207];   //[pfo_n]
-   Float_t         pfo_pid_kprob[207];   //[pfo_n]
-   Float_t         pfo_pid_pprob[207];   //[pfo_n]
-   Float_t         pfo_pid_hprob[207];   //[pfo_n]
-   Int_t           pfo_piddedx[207];   //[pfo_n]
-   Float_t         pfo_piddedx_likelihood[207];   //[pfo_n]
-   Float_t         pfo_piddedx_eprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_muprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_piprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_kprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_pprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_hprob[207];   //[pfo_n]
-   Float_t         pfo_piddedx_e_dedxdist[207];   //[pfo_n]
-   Float_t         pfo_piddedx_mu_dedxdist[207];   //[pfo_n]
-   Float_t         pfo_piddedx_pi_dedxdist[207];   //[pfo_n]
-   Float_t         pfo_piddedx_k_dedxdist[207];   //[pfo_n]
-   Float_t         pfo_piddedx_p_dedxdist[207];   //[pfo_n]
-   Float_t         pfo_piddedx_e_lkhood[207];   //[pfo_n]
-   Float_t         pfo_piddedx_mu_lkhood[207];   //[pfo_n]
-   Float_t         pfo_piddedx_pi_lkhood[207];   //[pfo_n]
-   Float_t         pfo_piddedx_k_lkhood[207];   //[pfo_n]
-   Float_t         pfo_piddedx_p_lkhood[207];   //[pfo_n]
-   Float_t         pfo_pidtof_p_at_calo[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closest_beta_0ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closest_beta_10ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closest_beta_50ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closest_beta_100ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_fastest_beta_0ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_fastest_beta_10ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_fastest_beta_50ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_fastest_beta_100ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_cylfit_beta_0ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_cylfit_beta_10ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_cylfit_beta_50ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_cylfit_beta_100ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closestfit_beta_0ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closestfit_beta_10ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closestfit_beta_50ps[207];   //[pfo_n]
-   Float_t         pfo_pidtof_closestfit_beta_100ps[207];   //[pfo_n]
+   Int_t           pfo_match[1000];   //[pfo_n]
+   Int_t           pfo_truejet_pdg[1000];   //[pfo_n]
+   Int_t           pfo_truejet_type[1000];   //[pfo_n]
+   Int_t           pfo_pdgcheat[1000];   //[pfo_n]
+   Int_t           pfo_nparents[1000];   //[pfo_n]
+   Int_t           pfo_pdgcheat_parent[1000][1000];   //[pfo_n]
+   Float_t         pfo_E[1000];   //[pfo_n]
+   Float_t         pfo_E_calo[1000];   //[pfo_n]
+   Float_t         pfo_px[1000];   //[pfo_n]
+   Float_t         pfo_py[1000];   //[pfo_n]
+   Float_t         pfo_pz[1000];   //[pfo_n]
+   Float_t         pfo_m[1000];   //[pfo_n]
+   Int_t           pfo_type[1000];   //[pfo_n]
+   Int_t           pfo_isoverlay[1000];   //[pfo_n]
+   Int_t           pfo_isisr[1000];   //[pfo_n]
+   Int_t           pfo_vtx[1000];   //[pfo_n]
+   Int_t           pfo_charge[1000];   //[pfo_n]
+   Int_t           pfo_ntracks[1000];   //[pfo_n]
+   Int_t           pfo_tpc_hits[1000];   //[pfo_n]
+   Float_t         pfo_dedx[1000];   //[pfo_n]
+   Float_t         pfo_dedxerror[1000];   //[pfo_n]
+   Float_t         pfo_d0[1000];   //[pfo_n]
+   Float_t         pfo_d0error[1000];   //[pfo_n]
+   Float_t         pfo_z0[1000];   //[pfo_n]
+   Float_t         pfo_z0error[1000];   //[pfo_n]
+   Float_t         pfo_phi[1000];   //[pfo_n]
+   Float_t         pfo_phierror[1000];   //[pfo_n]
+   Float_t         pfo_omega[1000];   //[pfo_n]
+   Float_t         pfo_omegaerror[1000];   //[pfo_n]
+   Float_t         pfo_tanlambda[1000];   //[pfo_n]
+   Float_t         pfo_tanlambdaerror[1000];   //[pfo_n]
+   Float_t         pfo_chi2[1000];   //[pfo_n]
+   Float_t         pfo_ndf[1000];   //[pfo_n]
+   Float_t         pfo_vtxpt[1000][3];   //[pfo_n]
+   Float_t         pfo_endpt[1000][3];   //[pfo_n]
+   Int_t           pfo_pid[1000];   //[pfo_n]
+   Float_t         pfo_pid_likelihood[1000];   //[pfo_n]
+   Float_t         pfo_pid_eprob[1000];   //[pfo_n]
+   Float_t         pfo_pid_muprob[1000];   //[pfo_n]
+   Float_t         pfo_pid_piprob[1000];   //[pfo_n]
+   Float_t         pfo_pid_kprob[1000];   //[pfo_n]
+   Float_t         pfo_pid_pprob[1000];   //[pfo_n]
+   Float_t         pfo_pid_hprob[1000];   //[pfo_n]
+   Int_t           pfo_piddedx[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_likelihood[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_eprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_muprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_piprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_kprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_pprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_hprob[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_e_dedxdist[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_mu_dedxdist[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_pi_dedxdist[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_k_dedxdist[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_p_dedxdist[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_e_lkhood[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_mu_lkhood[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_pi_lkhood[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_k_lkhood[1000];   //[pfo_n]
+   Float_t         pfo_piddedx_p_lkhood[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_p_at_calo[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closest_beta_0ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closest_beta_10ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closest_beta_50ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closest_beta_100ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_fastest_beta_0ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_fastest_beta_10ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_fastest_beta_50ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_fastest_beta_100ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_cylfit_beta_0ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_cylfit_beta_10ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_cylfit_beta_50ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_cylfit_beta_100ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closestfit_beta_0ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closestfit_beta_10ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closestfit_beta_50ps[1000];   //[pfo_n]
+   Float_t         pfo_pidtof_closestfit_beta_100ps[1000];   //[pfo_n]
 
    // List of branches
    TBranch        *b_mc_quark_E;   //!
@@ -273,8 +277,10 @@ public :
    TBranch        *b_pfo_truejet_pdg;   //!
    TBranch        *b_pfo_truejet_type;   //!
    TBranch        *b_pfo_pdgcheat;   //!
+   TBranch        *b_pfo_nparents;   //!
    TBranch        *b_pfo_pdgcheat_parent;   //!
    TBranch        *b_pfo_E;   //!
+   TBranch        *b_pfo_E_calo;   //!
    TBranch        *b_pfo_px;   //!
    TBranch        *b_pfo_py;   //!
    TBranch        *b_pfo_pz;   //!
@@ -300,6 +306,8 @@ public :
    TBranch        *b_pfo_tanlambdaerror;   //!
    TBranch        *b_pfo_chi2;   //!
    TBranch        *b_pfo_ndf;   //!
+   TBranch        *b_pfo_vtxpt;   //!
+   TBranch        *b_pfo_endpt;   //!
    TBranch        *b_pfo_pid;   //!
    TBranch        *b_pfo_pid_likelihood;   //!
    TBranch        *b_pfo_pid_eprob;   //!
@@ -363,8 +371,8 @@ public :
 
    virtual void     Analyze_dEdxdist(int, float, TString, TString);
 
-	virtual float  GetInvMass(float E, vector<float> p);
-	virtual float  GetInvMass(float E, TVector3 p);
+	virtual double  GetInvMass(float E, vector<float> p);
+	virtual double  GetInvMass(float E, TVector3 p);
 
    float getAngle2Vec(float px1, float py1, float pz1, float E1, float px2, float py2, float pz2, float E2) {
 
@@ -382,6 +390,7 @@ private:
    struct PFOParam {
       int   pdg_cheat = 0;
       float E = 0;
+      float E_calo = 0;
       float chg  = 0;
       float cos  = -2;
       float qcos = -2;
@@ -398,9 +407,10 @@ private:
 
    struct JetParam {
       vector<int>   id;
-      vector<int>   chg;
+      vector<float>   chg;
       vector<TVector3> mom;
       vector<float>   E;
+      vector<float>   E_calo;
       vector<float> kdEdx_dist;
       vector<float> pdEdx_dist;
       vector<float> pidEdx_dist;
@@ -599,8 +609,10 @@ void dEdx_dist::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_truejet_pdg", pfo_truejet_pdg, &b_pfo_truejet_pdg);
    fChain->SetBranchAddress("pfo_truejet_type", pfo_truejet_type, &b_pfo_truejet_type);
    fChain->SetBranchAddress("pfo_pdgcheat", pfo_pdgcheat, &b_pfo_pdgcheat);
+   fChain->SetBranchAddress("pfo_nparents", pfo_nparents, &b_pfo_nparents);
    fChain->SetBranchAddress("pfo_pdgcheat_parent", pfo_pdgcheat_parent, &b_pfo_pdgcheat_parent);
    fChain->SetBranchAddress("pfo_E", pfo_E, &b_pfo_E);
+   fChain->SetBranchAddress("pfo_E_calo", pfo_E_calo, &b_pfo_E_calo);
    fChain->SetBranchAddress("pfo_px", pfo_px, &b_pfo_px);
    fChain->SetBranchAddress("pfo_py", pfo_py, &b_pfo_py);
    fChain->SetBranchAddress("pfo_pz", pfo_pz, &b_pfo_pz);
@@ -626,6 +638,8 @@ void dEdx_dist::Init(TTree *tree)
    fChain->SetBranchAddress("pfo_tanlambdaerror", pfo_tanlambdaerror, &b_pfo_tanlambdaerror);
    fChain->SetBranchAddress("pfo_chi2", pfo_chi2, &b_pfo_chi2);
    fChain->SetBranchAddress("pfo_ndf", pfo_ndf, &b_pfo_ndf);
+   fChain->SetBranchAddress("pfo_vtxpt", pfo_vtxpt, &b_pfo_vtxpt);
+   fChain->SetBranchAddress("pfo_endpt", pfo_endpt, &b_pfo_endpt);
    fChain->SetBranchAddress("pfo_pid", pfo_pid, &b_pfo_pid);
    fChain->SetBranchAddress("pfo_pid_likelihood", pfo_pid_likelihood, &b_pfo_pid_likelihood);
    fChain->SetBranchAddress("pfo_pid_eprob", pfo_pid_eprob, &b_pfo_pid_eprob);
