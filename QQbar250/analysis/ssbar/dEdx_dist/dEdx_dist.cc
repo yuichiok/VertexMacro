@@ -55,6 +55,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 {
 
 	float MAXP_CUT = 60.0;
+	float K_MASS_TRUE = 0.493667;
 
 	// Number Counting
 	TH1I *cnt_nevents = new TH1I("h_cnt_nevents", ";nevents;Entries", 10, 0, 10);
@@ -1457,6 +1458,9 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				float pi_invM = GetInvMass(LPFO[i].E, LPFO[i].mom);
 				h_pfo_LeadPi_mass->Fill(pi_invM);
 
+				// Lead Pi is actually Kaon case study
+				float pi_is_K_E_corr = sqrt(K_MASS_TRUE*K_MASS_TRUE + LPFO[i].mom*LPFO[i].mom);
+
 				TVector3 pi_mom = LPFO[i].mom;
 
 				TVector3 pi_vtx = pfo_vtxpt[lead_ipfo[i]];
@@ -1469,7 +1473,6 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 				for(int j = 0; j < K_SPFOs[i].mom.size(); j++)
 				{
 					TVector3 K_mom = K_SPFOs[i].mom.at(j);
-					float K_mass_true = 0.493667;
 					float K_chg = K_SPFOs[i].chg.at(j);
 					float K_cos = K_mom.CosTheta();
 
@@ -1480,7 +1483,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 					float K_qcos = (K_chg < 0) ? K_cos : -K_cos;
 					float pi_K_qcos = (K_chg < 0) ? pi_K_cos : -pi_K_cos;
 					
-					float K_E_corr = sqrt(K_mass_true*K_mass_true + K_mom*K_mom);
+					float K_E_corr = sqrt(K_MASS_TRUE*K_MASS_TRUE + K_mom*K_mom);
 					h_pfo_SPFOK_E->Fill(K_SPFOs[i].E.at(j));
 					h_pfo_SPFOK_E_corr->Fill(K_E_corr);
 
