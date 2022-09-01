@@ -176,6 +176,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadPi_K_mass_cheat315 = new TH1F(name_pfo + "LeadPi_K_mass_cheat315", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat323 = new TH1F(name_pfo + "LeadPi_K_mass_cheat323", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat333 = new TH1F(name_pfo + "LeadPi_K_mass_cheat333", ";GeV; Events", 500, 0., 2.0);
+	TH1F *h_pfo_LeadPi_K_mass_reco333 = new TH1F(name_pfo + "LeadPi_K_mass_reco333", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat335 = new TH1F(name_pfo + "LeadPi_K_mass_cheat335", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat113 = new TH1F(name_pfo + "LeadPi_K_mass_cheat113", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat213 = new TH1F(name_pfo + "LeadPi_K_mass_cheat213", ";GeV; Events", 500, 0., 2.0);
@@ -312,6 +313,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat315);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat323);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat333);
+	h1_pfo.push_back(h_pfo_LeadPi_K_mass_reco333);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat335);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat113);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat213);
@@ -1492,6 +1494,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 					// float pi_K_invM = GetInvMass(LPFO[i].E + K_SPFOs[i].E.at(j), pi_K_mom);
 					float pi_K_invM = GetInvMass(LPFO[i].E + K_E_corr, pi_K_mom);
+					float K_K_invM  = GetInvMass(pi_is_K_E_corr + K_E_corr, pi_K_mom);
+					
 
 					TVector3 K_vtx = pfo_vtxpt[K_SPFOs[i].id.at(j)];
 					TVector3 K_end = pfo_endpt[K_SPFOs[i].id.at(j)];
@@ -1579,6 +1583,7 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						h_pfo_SPFOK_mass->Fill(K_invM);
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
+						if(pi_K_invM < 0.85) h_pfo_LeadPi_K_mass_reco333->Fill(K_K_invM);
 
 						h_pfo_LeadPi_K_sep->Fill(pi_K_sep);
 						h_pfo_LeadPi_trk_length->Fill(pi_trk_length);
