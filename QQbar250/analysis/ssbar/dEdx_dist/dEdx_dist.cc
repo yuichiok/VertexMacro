@@ -182,6 +182,10 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	TH1F *h_pfo_LeadPi_K_mass_cheat213 = new TH1F(name_pfo + "LeadPi_K_mass_cheat213", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat92 = new TH1F(name_pfo + "LeadPi_K_mass_cheat92", ";GeV; Events", 500, 0., 2.0);
 	TH1F *h_pfo_LeadPi_K_mass_cheat_other = new TH1F(name_pfo + "LeadPi_K_mass_cheat_other", ";GeV; Events", 500, 0., 2.0);
+
+	TH1F *h_pfo_LeadPi_K_corr_phi_mass = new TH1F(name_pfo + "LeadPi_K_corr_phi_mass", ";GeV; Events", 500, 0., 2.0);
+
+
 	TH1F *h_pfo_pdgcheat_parent_mod1000 = new TH1F(name_pfo + "pdgcheat_parent_mod1000", ";PDG cheat parent MOD 1000; Entries", 500, 0, 500);
 	TH1F *h_pfo_pdgcheat_parent = new TH1F(name_pfo + "pdgcheat_parent", ";PDG cheat parent;Entries", 500, 0, 500);
 	TH1F *h_pfo_pPi_parent_K0star = new TH1F(name_pfo + "pPi_parent_K0star", ";Pi momentum with K*0 parent (GeV);Entries", 100, 0, 100);
@@ -319,6 +323,8 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat213);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat92);
 	h1_pfo.push_back(h_pfo_LeadPi_K_mass_cheat_other);
+	h1_pfo.push_back(h_pfo_LeadPi_K_corr_phi_mass);
+
 	h1_pfo.push_back(h_pfo_pdgcheat_parent_mod1000);
 	h1_pfo.push_back(h_pfo_pdgcheat_parent);
 
@@ -1583,7 +1589,12 @@ void dEdx_dist::Analyze_dEdxdist(int n_entries = -1, float MINP_CUT = 10.0, TStr
 
 						h_pfo_SPFOK_mass->Fill(K_invM);
 						h_pfo_LeadPi_K_mass->Fill(pi_K_invM);
-						if(pi_K_invM < 0.85) h_pfo_LeadPi_K_mass_reco333->Fill(K_K_invM);
+						if(pi_K_invM < 0.85) {
+							h_pfo_LeadPi_K_corr_phi_mass->Fill(K_K_invM);
+							h_pfo_LeadPi_K_mass_reco333->Fill(K_K_invM);
+						}else{
+							h_pfo_LeadPi_K_corr_phi_mass->Fill(pi_K_invM);
+						}
 
 						h_pfo_LeadPi_K_sep->Fill(pi_K_sep);
 						h_pfo_LeadPi_trk_length->Fill(pi_trk_length);
